@@ -58,7 +58,10 @@ size_t ExplicitTriangulation::footprint(size_t size) const {
 int ExplicitTriangulation::preconditionBoundaryEdgesInternal() {
 
   if(this->cellArray_ == nullptr || this->vertexNumber_ == 0) {
-    this->printErr("Empty dataset, precondition skipped");
+#ifdef TTK_ENABLE_MPI
+    if(!(ttk::isRunningWithMPI()))
+#endif
+      this->printErr("Empty dataset, precondition skipped");
     return 1;
   }
 
@@ -123,21 +126,29 @@ int ExplicitTriangulation::preconditionBoundaryEdgesInternal() {
 #ifdef TTK_ENABLE_MPI
 
 int ExplicitTriangulation::preconditionVertexRankArray() {
-  this->vertexRankArray_.resize(this->vertexNumber_);
-  if(ttk::isRunningWithMPI()) {
-    ttk::produceRankArray(this->vertexRankArray_, this->vertGid_,
-                          this->vertexGhost_, this->vertexNumber_,
-                          this->boundingBox_.data(), this->neighborRanks_);
+  if(vertexRankArray_.size() == 0) {
+    this->vertexRankArray_.resize(this->vertexNumber_, 0);
+    if(ttk::isRunningWithMPI()) {
+      ttk::produceRankArray(this->vertexRankArray_, this->vertGid_,
+                            this->vertexGhost_, this->vertexNumber_,
+                            this->boundingBox_.data(), this->neighborRanks_);
+      ttk::preconditionNeighborsUsingRankArray<ttk::SimplexId>(
+        this->neighborRanks_,
+        [this](const ttk::SimplexId a) { return this->getVertexRank(a); },
+        this->vertexNumber_, ttk::MPIcomm_);
+    }
   }
   return 0;
 }
 
 int ExplicitTriangulation::preconditionCellRankArray() {
-  this->cellRankArray_.resize(this->cellNumber_);
-  if(ttk::isRunningWithMPI()) {
-    ttk::produceRankArray(this->cellRankArray_, this->cellGid_,
-                          this->cellGhost_, this->cellNumber_,
-                          this->boundingBox_.data(), this->neighborRanks_);
+  if(cellRankArray_.size() == 0) {
+    this->cellRankArray_.resize(this->cellNumber_, 0);
+    if(ttk::isRunningWithMPI()) {
+      ttk::produceRankArray(this->cellRankArray_, this->cellGid_,
+                            this->cellGhost_, this->cellNumber_,
+                            this->boundingBox_.data(), this->neighborRanks_);
+    }
   }
   return 0;
 }
@@ -194,7 +205,10 @@ int ExplicitTriangulation::preconditionTriangleRankArray() {
 int ExplicitTriangulation::preconditionBoundaryTrianglesInternal() {
 
   if(this->cellArray_ == nullptr || this->vertexNumber_ == 0) {
-    this->printErr("Empty dataset, precondition skipped");
+#ifdef TTK_ENABLE_MPI
+    if(!(ttk::isRunningWithMPI()))
+#endif
+      this->printErr("Empty dataset, precondition skipped");
     return 1;
   }
 
@@ -254,7 +268,10 @@ int ExplicitTriangulation::preconditionBoundaryTrianglesInternal() {
 int ExplicitTriangulation::preconditionBoundaryVerticesInternal() {
 
   if(this->cellArray_ == nullptr || this->vertexNumber_ == 0) {
-    this->printErr("Empty dataset, precondition skipped");
+#ifdef TTK_ENABLE_MPI
+    if(!(ttk::isRunningWithMPI()))
+#endif
+      this->printErr("Empty dataset, precondition skipped");
     return 1;
   }
 
@@ -331,7 +348,10 @@ int ExplicitTriangulation::preconditionBoundaryVerticesInternal() {
 int ExplicitTriangulation::preconditionCellEdgesInternal() {
 
   if(this->cellArray_ == nullptr || this->vertexNumber_ == 0) {
-    this->printErr("Empty dataset, precondition skipped");
+#ifdef TTK_ENABLE_MPI
+    if(!(ttk::isRunningWithMPI()))
+#endif
+      this->printErr("Empty dataset, precondition skipped");
     return 1;
   }
 
@@ -346,7 +366,10 @@ int ExplicitTriangulation::preconditionCellEdgesInternal() {
 int ExplicitTriangulation::preconditionCellNeighborsInternal() {
 
   if(this->cellArray_ == nullptr || this->vertexNumber_ == 0) {
-    this->printErr("Empty dataset, precondition skipped");
+#ifdef TTK_ENABLE_MPI
+    if(!(ttk::isRunningWithMPI()))
+#endif
+      this->printErr("Empty dataset, precondition skipped");
     return 1;
   }
 
@@ -371,7 +394,10 @@ int ExplicitTriangulation::preconditionCellNeighborsInternal() {
 int ExplicitTriangulation::preconditionCellTrianglesInternal() {
 
   if(this->cellArray_ == nullptr || this->vertexNumber_ == 0) {
-    this->printErr("Empty dataset, precondition skipped");
+#ifdef TTK_ENABLE_MPI
+    if(!(ttk::isRunningWithMPI()))
+#endif
+      this->printErr("Empty dataset, precondition skipped");
     return 1;
   }
 
@@ -414,7 +440,10 @@ int ExplicitTriangulation::preconditionCellTrianglesInternal() {
 int ExplicitTriangulation::preconditionEdgesInternal() {
 
   if(this->cellArray_ == nullptr || this->vertexNumber_ == 0) {
-    this->printErr("Empty dataset, precondition skipped");
+#ifdef TTK_ENABLE_MPI
+    if(!(ttk::isRunningWithMPI()))
+#endif
+      this->printErr("Empty dataset, precondition skipped");
     return 1;
   }
 
@@ -452,7 +481,10 @@ int ExplicitTriangulation::preconditionEdgesInternal() {
 int ExplicitTriangulation::preconditionEdgeLinksInternal() {
 
   if(this->cellArray_ == nullptr || this->vertexNumber_ == 0) {
-    this->printErr("Empty dataset, precondition skipped");
+#ifdef TTK_ENABLE_MPI
+    if(!(ttk::isRunningWithMPI()))
+#endif
+      this->printErr("Empty dataset, precondition skipped");
     return 1;
   }
 
@@ -488,7 +520,10 @@ int ExplicitTriangulation::preconditionEdgeLinksInternal() {
 int ExplicitTriangulation::preconditionEdgeStarsInternal() {
 
   if(this->cellArray_ == nullptr || this->vertexNumber_ == 0) {
-    this->printErr("Empty dataset, precondition skipped");
+#ifdef TTK_ENABLE_MPI
+    if(!(ttk::isRunningWithMPI()))
+#endif
+      this->printErr("Empty dataset, precondition skipped");
     return 1;
   }
 
@@ -501,7 +536,10 @@ int ExplicitTriangulation::preconditionEdgeStarsInternal() {
 int ExplicitTriangulation::preconditionEdgeTrianglesInternal() {
 
   if(this->cellArray_ == nullptr || this->vertexNumber_ == 0) {
-    this->printErr("Empty dataset, precondition skipped");
+#ifdef TTK_ENABLE_MPI
+    if(!(ttk::isRunningWithMPI()))
+#endif
+      this->printErr("Empty dataset, precondition skipped");
     return 1;
   }
 
@@ -522,7 +560,10 @@ int ExplicitTriangulation::preconditionEdgeTrianglesInternal() {
 int ExplicitTriangulation::preconditionTrianglesInternal() {
 
   if(this->cellArray_ == nullptr || this->vertexNumber_ == 0) {
-    this->printErr("Empty dataset, precondition skipped");
+#ifdef TTK_ENABLE_MPI
+    if(!(ttk::isRunningWithMPI()))
+#endif
+      this->printErr("Empty dataset, precondition skipped");
     return 1;
   }
 
@@ -545,7 +586,10 @@ int ExplicitTriangulation::preconditionTrianglesInternal() {
 int ExplicitTriangulation::preconditionTriangleEdgesInternal() {
 
   if(this->cellArray_ == nullptr || this->vertexNumber_ == 0) {
-    this->printErr("Empty dataset, precondition skipped");
+#ifdef TTK_ENABLE_MPI
+    if(!(ttk::isRunningWithMPI()))
+#endif
+      this->printErr("Empty dataset, precondition skipped");
     return 1;
   }
 
@@ -572,7 +616,10 @@ int ExplicitTriangulation::preconditionTriangleEdgesInternal() {
 int ExplicitTriangulation::preconditionTriangleLinksInternal() {
 
   if(this->cellArray_ == nullptr || this->vertexNumber_ == 0) {
-    this->printErr("Empty dataset, precondition skipped");
+#ifdef TTK_ENABLE_MPI
+    if(!(ttk::isRunningWithMPI()))
+#endif
+      this->printErr("Empty dataset, precondition skipped");
     return 1;
   }
 
@@ -592,7 +639,10 @@ int ExplicitTriangulation::preconditionTriangleLinksInternal() {
 int ExplicitTriangulation::preconditionTriangleStarsInternal() {
 
   if(this->cellArray_ == nullptr || this->vertexNumber_ == 0) {
-    this->printErr("Empty dataset, precondition skipped");
+#ifdef TTK_ENABLE_MPI
+    if(!(ttk::isRunningWithMPI()))
+#endif
+      this->printErr("Empty dataset, precondition skipped");
     return 1;
   }
 
@@ -610,7 +660,10 @@ int ExplicitTriangulation::preconditionTriangleStarsInternal() {
 int ExplicitTriangulation::preconditionVertexEdgesInternal() {
 
   if(this->cellArray_ == nullptr || this->vertexNumber_ == 0) {
-    this->printErr("Empty dataset, precondition skipped");
+#ifdef TTK_ENABLE_MPI
+    if(!(ttk::isRunningWithMPI()))
+#endif
+      this->printErr("Empty dataset, precondition skipped");
     return 1;
   }
 
@@ -631,7 +684,10 @@ int ExplicitTriangulation::preconditionVertexEdgesInternal() {
 int ExplicitTriangulation::preconditionVertexLinksInternal() {
 
   if(this->cellArray_ == nullptr || this->vertexNumber_ == 0) {
-    this->printErr("Empty dataset, precondition skipped");
+#ifdef TTK_ENABLE_MPI
+    if(!(ttk::isRunningWithMPI()))
+#endif
+      this->printErr("Empty dataset, precondition skipped");
     return 1;
   }
 
@@ -665,7 +721,10 @@ int ExplicitTriangulation::preconditionVertexLinksInternal() {
 int ExplicitTriangulation::preconditionVertexNeighborsInternal() {
 
   if(this->cellArray_ == nullptr || this->vertexNumber_ == 0) {
-    this->printErr("Empty dataset, precondition skipped");
+#ifdef TTK_ENABLE_MPI
+    if(!(ttk::isRunningWithMPI()))
+#endif
+      this->printErr("Empty dataset, precondition skipped");
     return 1;
   }
 
@@ -682,7 +741,10 @@ int ExplicitTriangulation::preconditionVertexNeighborsInternal() {
 int ExplicitTriangulation::preconditionVertexStarsInternal() {
 
   if(this->cellArray_ == nullptr || this->vertexNumber_ == 0) {
-    this->printErr("Empty dataset, precondition skipped");
+#ifdef TTK_ENABLE_MPI
+    if(!(ttk::isRunningWithMPI()))
+#endif
+      this->printErr("Empty dataset, precondition skipped");
     return 1;
   }
 
@@ -699,7 +761,10 @@ int ExplicitTriangulation::preconditionVertexStarsInternal() {
 int ExplicitTriangulation::preconditionVertexTrianglesInternal() {
 
   if(this->cellArray_ == nullptr || this->vertexNumber_ == 0) {
-    this->printErr("Empty dataset, precondition skipped");
+#ifdef TTK_ENABLE_MPI
+    if(!(ttk::isRunningWithMPI()))
+#endif
+      this->printErr("Empty dataset, precondition skipped");
     return 1;
   }
 
@@ -1351,6 +1416,7 @@ int ExplicitTriangulation::preconditionDistributedVertices() {
     return -2;
   }
 
+  this->hasPreconditionedDistributedVertices_ = true;
   this->preconditionVertexRankArray();
 
   // number of local vertices (with ghost vertices...)
@@ -1393,8 +1459,6 @@ int ExplicitTriangulation::preconditionDistributedVertices() {
                  this->remoteGhostVertices_[neigh].size(), MIT, neigh, neigh,
                  ttk::MPIcomm_, MPI_STATUS_IGNORE);
   }
-
-  this->hasPreconditionedDistributedVertices_ = true;
 
   return 0;
 }
