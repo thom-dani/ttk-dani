@@ -3154,6 +3154,16 @@ int ttk::ImplicitTriangulation::preconditionDistributedCells() {
                  MPI_STATUS_IGNORE);
   }
 
+  int cellRank = 0;
+  for(LongSimplexId lcid = 0; lcid < nLocCells; ++lcid) {
+    cellRank = this->getCellRankInternal(lcid);
+    if(cellRank != ttk::MPIrank_) {
+      // store ghost cell global ids (per rank)
+      this->ghostCellsPerOwner_[cellRank].emplace_back(
+        this->getCellGlobalIdInternal(lcid));
+    }
+  }
+
   // for each rank, store the global id of local cells that are ghost cells of
   // other ranks.
   const auto MIT{ttk::getMPIType(ttk::SimplexId{})};
@@ -3726,7 +3736,7 @@ int ttk::ImplicitTriangulation::getVertexRankInternal(
   const SimplexId lvid) const {
 
 #ifndef TTK_ENABLE_KAMIKAZE
-  if(this->neighborRanks_.empty()) {
+  if(this->neighborRanks_.empty() && ttk::MPIsize_ > 1) {
     this->printErr("Empty neighborsRanks_!");
     return -1;
   }
@@ -3752,7 +3762,7 @@ int ttk::ImplicitTriangulation::getCellRankInternal(
   const SimplexId lcid) const {
 
 #ifndef TTK_ENABLE_KAMIKAZE
-  if(this->neighborRanks_.empty()) {
+  if(this->neighborRanks_.empty() && ttk::MPIsize_ > 1) {
     this->printErr("Empty neighborsRanks_!");
     return -1;
   }
