@@ -660,6 +660,22 @@ namespace ttk {
         baryTree->getChildren(node, children);
         for(auto child : children)
           queue.emplace(child);
+
+        // Print
+        std::stringstream ss;
+        ss << node << " : (" << nodeScalar << ", " << nodeOriginScalar << ")";
+        printMsg(ss.str(), debug::Priority::INFO);
+        ss.str("");
+        ss << " - ";
+        for(unsigned int i = 0; i < baryMatching[node].size(); ++i) {
+          if(baryMatching[node][i] != std::numeric_limits<ftm::idNode>::max()) {
+            auto birthDeath = getParametrizedBirthDeath<dataType>(
+              trees[i], baryMatching[node][i]);
+            ss << baryMatching[node][i] << " (" << std::get<0>(birthDeath)
+               << ", " << std::get<1>(birthDeath) << ") ; ";
+          }
+        }
+        printMsg(ss.str(), debug::Priority::INFO);
       }
 
       if(baryMergeTree.tree.isFullMerge()) {
@@ -800,6 +816,12 @@ namespace ttk {
 #ifdef TTK_ENABLE_OPENMP4
       } // pragma omp parallel
 #endif
+      for(unsigned int i = 0; i < distances.size(); ++i) {
+        std::stringstream ss;
+        ss << i << " : distance=" << distances[i] << " ("
+           << distances[i] * distances[i] << ")";
+        printMsg(ss.str(), debug::Priority::INFO);
+      }
     }
 
     template <class dataType>
