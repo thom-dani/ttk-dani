@@ -11,7 +11,7 @@
 #include <vtkPointData.h>
 #include <vtkPolyData.h>
 #include <vtkUnstructuredGrid.h>
-#include <vtkVersion.h>
+#include <vtkVersionMacros.h>
 
 static vtkCellArray *GetCells(vtkDataSet *dataSet) {
   switch(dataSet->GetDataObjectType()) {
@@ -145,7 +145,11 @@ bool RegistryValue::isValid(vtkDataSet *dataSet) const {
     image->GetSpacing(spacing_);
     image->GetDimensions(dimensions_);
 
+#ifdef TTK_ENABLE_MPI
+    bool isValid = triangulation->getIsMPIValid();
+#else
     bool isValid = true;
+#endif
     for(int i = 0; i < 6; i++)
       if(this->extent[i] != extent_[i])
         isValid = false;
@@ -217,7 +221,7 @@ RegistryTriangulation
   }
 
   auto triangulation = std::make_unique<ttk::Triangulation>();
-  int hasIndexArray
+  int const hasIndexArray
     = pointSet->GetPointData()->HasArray(ttk::compactTriangulationIndex);
 
   if(hasIndexArray) {
@@ -251,7 +255,7 @@ RegistryTriangulation
   }
 
   // check if cell types are simplices
-  int cellTypeStatus = checkCellTypes(pointSet);
+  int const cellTypeStatus = checkCellTypes(pointSet);
   if(cellTypeStatus == -1) {
     this->printWrn("Inhomogeneous cell dimensions detected.");
     this->printWrn(
@@ -264,12 +268,12 @@ RegistryTriangulation
   }
 
   // Cells
-  int nCells = cells->GetNumberOfCells();
+  int const nCells = cells->GetNumberOfCells();
   if(nCells > 0) {
     if(!cells->IsStorage64Bit()) {
       if(cells->CanConvertTo64BitStorage()) {
         this->printWrn("Converting the cell array to 64-bit storage");
-        bool success = cells->ConvertTo64BitStorage();
+        bool const success = cells->ConvertTo64BitStorage();
         if(!success) {
           this->printErr(
             "Error converting the provided cell array to 64-bit storage");

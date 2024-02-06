@@ -1423,6 +1423,19 @@ namespace ttk {
       return abstractTriangulation_->getNeighborRanks();
     }
 
+    inline std::map<int, int> &getNeighborsToId() override {
+      return abstractTriangulation_->getNeighborsToId();
+    }
+
+    inline const std::map<int, int> &getNeighborsToId() const override {
+      return abstractTriangulation_->getNeighborsToId();
+    }
+
+    inline const std::vector<std::array<ttk::SimplexId, 6>> &
+      getNeighborVertexBBoxes() const override {
+      return abstractTriangulation_->getNeighborVertexBBoxes();
+    }
+
     inline const std::vector<std::vector<SimplexId>> &
       getGhostCellsPerOwner() const override {
       return abstractTriangulation_->getGhostCellsPerOwner();
@@ -1468,9 +1481,16 @@ namespace ttk {
      */
     inline void createMetaGrid(const double *const bounds) {
       this->implicitPreconditionsTriangulation_.createMetaGrid(bounds);
+      this->periodicImplicitTriangulation_.createMetaGrid(bounds);
       this->implicitTriangulation_.createMetaGrid(bounds);
+      this->periodicPreconditionsTriangulation_.createMetaGrid(bounds);
       // also pass bounding box to ExplicitTriangulation...
       this->explicitTriangulation_.setBoundingBox(bounds);
+    }
+
+    inline void setIsBoundaryPeriodic(std::array<unsigned char, 6> boundary) {
+      this->periodicImplicitTriangulation_.setIsBoundaryPeriodic(boundary);
+      this->periodicPreconditionsTriangulation_.setIsBoundaryPeriodic(boundary);
     }
 
     /**
@@ -1490,7 +1510,14 @@ namespace ttk {
 #endif
       return this->abstractTriangulation_->getDistributedGlobalCellId(
         localCellId, cellDim, globalCellId);
-      ;
+    }
+
+    inline bool isOrderArrayGlobal(const void *data) const {
+      return this->abstractTriangulation_->isOrderArrayGlobal(data);
+    }
+
+    inline void setIsOrderArrayGlobal(const void *data, bool flag) {
+      this->abstractTriangulation_->setIsOrderArrayGlobal(data, flag);
     }
 
 #endif // TTK_ENABLE_MPI
@@ -2939,9 +2966,19 @@ namespace ttk {
       this->abstractTriangulation_->setCellGhostArray(data);
     }
 
+    inline bool getIsMPIValid() const {
+      return isMPIValid_;
+    }
+
+    inline void setIsMPIValid(bool flag) {
+      isMPIValid_ = flag;
+    }
 #endif // TTK_ENABLE_MPI
 
   protected:
+#ifdef TTK_ENABLE_MPI
+    bool isMPIValid_{true};
+#endif
     inline bool isEmptyCheck() const {
       if(!abstractTriangulation_) {
         printErr("Trying to access an empty data-structure!");

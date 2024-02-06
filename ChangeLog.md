@@ -1,18 +1,21 @@
 ## TTK - ChangeLog
 =
-### ttk.git
+### dev
+
+### 1.2
 - Principal Geodesic Analysis of Merge Trees / Pers. Diagrams (IEEE TVCG 2023)
 - Parallel Computation of Morse-Smale Segmentations (IEEE TVCG 2023)
 - Branch Mapping Distance between Merge Trees (EuroVis 2022)
 - Path Mapping Distance between Merge Trees (IEEE TopoInVis 2022)
-- Migration to ParaView 5.11.0
+- TTK is Getting MPI-Ready \0/ !!!
+- Migration to ParaView 5.11.1
 - Switch to C++14
 - Discrete Morse Sandwich performance improvements (parallel efficiency)
 - Morse Smale Complex performance improvements
 - Wasserstein distance performance improvements
 - Support for Persistence Diagrams in Merge Tree Clustering
 - Clustering scores (NMI/ARI)
-- Dimensionality reduction metric preservation score (DistanceMatrixDistorsion)
+- Dimensionality reduction metric preservation score (DistanceMatrixDistortion)
 - On-surface smoothing
 - API improvements
 - Bug fixes
