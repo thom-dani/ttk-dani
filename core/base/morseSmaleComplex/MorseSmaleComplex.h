@@ -1769,6 +1769,8 @@ int ttk::MorseSmaleComplex::returnSaddleConnectors(
   TTK_PSORT(
     this->threadNumber_, pairs.begin(), pairs.end(), comparePersistence);
 
+  std::vector<std::tuple<dataType, SimplexId, SimplexId>> skippedPairsPers;
+
   // Process pairs
   for(const auto &pairTup : pairs) {
     const auto &pairIndex = std::get<0>(pairTup);
@@ -1816,6 +1818,9 @@ int ttk::MorseSmaleComplex::returnSaddleConnectors(
                          + " -> " + death.to_string()
                          + " without creating a cycle.",
                        debug::Priority::VERBOSE);
+        if(this->debugLevel_ == (int)debug::Priority::DETAIL)
+          skippedPairsPers.emplace_back(
+            std::make_tuple(pairPersistence, pair.birth, pair.death));
       } else
         nReturned++;
 
@@ -1823,7 +1828,20 @@ int ttk::MorseSmaleComplex::returnSaddleConnectors(
       this->printMsg("Could not return saddle connector " + birth.to_string()
                        + " -> " + death.to_string(),
                      debug::Priority::VERBOSE);
+      if(this->debugLevel_ == (int)debug::Priority::DETAIL)
+        skippedPairsPers.emplace_back(
+          std::make_tuple(pairPersistence, pair.birth, pair.death));
     }
+  }
+
+  if(this->debugLevel_ == (int)debug::Priority::DETAIL) {
+    TTK_PSORT(
+      this->threadNumber_, skippedPairsPers.begin(), skippedPairsPers.end());
+    for(unsigned int i = 0; i < skippedPairsPers.size(); ++i)
+      this->printMsg(std::to_string(i) + " "
+                     + std::to_string(std::get<1>(skippedPairsPers[i])) + " "
+                     + std::to_string(std::get<2>(skippedPairsPers[i])) + " "
+                     + std::to_string(std::get<0>(skippedPairsPers[i])));
   }
 
   this->printMsg("Returned " + std::to_string(nReturned) + " saddle connectors",
