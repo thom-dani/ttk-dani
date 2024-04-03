@@ -147,6 +147,7 @@ jobs:
         cmake ^
           -DPython3_ROOT_DIR="%CONDA_ROOT%" ^
           -DCMAKE_BUILD_TYPE=Release ^
+          -DVTKm_MODULE_ENABLE_vtkm_filter_scalar_topology=NO ^
           -G"Visual Studio 17 2022" ^
           %GITHUB_WORKSPACE%
 
