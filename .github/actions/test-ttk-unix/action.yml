@@ -22,11 +22,11 @@ runs:
         cmake --build . --parallel
         ./ttkExample-vtk-c++ -i ../../data/inputData.vtu
 
-        #    - name: Test Python example
-        #      shell: bash
-        #      run: |
-        #        cd $GITHUB_WORKSPACE/examples/python
-        #        python3 example.py ../data/inputData.vtu
+    - name: Test Python example
+      shell: bash
+      run: |
+        cd $GITHUB_WORKSPACE/examples/python
+        python3 example.py ../data/inputData.vtu
 
     - name: Test pvpython example
       shell: bash
