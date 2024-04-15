@@ -29,7 +29,7 @@ dataType DiscreteGradient::getPersistence(
   const triangulationType &triangulation) const {
 
   return scalars[getCellGreaterVertex(up, triangulation)]
-         - scalars[getCellLowerVertex(down, triangulation)];
+         - scalars[getCellGreaterVertex(down, triangulation)];
 }
 
 template <typename triangulationType>
