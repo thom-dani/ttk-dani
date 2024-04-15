@@ -275,11 +275,10 @@ jobs:
       run: |
         sudo rm -rf /Library/Frameworks/Python.framework/
         sudo rm -rf /usr/local/Frameworks/Python.framework/
-        sudo rm -rf /usr/local/Cellar/python@3.11/3.11.9/Frameworks/Python.framework/Versions/3.11/Resources/Python.app/Contents/MacOS/Python
     - name: Install macOS dependencies
       run: |
         # ParaView dependencies
-        brew reinstall python
+        brew reinstall python@3.11
         brew install --cask xquartz
         brew install wget llvm libomp ninja open-mpi
         # TTK dependencies
