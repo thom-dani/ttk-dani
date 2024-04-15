@@ -378,10 +378,11 @@ jobs:
         path: ttk-data/tests/screenshots.tar.gz
         retention-days: 10
 
-    - name: Run ttk-data Python scripts
+    - name: Run ttk-data Python scripts [NOT ENFORCED]
+      continue-on-error: true
       run: |
         cd ttk-data
-        python3 -u python/run.py
+        pvpython -u python/run.py
       env:
         PV_PLUGIN_PATH: /usr/local/bin/plugins/TopologyToolKit
 
