@@ -381,8 +381,7 @@ jobs:
     - name: Run ttk-data Python scripts
       run: |
         cd ttk-data
-        #pvpython -u python/run.py
-        python -u python/run.py
+        pvpython -u python/run.py
       env:
         PV_PLUGIN_PATH: /usr/local/bin/plugins/TopologyToolKit
 
