@@ -378,8 +378,7 @@ jobs:
         path: ttk-data/tests/screenshots.tar.gz
         retention-days: 10
 
-    - name: Run ttk-data Python scripts [NOT ENFORCED]
-      continue-on-error: true
+    - name: Run ttk-data Python scripts
       run: |
         cd ttk-data
         pvpython -u python/run.py
