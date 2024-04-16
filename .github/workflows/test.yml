@@ -309,7 +309,7 @@ jobs:
       run: |
         tar xzf ttk-paraview-headless.tar.gz
         sudo cp -r ttk-paraview/* /usr/local
-        python -m pip install scikit-learn
+        python3 -m pip install scikit-learn
 
     - name: Set compilers as environment variables
       run: |
