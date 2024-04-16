@@ -274,7 +274,7 @@ jobs:
         sudo cp -r ttk-paraview/* /usr/local
         tar xzf ttk.tar.gz
         sudo cp -r ttk/* /usr/local
-        python3 -m pip install scikit-learn
+        pvpython -m pip install --break-system-packages scikit-learn
 
     - name: Set environment variables
       run: |
