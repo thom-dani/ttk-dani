@@ -627,6 +627,7 @@
         <Property name="TrackingLossDecoding"/>
         <Property name="TrackingLossInitRandomness"/>
         <Property name="NumberOfProjectionSteps"/>
+        <Property name="NodePerTask"/>
       </PropertyGroup>
 
       <!-- Create a UI group that contains all output parameter widgets -->
