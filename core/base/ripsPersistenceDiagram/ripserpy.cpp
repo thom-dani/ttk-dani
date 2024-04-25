@@ -99,7 +99,7 @@ namespace std {
   inline std::string to_string(__int128) {
     return "";
   }
-}
+} // namespace std
 
 void check_overflow(index_t i) {
   if
