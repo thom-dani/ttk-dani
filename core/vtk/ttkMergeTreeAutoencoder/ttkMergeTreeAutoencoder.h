@@ -9,7 +9,11 @@
 /// auto-encoder of merge trees or persistence diagrams.
 ///
 /// \param Input vtkMultiBlockDataSet Input trees
-/// \param Input (optional) vtkMultiBlockDataSet Input trees
+/// \param Input (optional) vtkMultiBlockDataSet Input trees. If input are merge
+/// trees, then this input can be used to process join and split trees together.
+/// Pass as input either join or split trees in the first input and the other
+/// type of trees in the second input. If input are persistence diagrams, then
+/// this has no effect to use this input.
 /// \param Input (optional) vtkTable Info (such as clustering assigment)
 /// \param Output vtkMultiBlockDataSet Origins
 /// \param Output vtkMultiBlockDataSet Bases Axes

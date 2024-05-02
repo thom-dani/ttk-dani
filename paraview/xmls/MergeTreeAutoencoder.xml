@@ -2,7 +2,13 @@
 <ServerManagerConfiguration>
   <ProxyGroup name="filters">
     <SourceProxy name="ttkMergeTreeAutoencoder" class="ttkMergeTreeAutoencoder" label="TTK MergeTreeAutoencoder">
-      <Documentation long_help="MergeTreeAutoencoder Long" short_help="MergeTreeAutoencoder Short">This VTK filter uses the ttk::MergeTreeAutoencoder module to compute an auto-encoder of merge trees or persistence diagrams.</Documentation>
+      <Documentation long_help="MergeTreeAutoencoder Long" short_help="MergeTreeAutoencoder Short">
+This VTK filter uses the ttk::MergeTreeAutoencoder module to compute an auto-encoder of merge trees or persistence diagrams.
+Related Publication:
+"Wasserstein Auto-Encoders of Merge Trees (and Persistence Diagrams)" 
+Mathieu Pont,  Julien Tierny.
+IEEE Transactions on Visualization and Computer Graphics, 2023
+      </Documentation>
 
       <!-- INPUT DATA OBJECTS -->
       <InputProperty
@@ -143,7 +149,7 @@
       default_values="10"
       panel_visibility="advanced">
         <Documentation>
-          Adjust the maximum size of the origin of the latent output basis, given the total number of nodes in the input.
+          Adjust the maximum size of the origin of the latent output basis, as a percentage of the total number of nodes in the input.
         </Documentation>
       </DoubleVectorProperty>
       
@@ -155,7 +161,7 @@
       default_values="20"
       panel_visibility="advanced">
         <Documentation>
-          Adjust the maximum size of the origins of the input bases, given the total number of nodes in the output of the previous layer.
+          Adjust the maximum size of the origins of the input bases, as a percentage of the total number of nodes in the input.
         </Documentation>
         <DoubleRangeDomain name="range" min="0" max="100" />
       </DoubleVectorProperty>
@@ -281,7 +287,7 @@
       default_values="0.0"
       panel_visibility="advanced">
         <Documentation>
-          Weight of the tracking loss in the optimization.
+          Weight of the tracking loss in the optimization. It allows to minimize the distance between the output origins of two consecutive layers to facilitate the tracking of persistence pairs through the network. A non-zero value will trigger a specific initialization consisting in copying the output origin of the previous layer, to enable this option without using the loss, a low value like 1e-6 can be used.
         </Documentation>
       </DoubleVectorProperty>
       
@@ -317,7 +323,7 @@
       default_values="10.0"
       panel_visibility="advanced">
         <Documentation>
-          Temperature of the clustering loss in the optimization.
+          Temperature of the softmax in clustering loss in the optimization, it corresponds to the β parameter in Appendix D.2 of the reference paper. When this parameter tends to infinity the softmax will corresponds to argmax with hard classes, more this parameter is low more the paritition will be soft/fuzzy. In practice, more this parameter is low more the classes will be forced to be separated.
         </Documentation>
       </DoubleVectorProperty>
       
@@ -468,7 +474,7 @@
       default_values="2"
       panel_visibility="advanced">
         <Documentation>
-          Number of steps to compute the projection of each input on a basis.
+          Number of steps to compute the projection of each input on a basis, it corresponds to the n_it parameter in Appendix C of the reference paper.
         </Documentation>
       </IntVectorProperty>
       
@@ -574,7 +580,7 @@
       number_of_elements="1"
       default_values="1">
         <Documentation>
-          
+          This parameter will trigger the creation of the vtk output. It can be useful to disable this option when running many execution in python for which the only information needed is printed in the console.
         </Documentation>
         <BooleanDomain name="bool"/>
       </IntVectorProperty>
