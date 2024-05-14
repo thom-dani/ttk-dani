@@ -171,20 +171,24 @@ double ttk::PDBarycenter::updateBarycenter(
   points_deleted_ = 0;
   double max_shift = 0;
 
-  std::vector<size_t> count_diag_matchings(n_goods, 0); // Number of diagonal matchings for each point of the barycenter
+  std::vector<size_t> count_diag_matchings(
+    n_goods,
+    0); // Number of diagonal matchings for each point of the barycenter
   std::vector<double> x(n_goods, 0);
   std::vector<double> y(n_goods, 0);
   std::vector<double> crit_coords_x(n_goods, 0);
   std::vector<double> crit_coords_y(n_goods, 0);
   std::vector<double> crit_coords_z(n_goods, 0);
 
-  std::vector<double> min_prices(n_diagrams, std::numeric_limits<double>::max());
+  std::vector<double> min_prices(
+    n_diagrams, std::numeric_limits<double>::max());
 
   std::vector<Bidder *>
     points_to_append; // Will collect bidders linked to diagonal
   std::vector<int> diagonalToNewGood;
-  if (numberOfInputs_ == 2)
-    diagonalToNewGood.resize((*inputDiagrams_)[0].size() + (*inputDiagrams_)[1].size());
+  if(numberOfInputs_ == 2)
+    diagonalToNewGood.resize((*inputDiagrams_)[0].size()
+                             + (*inputDiagrams_)[1].size());
   // 2. Preprocess the matchings
   for(size_t j = 0; j < matchings.size(); j++) {
     for(size_t i = 0; i < matchings[j].size(); i++) {
@@ -194,7 +198,8 @@ double ttk::PDBarycenter::updateBarycenter(
         // Future new barycenter point
         points_to_append.push_back(&current_bidder_diagrams_[j].at(bidder_id));
         if(numberOfInputs_ == 2)
-          diagonalToNewGood[-good_id-1] = n_goods + points_to_append.size()-1;
+          diagonalToNewGood[-good_id - 1]
+            = n_goods + points_to_append.size() - 1;
       }
 
       else if(good_id >= 0 && bidder_id >= 0) {
@@ -335,16 +340,16 @@ double ttk::PDBarycenter::updateBarycenter(
   }
 
   // final update of matchings here if there are only 2 input diagrams
-  if (numberOfInputs_ == 2) {
+  if(numberOfInputs_ == 2) {
     std::vector<double> costs(n_goods + points_to_append.size());
-    for (int i=0; i<2; ++i) {
-      for (auto& [b_id,g_id,c] : matchings[i]) {
-        if (g_id < 0 && diagonalToNewGood[-g_id-1] > 0)
-          g_id = diagonalToNewGood[-g_id-1];
+    for(int i = 0; i < 2; ++i) {
+      for(auto &[b_id, g_id, c] : matchings[i]) {
+        if(g_id < 0 && diagonalToNewGood[-g_id - 1] > 0)
+          g_id = diagonalToNewGood[-g_id - 1];
         costs[g_id] += c;
       }
     }
-    for (int i=0; i<2; ++i) {
+    for(int i = 0; i < 2; ++i) {
       for(auto &[b_id, g_id, c] : matchings[i])
         c = costs[g_id] / Geometry::pow(2, wasserstein_);
     }
