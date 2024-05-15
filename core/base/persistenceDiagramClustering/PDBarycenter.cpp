@@ -351,7 +351,7 @@ double ttk::PDBarycenter::updateBarycenter(
     }
     for(int i = 0; i < 2; ++i) {
       for(auto &[b_id, g_id, c] : matchings[i]) {
-        if (g_id >= 0)
+        if(g_id >= 0)
           c = costs[g_id] / Geometry::pow(2, wasserstein_);
       }
     }
