@@ -341,7 +341,7 @@ double ttk::PDBarycenter::updateBarycenter(
 
   // final update of matchings here if there are only 2 input diagrams
   if(numberOfInputs_ == 2) {
-    std::vector<double> costs(n_goods + points_to_append.size());
+    std::vector<double> costs(n_goods + points_to_append.size(), 0.);
     for(int i = 0; i < 2; ++i) {
       for(auto &[b_id, g_id, c] : matchings[i]) {
         if(g_id < 0 && diagonalToNewGood[-g_id - 1] > 0)
@@ -350,8 +350,10 @@ double ttk::PDBarycenter::updateBarycenter(
       }
     }
     for(int i = 0; i < 2; ++i) {
-      for(auto &[b_id, g_id, c] : matchings[i])
-        c = costs[g_id] / Geometry::pow(2, wasserstein_);
+      for(auto &[b_id, g_id, c] : matchings[i]) {
+        if (g_id >= 0)
+          c = costs[g_id] / Geometry::pow(2, wasserstein_);
+      }
     }
   }
 
