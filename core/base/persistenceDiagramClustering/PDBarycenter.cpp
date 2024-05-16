@@ -187,8 +187,8 @@ double ttk::PDBarycenter::updateBarycenter(
     points_to_append; // Will collect bidders linked to diagonal
   std::vector<int> diagonalToNewGood;
   if(numberOfInputs_ == 2)
-    diagonalToNewGood.resize((*inputDiagrams_)[0].size()
-                             + (*inputDiagrams_)[1].size());
+    diagonalToNewGood.resize(current_bidder_diagrams_[0].size()
+                             + current_bidder_diagrams_[1].size());
   // 2. Preprocess the matchings
   for(size_t j = 0; j < matchings.size(); j++) {
     for(size_t i = 0; i < matchings[j].size(); i++) {
