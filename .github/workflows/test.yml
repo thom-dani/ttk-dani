@@ -282,7 +282,7 @@ jobs:
         brew install --cask xquartz
         brew install wget llvm libomp ninja open-mpi
         # TTK dependencies
-        brew install boost eigen graphviz numpy qhull websocketpp ccache
+        brew install boost eigen graphviz numpy qhull ccache
         # prepend ccache to system path
         echo "$(brew --prefix)/opt/ccache/libexec" >> $GITHUB_PATH
 
