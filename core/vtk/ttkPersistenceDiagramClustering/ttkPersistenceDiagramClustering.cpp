@@ -274,7 +274,10 @@ void ttkPersistenceDiagramClustering::outputClusteredDiagrams(
       pointPers->SetTuple1(2 * j + 0, pers);
       pointPers->SetTuple1(2 * j + 1, pers);
     }
-    pointPers->SetTuple1(vtu->GetNumberOfPoints() - 1, vtu->GetCellData()->GetArray("Persistence")->GetTuple1(vtu->GetNumberOfCells() - 1));
+    pointPers->SetTuple1(
+      vtu->GetNumberOfPoints() - 1, vtu->GetCellData()
+                                      ->GetArray("Persistence")
+                                      ->GetTuple1(vtu->GetNumberOfCells() - 1));
 
     const auto cid = inv_clustering[i];
     const auto &matchings{matchingsPerCluster[cid][i]};
