@@ -346,7 +346,8 @@ double ttk::PDBarycenter::updateBarycenter(
       for(auto &[b_id, g_id, c] : matchings[i]) {
         if(g_id < 0 && diagonalToNewGood[-g_id - 1] > 0)
           g_id = diagonalToNewGood[-g_id - 1];
-        costs[g_id] += c;
+        if(g_id >= 0)
+          costs[g_id] += c;
       }
     }
     for(int i = 0; i < 2; ++i) {
