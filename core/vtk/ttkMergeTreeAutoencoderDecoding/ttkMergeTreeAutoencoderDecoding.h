@@ -28,6 +28,11 @@
 ///
 /// \sa ttk::MergeTreeAutoencoderDecoding
 /// \sa ttkAlgorithm
+/// 
+/// \b Online \b examples: \n
+///   - <a
+///   href="https://topology-tool-kit.github.io/examples/mergeTreeWAE/">Merge
+///   tree Wasserstein Auto-Encoder</a> \n
 
 #pragma once
 
