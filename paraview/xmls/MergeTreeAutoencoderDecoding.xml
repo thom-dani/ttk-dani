@@ -2,7 +2,18 @@
 <ServerManagerConfiguration>
   <ProxyGroup name="filters">
     <SourceProxy name="ttkMergeTreeAutoencoderDecoding" class="ttkMergeTreeAutoencoderDecoding" label="TTK MergeTreeAutoencoderDecoding">
-      <Documentation long_help="MergeTreeAutoencoderDecoding Long" short_help="MergeTreeAutoencoderDecoding Short">This VTK filter uses the ttk::MergeTreeAutoencoderDecoding module to compute a decoding of merge trees or persistence diagrams given the parameters of a Wasserstein Auto-Encoder.</Documentation>
+      <Documentation long_help="MergeTreeAutoencoderDecoding Long" short_help="MergeTreeAutoencoderDecoding Short">This VTK filter uses the ttk::MergeTreeAutoencoderDecoding module to compute a decoding of merge trees or persistence diagrams given the parameters of a Wasserstein Auto-Encoder.
+
+Related Publication:
+"Wasserstein Auto-Encoders of Merge Trees (and Persistence Diagrams)"
+Mathieu Pont,  Julien Tierny.
+IEEE Transactions on Visualization and Computer Graphics, 2023
+
+Online examples:
+
+- https://topology-tool-kit.github.io/examples/mergeTreeWAE/
+
+      </Documentation>
 
       <!-- INPUT DATA OBJECTS -->
       <InputProperty
