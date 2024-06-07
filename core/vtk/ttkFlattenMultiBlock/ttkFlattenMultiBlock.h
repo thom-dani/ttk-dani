@@ -15,7 +15,7 @@
 ///   Tree Principal Geodesic Analysis example</a> \n
 ///   - <a
 ///   href="https://topology-tool-kit.github.io/examples/mergeTreeWAE/">Merge
-///   tree Wasserstein Auto-Encoder</a> \n
+///   tree Wasserstein Auto-Encoder example</a> \n
 ///   - <a
 ///   href="https://topology-tool-kit.github.io/examples/nestedTrackingFromOverlap/">Nested
 ///   Tracking from Overlap example</a> \n

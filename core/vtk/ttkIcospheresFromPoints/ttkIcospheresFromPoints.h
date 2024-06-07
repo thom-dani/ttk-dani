@@ -20,7 +20,7 @@
 ///   Interaction sites example</a> \n
 ///   - <a
 ///   href="https://topology-tool-kit.github.io/examples/mergeTreeWAE/">Merge
-///   tree Wasserstein Auto-Encoder</a> \n
+///   tree Wasserstein Auto-Encoder example</a> \n
 ///   - <a href="https://topology-tool-kit.github.io/examples/morseMolecule/">
 /// Morse molecule example</a> \n
 ///   - <a href="https://topology-tool-kit.github.io/examples/tectonicPuzzle/">

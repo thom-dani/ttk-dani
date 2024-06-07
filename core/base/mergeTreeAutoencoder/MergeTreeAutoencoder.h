@@ -11,6 +11,10 @@
 /// Mathieu Pont, Julien Tierny.\n
 /// IEEE Transactions on Visualization and Computer Graphics, 2023
 ///
+/// \b Online \b examples: \n
+///   - <a
+///   href="https://topology-tool-kit.github.io/examples/mergeTreeWAE/">Merge
+///   Tree Wasserstein Auto-Encoder example</a> \n
 
 #pragma once
 
