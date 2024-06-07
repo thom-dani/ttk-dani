@@ -33,6 +33,9 @@
 ///   - <a
 ///   href="https://topology-tool-kit.github.io/examples/mergeTreeWAE/">Merge
 ///   tree Wasserstein Auto-Encoder example</a> \n
+///   - <a
+///   href="https://topology-tool-kit.github.io/examples/persistenceDiagramWAE/">Persistence
+///   Diagram Wasserstein Auto-Encoder example</a> \n
 
 #pragma once
 
