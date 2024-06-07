@@ -13,18 +13,15 @@ printMsg(
   debug::LineMode::NEW,
   stream);
 printMsg(debug::output::BOLD
-           //+ "|_   _|_   _| |/ /                   / /__\\ \\  |___ \\ / _ "
-           //"\\___ \\|___ /"
-           + "|_   _|_   _| |/ /                  / /__\\ \\  |___ \\ / _ "
-             "\\___ \\| || |"
+    //+ "|_   _|_   _| |/ /                   / /__\\ \\  |___ \\ / _ " "\\___ \\|___ /"
+    + "|_   _|_   _| |/ /                  / /__\\ \\  |___ \\ / _ \\___ \\| || |"
            + debug::output::ENDCOLOR,
          debug::Priority::PERFORMANCE,
          debug::LineMode::NEW,
          stream);
 printMsg(
   debug::output::BOLD
-    //+ "  | |   | | | ' /                   | |/ __| |   __) | | | |__) | |_
-    //\\"
+    //+ "  | |   | | | ' /                   | |/ __| |   __) | | | |__) | |_ \\"
     + "  | |   | | | ' /                  | |/ __| |   __) | | | |__) | || |_"
     + debug::output::ENDCOLOR,
   debug::Priority::PERFORMANCE,
@@ -32,18 +29,15 @@ printMsg(
   stream);
 printMsg(
   debug::output::BOLD
-    //    + "  | |   | | | . \\                   | | (__| |  / __/| |_| / __/
-    //    ___) |"
+//    + "  | |   | | | . \\                   | | (__| |  / __/| |_| / __/ ___) |"
     + "  | |   | | | . \\                  | | (__| |  / __/| |_| / __/|__   _|"
     + debug::output::ENDCOLOR,
   debug::Priority::PERFORMANCE,
   debug::LineMode::NEW,
   stream);
 printMsg(debug::output::BOLD
-           //    + "  |_|   |_| |_|\\_\\                  | |\\___| | "
-           //    "|_____|\\___/_____|____/"
-           + "  |_|   |_| |_|\\_\\                 | |\\___| | "
-             "|_____|\\___/_____|  |_|"
+//    + "  |_|   |_| |_|\\_\\                  | |\\___| | " "|_____|\\___/_____|____/"
+    + "  |_|   |_| |_|\\_\\                 | |\\___| | |_____|\\___/_____|  |_|"
            + debug::output::ENDCOLOR,
          debug::Priority::PERFORMANCE,
          debug::LineMode::NEW,
