@@ -1,0 +1,11 @@
+ttk_add_base_library(signedDistanceField
+  SOURCES
+    SignedDistanceField.cpp
+  HEADERS
+    SignedDistanceField.h
+  DEPENDS
+    triangulation
+    common
+    surfaceGeometrySmoother
+    boundingVolumeHierarchy
+)

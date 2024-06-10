@@ -96,18 +96,6 @@ namespace ttk {
       }
     };
 
-  protected:
-    template <typename triangulationType0, typename triangulationType1>
-    int relaxProject(std::vector<Point> &outputPoints,
-                     std::vector<Point> &tmpStorage,
-                     std::vector<SimplexId> &nearestVertexId,
-                     std::vector<bool> &trianglesTested,
-                     std::vector<SimplexId> &visitedTriangles,
-                     std::vector<float> &dists,
-                     const char *const mask,
-                     const triangulationType0 &triangulationToSmooth,
-                     const triangulationType1 &triangulationSurface) const;
-
     /**
      * @brief Stores the findProjection() result
      */
@@ -146,6 +134,42 @@ namespace ttk {
                      const triangulationType0 &triangulationToSmooth,
                      const triangulationType1 &triangulationSurface) const;
 
+    /**
+     * @brief Find nearest vertex on the surface.
+     *
+     * @param[in] pa Input point
+     * @param[in] dists Pre-allocated distances vector
+     * @param[in] triangulation Surface triangulation
+     * @return Nearest vertex id on the surface
+     */
+    template <typename triangulationType>
+    inline SimplexId
+      getNearestSurfaceVertex(const Point &pa,
+                              std::vector<float> &dists,
+                              const triangulationType &triangulation) const {
+      for(SimplexId i = 0; i < triangulation.getNumberOfVertices(); ++i) {
+        Point pv{};
+        triangulation.getVertexPoint(i, pv[0], pv[1], pv[2]);
+        dists[i] = Geometry::distance(pa.data(), pv.data());
+      }
+      return std::min_element(dists.begin(), dists.end()) - dists.begin();
+    }
+
+  protected:
+    template <typename triangulationType0, typename triangulationType1>
+    int relaxProject(std::vector<Point> &outputPoints,
+                     std::vector<Point> &tmpStorage,
+                     std::vector<SimplexId> &nearestVertexId,
+                     std::vector<bool> &trianglesTested,
+                     std::vector<SimplexId> &visitedTriangles,
+                     std::vector<float> &dists,
+                     const char *const mask,
+                     const triangulationType0 &triangulationToSmooth,
+                     const triangulationType1 &triangulationSurface) const;
+
+    
+
+    
     /**
      * @brief Computes the barycenter of a given point's neighbors
      *
@@ -201,26 +225,7 @@ namespace ttk {
                  / Geometry::dotProduct(ab.data(), ab.data());
     }
 
-    /**
-     * @brief Find nearest vertex on the surface.
-     *
-     * @param[in] pa Input point
-     * @param[in] dists Pre-allocated distances vector
-     * @param[in] triangulation Surface triangulation
-     * @return Nearest vertex id on the surface
-     */
-    template <typename triangulationType>
-    inline SimplexId
-      getNearestSurfaceVertex(const Point &pa,
-                              std::vector<float> &dists,
-                              const triangulationType &triangulation) const {
-      for(SimplexId i = 0; i < triangulation.getNumberOfVertices(); ++i) {
-        Point pv{};
-        triangulation.getVertexPoint(i, pv[0], pv[1], pv[2]);
-        dists[i] = Geometry::distance(pa.data(), pv.data());
-      }
-      return std::min_element(dists.begin(), dists.end()) - dists.begin();
-    }
+    
 
     /**
      * @brief Compute normal vector to triangle
@@ -411,6 +416,7 @@ ttk::SurfaceGeometrySmoother::ProjectionResult
   }
 
   while(!trianglesToTest.empty()) {
+
     const auto curr = trianglesToTest.top();
     trianglesToTest.pop();
 
