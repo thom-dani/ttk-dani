@@ -26,7 +26,7 @@ public:
 
   vtkSetMacro(ExpandBox, bool);
   vtkGetMacro(ExpandBox, bool);
-  
+
   vtkSetMacro(Backend, int);
   vtkGetMacro(Backend, int);
 

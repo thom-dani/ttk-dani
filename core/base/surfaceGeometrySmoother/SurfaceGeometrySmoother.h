@@ -167,9 +167,6 @@ namespace ttk {
                      const triangulationType0 &triangulationToSmooth,
                      const triangulationType1 &triangulationSurface) const;
 
-    
-
-    
     /**
      * @brief Computes the barycenter of a given point's neighbors
      *
@@ -224,8 +221,6 @@ namespace ttk {
              + ab * Geometry::dotProduct(ap.data(), ab.data())
                  / Geometry::dotProduct(ab.data(), ab.data());
     }
-
-    
 
     /**
      * @brief Compute normal vector to triangle
