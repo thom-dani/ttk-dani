@@ -165,6 +165,16 @@ void ttk::SignedDistanceField::fastMarchingIterativeNode(
   dataType *const distances,
   int *const isInterior) const {
   printMsg("Fast Marching");
+  auto abs = [](auto arg) {
+    using T = decltype(arg);
+    if constexpr(std::is_unsigned<T>::value) {
+      // If T is an unsigned type, simply return the argument
+      return arg;
+    } else {
+      // If T is not an unsigned type, return std::abs(arg)
+      return std::abs(arg);
+    }
+  };
   struct Compare {
     constexpr bool
       operator()(std::pair<int, dataType> const &a,
@@ -177,7 +187,7 @@ void ttk::SignedDistanceField::fastMarchingIterativeNode(
     heap;
   for(unsigned int i = 0; i < vertexType.size(); ++i)
     if(vertexType[i] == VertexMarchingType::NARROW)
-      heap.push(std::make_pair(i, fabs(distances[i])));
+      heap.push(std::make_pair(i, abs(distances[i])));
   std::vector<int> toFreeze;
 
   while(!heap.empty()) {
@@ -186,8 +196,8 @@ void ttk::SignedDistanceField::fastMarchingIterativeNode(
     auto vertexId = std::get<0>(pair);
     auto value = std::get<1>(pair);
     heap.pop();
-    if(not(value <= fabs(distances[vertexId]) + 1e-6
-           and value >= fabs(distances[vertexId]) - 1e-6))
+    if(not(value <= abs(distances[vertexId]) + 1e-6
+           and value >= abs(distances[vertexId]) - 1e-6))
       continue;
 
     vertexType[vertexId] = VertexMarchingType::FROZEN;
@@ -224,7 +234,7 @@ void ttk::SignedDistanceField::fastMarchingIterativeNode(
               neighborId, distances, isInterior, vertexType);
             if(d) {
               distances[neighborId] = d;
-              heap.push(std::make_pair(neighborId, fabs(d)));
+              heap.push(std::make_pair(neighborId, abs(d)));
               if(vertexType[neighborId] == VertexMarchingType::FAR)
                 vertexType[neighborId] = VertexMarchingType::NARROW;
             } else
@@ -241,7 +251,7 @@ void ttk::SignedDistanceField::fastMarchingIterativeNode(
                 dataType d = fastMarchingUpdatePointOrderTwo(
                   neighbor2Id, distances, isInterior, vertexType);
                 if(d) {
-                  heap.push(std::make_pair(neighbor2Id, fabs(d)));
+                  heap.push(std::make_pair(neighbor2Id, abs(d)));
                   distances[neighbor2Id] = d;
                 }
               }
@@ -331,7 +341,8 @@ dataType ttk::SignedDistanceField::fastMarchingUpdatePointOrderTwo(
       int neighborId = getNeighbor(vertexId, dim, j);
       if(neighborId != -1
          and vertexType[neighborId] == VertexMarchingType::FROZEN
-         and fabs(distances[neighborId]) < fabs(value1)) {
+         and std::abs((double)distances[neighborId])
+               < std::abs((double)value1)) {
         value1 = distances[neighborId];
         found1 = true;
         int neighbor2Id = getNeighbor(vertexId, dim, j * 2);
@@ -380,7 +391,8 @@ dataType ttk::SignedDistanceField::fastMarchingUpdatePointOrderOne(
       int neighborId = getNeighbor(vertexId, dim, j);
       if(neighborId != -1
          and vertexType[neighborId] == VertexMarchingType::FROZEN
-         and fabs(distances[neighborId]) < fabs(value)) {
+         and std::abs((double)distances[neighborId])
+               < std::abs((double)value)) {
         value = distances[neighborId];
         found = true;
       }
