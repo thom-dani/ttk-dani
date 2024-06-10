@@ -443,7 +443,7 @@ void ttk::SignedDistanceField::findOutsideVertices(
     englobanteTriangulation->getNumberOfVertices(), false);
 
   vertexStack.push(startVertexId);
-  outsideVertexSelected[startVertexId] = 1;
+  outsideVertexSelected[startVertexId] = true;
   isInterior[startVertexId] = 0;
 
   int cpt = 1;
