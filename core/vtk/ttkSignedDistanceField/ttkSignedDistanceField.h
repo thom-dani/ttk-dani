@@ -48,12 +48,12 @@ protected:
   int RequestData(vtkInformation *request,
                   vtkInformationVector **inputVector,
                   vtkInformationVector *outputVector) override;
-  virtual int RequestInformation(vtkInformation *,
-                                 vtkInformationVector **,
-                                 vtkInformationVector *) override;
-  virtual int RequestUpdateExtent(vtkInformation *,
-                                  vtkInformationVector **,
-                                  vtkInformationVector *) override;
+  int RequestInformation(vtkInformation *,
+                         vtkInformationVector **,
+                         vtkInformationVector *) override;
+  int RequestUpdateExtent(vtkInformation *,
+                          vtkInformationVector **,
+                          vtkInformationVector *) override;
   int FillInputPortInformation(int, vtkInformation *) override;
   int FillOutputPortInformation(int, vtkInformation *) override;
 
