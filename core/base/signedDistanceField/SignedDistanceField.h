@@ -17,6 +17,7 @@
 #include <BoundingVolumeHierarchy.h>
 #include <Debug.h>
 #include <Triangulation.h>
+#include <queue>
 
 namespace ttk {
 
