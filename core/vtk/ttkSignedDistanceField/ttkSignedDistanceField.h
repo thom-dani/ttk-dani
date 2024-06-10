@@ -50,10 +50,10 @@ protected:
                   vtkInformationVector *outputVector) override;
   virtual int RequestInformation(vtkInformation *,
                                  vtkInformationVector **,
-                                 vtkInformationVector *);
+                                 vtkInformationVector *) override;
   virtual int RequestUpdateExtent(vtkInformation *,
                                   vtkInformationVector **,
-                                  vtkInformationVector *);
+                                  vtkInformationVector *) override;
   int FillInputPortInformation(int, vtkInformation *) override;
   int FillOutputPortInformation(int, vtkInformation *) override;
 
