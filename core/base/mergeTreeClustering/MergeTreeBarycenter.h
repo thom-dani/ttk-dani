@@ -663,7 +663,9 @@ namespace ttk {
 
         // Print
         std::stringstream ss;
-        ss << node << " : (" << nodeScalar << ", " << nodeOriginScalar << ")";
+        ss << node << " : (" << baryTree->getValue<dataType>(node) << ", "
+           << baryTree->getValue<dataType>(baryTree->getNode(node)->getOrigin())
+           << ") -> (" << nodeScalar << ", " << nodeOriginScalar << ")";
         printMsg(ss.str(), debug::Priority::INFO);
         ss.str("");
         ss << " - ";
@@ -671,8 +673,9 @@ namespace ttk {
           if(baryMatching[node][i] != std::numeric_limits<ftm::idNode>::max()) {
             auto birthDeath = getParametrizedBirthDeath<dataType>(
               trees[i], baryMatching[node][i]);
-            ss << baryMatching[node][i] << " (" << std::get<0>(birthDeath)
-               << ", " << std::get<1>(birthDeath) << ") ; ";
+            ss << i << "_" << baryMatching[node][i] << " ("
+               << std::get<0>(birthDeath) << ", " << std::get<1>(birthDeath)
+               << ") ; ";
           }
         }
         printMsg(ss.str(), debug::Priority::INFO);
@@ -695,6 +698,10 @@ namespace ttk {
         &(baryMergeTree.tree), 0, deletedNodesT);
       limitSizeBarycenter(baryMergeTree, trees);
       ftm::cleanMergeTree<dataType>(baryMergeTree);
+
+      std::cout
+        << baryMergeTree.tree.template printPairsFromTree<dataType>(true).str()
+        << std::endl;
     }
 
     template <class dataType>
