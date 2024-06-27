@@ -1,6 +1,17 @@
 ## TTK - ChangeLog
 =
 ### dev
+- Wasserstein Auto-Encoders of Merge Trees / Pers. Diagrams (IEEE TVCG 2024)
+- TopoMap dimensionality reduction (IEEE TVCG 2020)
+- TTK is Getting MPI-ready! (IEEE TVCG 2024)
+- ExTreeM merge tree computation backend (IEEE TVCG 2024)
+- Ripser integration
+- DMS performance improvements (allocation)
+- Saddle connector reversal performance improvements
+- Migration to ParaView 5.12
+- Switch to C++17
+- Bug fixes
+
 
 ### 1.2
 - Principal Geodesic Analysis of Merge Trees / Pers. Diagrams (IEEE TVCG 2023)
