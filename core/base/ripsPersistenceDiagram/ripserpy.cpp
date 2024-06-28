@@ -91,7 +91,7 @@ static const std::string clear_line("\r\033[K");
 
 static const size_t num_coefficient_bits = 8;
 
-#if defined(RIPSER_ENABLE_128BITS_IDS) \
+#if defined(TTK_ENABLE_RIPSER_128BITS_IDS) \
   && (defined(__GNUC__) || defined(__clang__))
 static const index_t max_simplex_index
   = (__int128(1) << (8 * sizeof(index_t) - 1 - num_coefficient_bits)) - 1;

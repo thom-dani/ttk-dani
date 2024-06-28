@@ -18,7 +18,7 @@
 namespace ripser {
 
   using value_t = double;
-#if defined(RIPSER_ENABLE_128BITS_IDS) \
+#if defined(TTK_ENABLE_RIPSER_128BITS_IDS) \
   && (defined(__GNUC__) || defined(__clang__))
   using index_t = __int128;
 #else
