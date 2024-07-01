@@ -1,4 +1,5 @@
 #include <DiscreteGradient.h>
+#include <vector>
 
 using namespace std;
 using namespace ttk;

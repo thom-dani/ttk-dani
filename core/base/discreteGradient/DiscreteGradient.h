@@ -26,6 +26,7 @@
 #include <queue>
 #include <set>
 #include <utility>
+#include <vector>
 
 namespace ttk {
 
@@ -101,7 +102,8 @@ triangulation.
        */
       template <typename triangulationType>
       int buildGradient(const triangulationType &triangulation,
-                        bool bypassCache = false);
+                        bool bypassCache = false, 
+                        const std::vector<bool> *updateMask = nullptr);
 
       /**
        * Set the input scalar function.
@@ -149,6 +151,27 @@ triangulation.
       static inline void
         clearCache(const AbstractTriangulation &triangulation) {
         triangulation.gradientCache_.clear();
+      }
+
+      void saveGradient(std::string name) {
+        std::ofstream file(name);
+        // using gradientType = std::array<std::vector<gradIdType>, 6>;
+
+        if(file.is_open()) {
+          for(const auto &vec : (*this->gradient_)) {
+            for(const auto &elem : vec) {
+              file << elem << " ";
+            }
+            file << std::endl;
+          }
+
+          file.close();
+          std::cout << "Le gradient_ a été sauvegardé dans le fichier " << name
+                    << std::endl;
+        } else {
+          std::cout << "Erreur : impossible d'ouvrir le fichier " << name
+                    << std::endl;
+        }
       }
 
       /**
@@ -393,6 +416,23 @@ in the gradient.
                             const triangulationType &triangulation) const;
 
       /**
+       * @brief Store the subcomplexes around vertex for which offset
+       * at vertex is maximum
+       *
+       * @param[in] a Vertex Id
+       *
+       * @return Lower star as 4 sets of cells (0-cells, 1-cells, 2-cells and
+       * 3-cells)
+       */
+      template <typename triangulationType>
+      inline void lowerStarWithMask(lowerStarType &ls,
+                                    const SimplexId a,
+                                    const SimplexId *const offsets,
+                                    const triangulationType &triangulation,
+                                    const std::vector<bool> *updateMask
+                                    = nullptr) const;
+                                    
+      /**
        * @brief Return the number of unpaired faces of a given cell in
        * a lower star
        *
@@ -435,6 +475,18 @@ in the gradient.
       template <typename triangulationType>
       int processLowerStars(const SimplexId *const offsets,
                             const triangulationType &triangulation);
+
+      /**
+       * Implements the ProcessLowerStars algorithm from "Theory and
+       * Algorithms for Constructing Discrete Morse Complexes from
+       * Grayscale Digital Images", V. Robins, P. J. Wood,
+       * A. P. Sheppard
+       */
+      template <typename triangulationType>
+      int processLowerStarsWithMask(const SimplexId *const offsets,
+                                    const triangulationType &triangulation,
+                                    const std::vector<bool> *updateMask
+                                    = nullptr);
 
       /**
        * @brief Initialize/Allocate discrete gradient memory
