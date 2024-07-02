@@ -83,7 +83,6 @@ int DiscreteGradient::buildGradient(const triangulationType &triangulation,
     } else {
       this->initMemory(triangulation);
       this->processLowerStars(this->inputOffsets_, triangulation);
-      // this->saveGradient("GradientWithoutLazy.txt");
       this->printMsg("Built discrete gradient", 1.0, tm.getElapsedTime(),
                      this->threadNumber_);
     }

@@ -153,27 +153,6 @@ triangulation.
         triangulation.gradientCache_.clear();
       }
 
-      void saveGradient(std::string name) {
-        std::ofstream file(name);
-        // using gradientType = std::array<std::vector<gradIdType>, 6>;
-
-        if(file.is_open()) {
-          for(const auto &vec : (*this->gradient_)) {
-            for(const auto &elem : vec) {
-              file << elem << " ";
-            }
-            file << std::endl;
-          }
-
-          file.close();
-          std::cout << "Le gradient_ a été sauvegardé dans le fichier " << name
-                    << std::endl;
-        } else {
-          std::cout << "Erreur : impossible d'ouvrir le fichier " << name
-                    << std::endl;
-        }
-      }
-
       /**
        * @brief Use local storage instead of cache
        */
