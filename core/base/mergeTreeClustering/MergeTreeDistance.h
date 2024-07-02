@@ -225,18 +225,22 @@ namespace ttk {
       for(unsigned int i = 0; i < costMatrix.size(); ++i) {
         if(children1[i] != 463 and children1[i] != 485)
           continue;
-        ss << children1[i] << " : (" << tree1->getValue<dataType>(i) << ", "
-           << tree1->getValue<dataType>(tree1->getNode(i)->getOrigin()) << ")"
-           << std::endl;
+        ss << children1[i] << " : (" << tree1->getValue<dataType>(children1[i])
+           << ", "
+           << tree1->getValue<dataType>(
+                tree1->getNode(children1[i])->getOrigin())
+           << ")" << std::endl;
         found = true;
-        for(unsigned int j = 0; j < costMatrix[i].size(); ++j)
-          if(children2[j] != 237 and children2[j] != 229) {
+        for(unsigned int j = 0; j < costMatrix[i].size(); ++j) {
+          if(children2[j] != 237 and children2[j] != 229)
             continue;
-            ss << children2[j] << " : (" << tree2->getValue<dataType>(j) << ", "
-               << tree2->getValue<dataType>(tree1->getNode(j)->getOrigin())
-               << ")" << std::endl;
-            ss << costMatrix[i][j] << "   ";
-          }
+          ss << children2[j] << " : ("
+             << tree2->getValue<dataType>(children2[j]) << ", "
+             << tree2->getValue<dataType>(
+                  tree2->getNode(children2[j])->getOrigin())
+             << ")" << std::endl;
+          ss << costMatrix[i][j] << std::endl;
+        }
         ss << std::endl;
       }
       if(found)
