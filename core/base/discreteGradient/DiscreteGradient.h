@@ -102,7 +102,7 @@ triangulation.
        */
       template <typename triangulationType>
       int buildGradient(const triangulationType &triangulation,
-                        bool bypassCache = false, 
+                        bool bypassCache = false,
                         const std::vector<bool> *updateMask = nullptr);
 
       /**
@@ -431,7 +431,7 @@ in the gradient.
                                     const triangulationType &triangulation,
                                     const std::vector<bool> *updateMask
                                     = nullptr) const;
-                                    
+
       /**
        * @brief Return the number of unpaired faces of a given cell in
        * a lower star

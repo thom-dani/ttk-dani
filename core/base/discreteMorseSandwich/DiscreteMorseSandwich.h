@@ -70,7 +70,7 @@ namespace ttk {
     inline int buildGradient(const void *const scalars,
                              const size_t scalarsMTime,
                              const SimplexId *const offsets,
-                             const triangulationType &triangulation, 
+                             const triangulationType &triangulation,
                              const std::vector<bool> *updateMask = nullptr) {
       this->dg_.setDebugLevel(this->debugLevel_);
       this->dg_.setThreadNumber(this->threadNumber_);
@@ -997,7 +997,7 @@ void ttk::DiscreteMorseSandwich::getSaddleSaddlePairs(
   Timer tmseq{};
 
   // extract saddle-saddle pairs from computed boundaries
-  
+
   for(size_t i = 0; i < saddles2.size(); ++i) {
     if(!s2Boundaries[i].empty()) {
       const auto s2 = saddles2[i];

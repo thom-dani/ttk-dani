@@ -36,7 +36,7 @@ dataType DiscreteGradient::getPersistence(
 
 template <typename triangulationType>
 int DiscreteGradient::buildGradient(const triangulationType &triangulation,
-                                    bool bypassCache, 
+                                    bool bypassCache,
                                     const std::vector<bool> *updateMask) {
 
   auto &cacheHandler = *triangulation.getGradientCacheHandler();
@@ -97,7 +97,6 @@ int DiscreteGradient::buildGradient(const triangulationType &triangulation,
                      tm.getElapsedTime(), this->threadNumber_);
     }
   }
-
 
   return 0;
 }
