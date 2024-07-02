@@ -84,59 +84,57 @@ using ttkSimplexIdTypeArray = vtkIntArray;
                             ttk::CompactTriangulation, call);             \
   }
 
-#define ttkVtkTemplate2MacroCase2(dataType, triangulationClass1,           \
-                                  triangulationType2, triangulationClass2, \
-                                  call)                                    \
-  case triangulationType2: {                                               \
-    typedef triangulationClass1 TTK_TT1;                                   \
-    typedef triangulationClass2 TTK_TT2;                                   \
-    switch(dataType) { vtkTemplateMacro((call)); };                        \
+#define ttkVtkTemplate2MacroCase2(                                    \
+  triangulationClass1, triangulationType2, triangulationClass2, call) \
+  case triangulationType2: {                                          \
+    typedef triangulationClass1 TTK_TT1;                              \
+    typedef triangulationClass2 TTK_TT2;                              \
+    (call);                                                           \
   }; break;
 
-#define ttkVtkTemplate2MacroCase1(                                             \
-  dataType, triangulationType1, triangulationClass1, triangulationType2, call) \
-  case triangulationType1: {                                                   \
-    switch(triangulationType2) {                                               \
-      ttkVtkTemplate2MacroCase2(dataType, triangulationClass1,                 \
-                                ttk::Triangulation::Type::EXPLICIT,            \
-                                ttk::ExplicitTriangulation, call);             \
-      ttkVtkTemplate2MacroCase2(dataType, triangulationClass1,                 \
-                                ttk::Triangulation::Type::IMPLICIT,            \
-                                ttk::ImplicitNoPreconditions, call);           \
-      ttkVtkTemplate2MacroCase2(dataType, triangulationClass1,                 \
-                                ttk::Triangulation::Type::HYBRID_IMPLICIT,     \
-                                ttk::ImplicitWithPreconditions, call);         \
-      ttkVtkTemplate2MacroCase2(dataType, triangulationClass1,                 \
-                                ttk::Triangulation::Type::PERIODIC,            \
-                                ttk::PeriodicNoPreconditions, call);           \
-      ttkVtkTemplate2MacroCase2(dataType, triangulationClass1,                 \
-                                ttk::Triangulation::Type::HYBRID_PERIODIC,     \
-                                ttk::PeriodicWithPreconditions, call);         \
-      ttkVtkTemplate2MacroCase2(dataType, triangulationClass1,                 \
-                                ttk::Triangulation::Type::COMPACT,             \
-                                ttk::CompactTriangulation, call);              \
-    }                                                                          \
+#define ttkVtkTemplate2MacroCase1(                                         \
+  triangulationType1, triangulationClass1, triangulationType2, call)       \
+  case triangulationType1: {                                               \
+    switch(triangulationType2) {                                           \
+      ttkVtkTemplate2MacroCase2(triangulationClass1,                       \
+                                ttk::Triangulation::Type::EXPLICIT,        \
+                                ttk::ExplicitTriangulation, call);         \
+      ttkVtkTemplate2MacroCase2(triangulationClass1,                       \
+                                ttk::Triangulation::Type::IMPLICIT,        \
+                                ttk::ImplicitNoPreconditions, call);       \
+      ttkVtkTemplate2MacroCase2(triangulationClass1,                       \
+                                ttk::Triangulation::Type::HYBRID_IMPLICIT, \
+                                ttk::ImplicitWithPreconditions, call);     \
+      ttkVtkTemplate2MacroCase2(triangulationClass1,                       \
+                                ttk::Triangulation::Type::PERIODIC,        \
+                                ttk::PeriodicNoPreconditions, call);       \
+      ttkVtkTemplate2MacroCase2(triangulationClass1,                       \
+                                ttk::Triangulation::Type::HYBRID_PERIODIC, \
+                                ttk::PeriodicWithPreconditions, call);     \
+      ttkVtkTemplate2MacroCase2(triangulationClass1,                       \
+                                ttk::Triangulation::Type::COMPACT,         \
+                                ttk::CompactTriangulation, call);          \
+    }                                                                      \
   }; break;
 
-#define ttkVtkTemplate2Macro(                                                 \
-  dataType, triangulationType1, triangulationType2, call)                     \
+#define ttkVtkTemplate2Macro(triangulationType1, triangulationType2, call)    \
   switch(triangulationType1) {                                                \
-    ttkVtkTemplate2MacroCase1(dataType, ttk::Triangulation::Type::EXPLICIT,   \
+    ttkVtkTemplate2MacroCase1(ttk::Triangulation::Type::EXPLICIT,             \
                               ttk::ExplicitTriangulation, triangulationType2, \
                               call);                                          \
-    ttkVtkTemplate2MacroCase1(dataType, ttk::Triangulation::Type::IMPLICIT,   \
+    ttkVtkTemplate2MacroCase1(ttk::Triangulation::Type::IMPLICIT,             \
                               ttk::ImplicitNoPreconditions,                   \
                               triangulationType2, call);                      \
-    ttkVtkTemplate2MacroCase1(                                                \
-      dataType, ttk::Triangulation::Type::HYBRID_IMPLICIT,                    \
-      ttk::ImplicitWithPreconditions, triangulationType2, call);              \
-    ttkVtkTemplate2MacroCase1(dataType, ttk::Triangulation::Type::PERIODIC,   \
+    ttkVtkTemplate2MacroCase1(ttk::Triangulation::Type::HYBRID_IMPLICIT,      \
+                              ttk::ImplicitWithPreconditions,                 \
+                              triangulationType2, call);                      \
+    ttkVtkTemplate2MacroCase1(ttk::Triangulation::Type::PERIODIC,             \
                               ttk::PeriodicNoPreconditions,                   \
                               triangulationType2, call);                      \
-    ttkVtkTemplate2MacroCase1(                                                \
-      dataType, ttk::Triangulation::Type::HYBRID_PERIODIC,                    \
-      ttk::PeriodicWithPreconditions, triangulationType2, call);              \
-    ttkVtkTemplate2MacroCase1(dataType, ttk::Triangulation::Type::COMPACT,    \
+    ttkVtkTemplate2MacroCase1(ttk::Triangulation::Type::HYBRID_PERIODIC,      \
+                              ttk::PeriodicWithPreconditions,                 \
+                              triangulationType2, call);                      \
+    ttkVtkTemplate2MacroCase1(ttk::Triangulation::Type::COMPACT,              \
                               ttk::CompactTriangulation, triangulationType2,  \
                               call);                                          \
   }

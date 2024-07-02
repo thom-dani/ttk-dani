@@ -234,14 +234,13 @@ int ttkSignedDistanceField::RequestData(vtkInformation *ttkNotUsed(request),
   backend_ = Backend;
   fastMarchingOrder_ = FastMarchingOrder;
   ttkVtkTemplate2Macro(
-    outputScalars->GetDataType(), triangulation->getType(),
-    encompassingTriangulation->getType(),
-    (ret = this->execute(
-       ttkUtils::GetPointer<VTK_TT>(outputScalars),
-       (static_cast<TTK_TT1 *>(triangulation->getData())),
-       (static_cast<TTK_TT2 *>(encompassingTriangulation->getData())),
-       ttkUtils::GetPointer<int>(edgeCrossing),
-       ttkUtils::GetPointer<int>(isInterior))));
+    triangulation->getType(), boundingTriangulation->getType(),
+    (ret
+     = this->execute(ttkUtils::GetPointer<float>(outputScalars),
+                     (static_cast<TTK_TT1 *>(triangulation->getData())),
+                     (static_cast<TTK_TT2 *>(boundingTriangulation->getData())),
+                     ttkUtils::GetPointer<int>(edgeCrossing),
+                     ttkUtils::GetPointer<int>(isInterior))));
 
   // something wrong in baseCode
   if(ret) {

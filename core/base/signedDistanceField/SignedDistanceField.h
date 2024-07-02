@@ -25,10 +25,8 @@ namespace ttk {
   public:
     SignedDistanceField();
 
-    template <typename dataType,
-              typename triangulationType,
-              typename triangulationType2>
-    int execute(dataType *const outputScalars,
+    template <typename triangulationType, typename triangulationType2>
+    int execute(float *const outputScalars,
                 triangulationType *const triangulation,
                 triangulationType2 *const englobanteTriangulation,
                 int *const edgeCrossing,
@@ -477,11 +475,9 @@ void ttk::SignedDistanceField::findOutsideVertices(
   printMsg(ss.str());
 }
 
-template <typename dataType,
-          typename triangulationType,
-          typename triangulationType2>
+template <typename triangulationType, typename triangulationType2>
 int ttk::SignedDistanceField::execute(
-  dataType *const outputScalars,
+  float *const outputScalars,
   triangulationType *const triangulation,
   triangulationType2 *const englobanteTriangulation,
   int *const edgeCrossing,
