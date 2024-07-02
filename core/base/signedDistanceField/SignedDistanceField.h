@@ -28,7 +28,7 @@ namespace ttk {
     template <typename triangulationType, typename triangulationType2>
     int execute(float *const outputScalars,
                 triangulationType *const triangulation,
-                triangulationType2 *const englobanteTriangulation,
+                triangulationType2 *const boundingTriangulation,
                 int *const edgeCrossing,
                 int *const isInterior) const;
 
@@ -43,7 +43,7 @@ namespace ttk {
 
     template <typename triangulationType>
     void findOutsideVertices(const SimplexId vertexId,
-                             triangulationType *const englobanteTriangulation,
+                             triangulationType *const boundingTriangulation,
                              const std::vector<bool> &vertexIntersection,
                              int *const isInterior) const;
 
@@ -433,12 +433,12 @@ bool ttk::SignedDistanceField::fastMarchingSolveQuadratic(unsigned int vertexId,
 template <typename triangulationType>
 void ttk::SignedDistanceField::findOutsideVertices(
   const SimplexId startVertexId,
-  triangulationType *const englobanteTriangulation,
+  triangulationType *const boundingTriangulation,
   const std::vector<bool> &vertexIntersection,
   int *const isInterior) const {
   std::stack<SimplexId> vertexStack;
   std::vector<bool> outsideVertexSelected(
-    englobanteTriangulation->getNumberOfVertices(), false);
+    boundingTriangulation->getNumberOfVertices(), false);
 
   vertexStack.push(startVertexId);
   outsideVertexSelected[startVertexId] = true;
@@ -479,13 +479,13 @@ template <typename triangulationType, typename triangulationType2>
 int ttk::SignedDistanceField::execute(
   float *const outputScalars,
   triangulationType *const triangulation,
-  triangulationType2 *const englobanteTriangulation,
+  triangulationType2 *const boundingTriangulation,
   int *const edgeCrossing,
   int *const isInterior) const {
 
   Timer t;
 
-  auto noVertices = englobanteTriangulation->getNumberOfVertices();
+  auto noVertices = boundingTriangulation->getNumberOfVertices();
 #ifdef TTK_ENABLE_OPENMP
 #pragma omp parallel for num_threads(threadNumber_)
 #endif
@@ -569,7 +569,7 @@ int ttk::SignedDistanceField::execute(
 
     // Use BVH to find triangles on this ray direction
     float ray_origin[3];
-    englobanteTriangulation->getVertexPoint(
+    boundingTriangulation->getVertexPoint(
       vertexId, ray_origin[0], ray_origin[1], ray_origin[2]);
     float ray_dir[3] = {0, 0, 0};
     ray_dir[dirDimension] = spacing_[dirDimension];
@@ -631,7 +631,7 @@ int ttk::SignedDistanceField::execute(
     }
   }
   findOutsideVertices(
-    outsideVertex, englobanteTriangulation, vertexIntersection, isInterior);
+    outsideVertex, boundingTriangulation, vertexIntersection, isInterior);
   this->printMsg("Find outside vertices", 1.0, t_outside.getElapsedTime(),
                  this->threadNumber_);
 
@@ -662,7 +662,7 @@ int ttk::SignedDistanceField::execute(
     ttk::SurfaceGeometrySmoother smoother;
 
     float x = 0, y = 0, z = 0;
-    englobanteTriangulation->getVertexPoint(vertexId, x, y, z);
+    boundingTriangulation->getVertexPoint(vertexId, x, y, z);
 
     ttk::SurfaceGeometrySmoother::Point point;
     point[0] = x;
@@ -685,7 +685,7 @@ int ttk::SignedDistanceField::execute(
 
     ttk::SurfaceGeometrySmoother::ProjectionResult projectionResult
       = smoother.findProjection(projectionInput, vm, dists2, trianglesToTest,
-                                reverseProjection, *englobanteTriangulation,
+                                reverseProjection, *boundingTriangulation,
                                 *triangulation);
 
     ttk::SurfaceGeometrySmoother::Point projectedPoint = projectionResult.pt;

@@ -185,7 +185,7 @@ int ttkSignedDistanceField::RequestData(vtkInformation *ttkNotUsed(request),
      << triangulation->getNumberOfTriangles();
   printMsg(ss.str());
 
-  // Create encompassing triangulation
+  // Create bounding triangulation
   computeOutputInformation(inputVector);
   vtkSmartPointer<vtkImageData> imageData
     = vtkSmartPointer<vtkImageData>::New();
@@ -193,25 +193,24 @@ int ttkSignedDistanceField::RequestData(vtkInformation *ttkNotUsed(request),
   imageData->SetSpacing(spacing_[0], spacing_[1], spacing_[2]);
   imageData->SetDimensions(DataExtent[1], DataExtent[3], DataExtent[5]);
 
-  auto encompassingTriangulation = ttkAlgorithm::GetTriangulation(imageData);
-  if(!encompassingTriangulation) {
-    this->printErr("Input encompassing triangulation pointer is NULL.");
+  auto boundingTriangulation = ttkAlgorithm::GetTriangulation(imageData);
+  if(!boundingTriangulation) {
+    this->printErr("Input bounding triangulation pointer is NULL.");
     return -5;
   }
 
-  if(encompassingTriangulation->isEmpty()) {
+  if(boundingTriangulation->isEmpty()) {
     this->printErr("Encompassing triangulation allocation problem.");
     return -6;
   }
 
   ss.str("");
   ss << "Field number of vertices : "
-     << encompassingTriangulation->getNumberOfVertices();
+     << boundingTriangulation->getNumberOfVertices();
   printMsg(ss.str());
 
   ss.str("");
-  ss << "Field number of edges : "
-     << encompassingTriangulation->getNumberOfEdges();
+  ss << "Field number of edges : " << boundingTriangulation->getNumberOfEdges();
   printMsg(ss.str());
 
   // create output arrays
