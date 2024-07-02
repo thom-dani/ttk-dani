@@ -9,14 +9,14 @@
 #include <iostream>
 
 // base code includes
-#include "DataTypes.h"
-#include "Geometry.h"
-#include "ImplicitTriangulation.h"
-#include "SurfaceGeometrySmoother.h"
-#include "VisitedMask.h"
 #include <BoundingVolumeHierarchy.h>
+#include <DataTypes.h>
 #include <Debug.h>
+#include <Geometry.h>
+#include <ImplicitTriangulation.h>
+#include <SurfaceGeometrySmoother.h>
 #include <Triangulation.h>
+#include <VisitedMask.h>
 #include <queue>
 
 namespace ttk {
@@ -41,6 +41,7 @@ namespace ttk {
       return 0;
     }
 
+  protected:
     template <typename triangulationType>
     void findOutsideVertices(const SimplexId vertexId,
                              triangulationType *const boundingTriangulation,
@@ -108,7 +109,6 @@ namespace ttk {
                                     int *const isInterior,
                                     dataType &out) const;
 
-  protected:
     unsigned int xResolution_{1}, yResolution_{1}, zResolution_{1};
     std::array<double, 3> spacing_{1.0, 1.0, 1.0};
     std::array<double, 3> invSpacingSquared_{1.0, 1.0, 1.0};

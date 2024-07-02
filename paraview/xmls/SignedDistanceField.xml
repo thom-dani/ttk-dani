@@ -59,7 +59,7 @@
             <Entry value="2" text="Fast Marching Band"/>
         </EnumerationDomain>
         <Documentation>
-            Method for the signed distance field computation, exact or approximation (fast marching and fast marching band being a even more approximation).
+            Method for the signed distance field computation, exact or approximation (fast marching and fast marching band, being an even rougher approximation).
         </Documentation>
       </IntVectorProperty>
       
@@ -92,7 +92,7 @@
       </PropertyGroup>
 
       <Hints>
-        <ShowInMenu category="TTK - Scalar Data" />
+        <ShowInMenu category="TTK - Domain" />
       </Hints>
     </SourceProxy>
   </ProxyGroup>
