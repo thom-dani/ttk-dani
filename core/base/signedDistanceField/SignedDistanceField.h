@@ -14,7 +14,6 @@
 #include <Debug.h>
 #include <Geometry.h>
 #include <ImplicitTriangulation.h>
-#include <SurfaceGeometrySmoother.h>
 #include <Triangulation.h>
 #include <VisitedMask.h>
 #include <queue>
@@ -659,20 +658,18 @@ int ttk::SignedDistanceField::execute(
     if(backend_ != 0)
       vertexId = verticesCrossing[i];
 
-    ttk::SurfaceGeometrySmoother smoother;
-
     float x = 0, y = 0, z = 0;
     boundingTriangulation->getVertexPoint(vertexId, x, y, z);
 
-    ttk::SurfaceGeometrySmoother::Point point;
+    std::array<float, 3> point;
     point[0] = x;
     point[1] = y;
     point[2] = z;
 
     std::vector<float> dists(triangulation->getNumberOfVertices());
-    ttk::SurfaceGeometrySmoother::ProjectionInput projectionInput{
+    Geometry::ProjectionInput projectionInput{
       static_cast<size_t>(vertexId), point,
-      smoother.getNearestSurfaceVertex(point, dists, *triangulation)};
+      Geometry::getNearestSurfaceVertex(point.data(), dists, *triangulation)};
 
     std::vector<SimplexId> visitedTriangles{};
     std::vector<bool> trianglesTested(
@@ -683,17 +680,14 @@ int ttk::SignedDistanceField::execute(
     std::stack<ttk::SimplexId> trianglesToTest;
     bool reverseProjection = false;
 
-    ttk::SurfaceGeometrySmoother::ProjectionResult projectionResult
-      = smoother.findProjection(projectionInput, vm, dists2, trianglesToTest,
-                                reverseProjection, *boundingTriangulation,
-                                *triangulation);
-
-    ttk::SurfaceGeometrySmoother::Point projectedPoint = projectionResult.pt;
+    Geometry::ProjectionResult projectionResult = Geometry::findProjection(
+      projectionInput, vm, dists2, trianglesToTest, reverseProjection,
+      *boundingTriangulation, *triangulation);
 
     // We calculate the distance
     std::vector<double> p0({x, y, z});
     std::vector<double> p1(
-      {projectedPoint[0], projectedPoint[1], projectedPoint[2]});
+      {projectionResult.pt[0], projectionResult.pt[1], projectionResult.pt[2]});
     double distance = ttk::Geometry::distance(p0.data(), p1.data(), 3);
 
     outputScalars[vertexId] = (isInterior[vertexId] ? -1.0 : 1.0) * distance;

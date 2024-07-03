@@ -6,6 +6,5 @@ ttk_add_base_library(signedDistanceField
   DEPENDS
     triangulation
     common
-    surfaceGeometrySmoother
     boundingVolumeHierarchy
 )
