@@ -26,7 +26,6 @@
 #include <queue>
 #include <set>
 #include <utility>
-#include <vector>
 
 namespace ttk {
 
