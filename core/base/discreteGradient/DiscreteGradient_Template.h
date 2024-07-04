@@ -73,13 +73,11 @@ int DiscreteGradient::buildGradient(const triangulationType &triangulation,
     Timer tm{};
     // compute gradient pairs
     if(updateMask) {
-      this->initMemory(triangulation);
       this->processLowerStarsWithMask(
         this->inputOffsets_, triangulation, updateMask);
       this->printMsg("Update cached discrete gradient", 1.0,
                      tm.getElapsedTime(), this->threadNumber_);
     } else {
-      this->initMemory(triangulation);
       this->processLowerStars(this->inputOffsets_, triangulation);
       this->printMsg("Built discrete gradient", 1.0, tm.getElapsedTime(),
                      this->threadNumber_);
@@ -364,17 +362,11 @@ inline void DiscreteGradient::lowerStarWithMask(
       for(auto &vec : ls[2]) {
         int triangleId = vec.id_;
         int edgeId = (*gradient_)[3][triangleId];
-        // int tetraId = (*gradient_)[4][triangleId];
 
         (*gradient_)[3][triangleId] = -1;
         if(edgeId != -1) {
           (*gradient_)[2][edgeId] = -1;
         }
-
-        //(*gradient_)[4][triangleId] = -1;
-        // if(tetraId != -1){
-        //  (*gradient_)[5][tetraId] = -1;
-        //}
       }
     }
 
