@@ -143,7 +143,6 @@
 #include <PersistentSimplexPairs.h>
 #include <ProgressiveTopology.h>
 #include <Triangulation.h>
-#include <vector>
 
 namespace ttk {
 

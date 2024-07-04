@@ -25,7 +25,6 @@
 
 #include <algorithm>
 #include <numeric>
-#include <vector>
 
 namespace ttk {
   class DiscreteMorseSandwich : virtual public Debug {
