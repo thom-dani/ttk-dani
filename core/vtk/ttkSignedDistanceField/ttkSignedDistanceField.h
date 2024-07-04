@@ -4,20 +4,27 @@
 /// \author Mohamed Amine Kissi <mohamed.kissi@lip6.fr>
 /// \author Mathieu Pont <mathieu.pont@lip6.fr>
 /// \date August 2023
-/// 
-/// \brief This filter computes a signed distance field given a surface in input.
-/// 
+///
+/// \brief This filter computes a signed distance field given a surface in
+/// input.
+///
 /// It implements three backends (accelerated with a BVH data structure):
-/// 
+///
 /// - The exact backend
-/// 
-/// - The fast marching backend, this method simulates a "wave" that move starting from the input surface and solve the eikonal equation vertex by vertex to approximate the signed distance field. It corresponds to the the following reference:
-/// 
-/// J.A. Sethian. 
-/// A Fast Marching Level Set Method for Monotonically Advancing Fronts, 
+///
+/// - The fast marching backend, this method simulates a "wave" that move
+/// starting from the input surface and solve the eikonal equation vertex by
+/// vertex to approximate the signed distance field. It corresponds to the the
+/// following reference:
+///
+/// J.A. Sethian.
+/// A Fast Marching Level Set Method for Monotonically Advancing Fronts,
 /// Proc. Natl. Acad. Sci., 93, 4, pp.1591--1595, 1996
-/// 
-/// - The fast marching band backend, a variant of the fast marching for which all the vertices being not yet updated and nearest the input surface are updated (instead of just one in the fast marching backend). It results in a faster method (due to parallelism) but is a rougher approximation.
+///
+/// - The fast marching band backend, a variant of the fast marching for which
+/// all the vertices being not yet updated and nearest the input surface are
+/// updated (instead of just one in the fast marching backend). It results in a
+/// faster method (due to parallelism) but is a rougher approximation.
 
 #pragma once
 
