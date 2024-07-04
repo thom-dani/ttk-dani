@@ -488,6 +488,10 @@ inline void
                               const SimplexId *const offsets,
                               const triangulationType &triangulation) const {
 
+  // WARNING
+  // If you modify this function, please make sure to also report your edit to
+  // the other implementation of this function, `lowerStarWithMask`.
+
   // make sure that ls is cleared
   for(auto &vec : ls) {
     vec.clear();
@@ -714,6 +718,10 @@ inline void DiscreteGradient::pairCells(
 template <typename triangulationType>
 int DiscreteGradient::processLowerStars(
   const SimplexId *const offsets, const triangulationType &triangulation) {
+
+  // WARNING
+  // If you modify this function, please make sure to also report your edit to
+  // the other implementation of this function, `processLowerStarsWithMask`.
 
   /* Compute gradient */
 
