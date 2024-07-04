@@ -474,6 +474,7 @@ namespace ttk {
      * @param[in] p Point to be projected
      * @param[in] a Triangle vertex coordinates
      * @param[in] normTri Triangle normal vector
+     * @param[out] out Result
      * @return Projection coordinates
      */
     template <typename T>
@@ -486,6 +487,7 @@ namespace ttk {
      * @param[in] p Point to be projected
      * @param[in] a First segment vertex coordinates
      * @param[in] b Second segment vertex coordinates
+     * @param[out] out Result
      * @return Projection coordinates
      */
     template <typename T>
@@ -497,6 +499,7 @@ namespace ttk {
      * @param[in] a First triangle vertex coordinates
      * @param[in] b Second triangle vertex coordinates
      * @param[in] c Third triangle vertex coordinates
+     * @param[out] out Result
      * @return Triangle unitary normal
      */
     template <typename T>
