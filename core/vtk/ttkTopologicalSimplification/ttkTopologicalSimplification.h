@@ -124,12 +124,11 @@
 #include <ttkTopologicalSimplificationModule.h>
 
 // ttk code includes
-#include <TopologicalSimplification.h>
 #include <BackendTopologicalOptimization.h>
+#include <TopologicalSimplification.h>
 #include <ttkAlgorithm.h>
-#include <ttkUtils.h>
 #include <ttkPersistenceDiagramUtils.h>
-
+#include <ttkUtils.h>
 
 class vtkDataArray;
 
@@ -209,7 +208,6 @@ public:
 
   vtkSetMacro(ConstraintAveraging, bool);
   vtkGetMacro(ConstraintAveraging, bool);
-  
 
 protected:
   ttkTopologicalSimplification();
@@ -225,6 +223,6 @@ private:
   bool ForceInputOffsetScalarField{false};
   bool ConsiderIdentifierAsBlackList{false};
   bool AddPerturbation{false};
-  int Method{0}; 
+  int Method{0};
   double PersistenceThreshold{0};
 };

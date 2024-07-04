@@ -92,13 +92,12 @@
 #pragma once
 
 // base code includes
+#include <BackendTopologicalOptimization.h>
 #include <Debug.h>
 #include <LegacyTopologicalSimplification.h>
 #include <LocalizedTopologicalSimplification.h>
-#include <Triangulation.h>
 #include <PersistenceDiagram.h>
-#include <BackendTopologicalOptimization.h>
-
+#include <Triangulation.h>
 
 #include <cmath>
 #include <set>
@@ -126,8 +125,7 @@ namespace ttk {
                 const SimplexId constraintNumber,
                 const bool addPerturbation,
                 triangulationType &triangulation,
-                ttk::DiagramType &constraintDiagram
-                );
+                ttk::DiagramType &constraintDiagram);
 
     inline void setBackend(const BACKEND arg) {
       backend_ = arg;
@@ -165,7 +163,7 @@ namespace ttk {
     BACKEND backend_{BACKEND::LTS};
     LegacyTopologicalSimplification legacyObject_;
     lts::LocalizedTopologicalSimplification ltsObject_;
-    ttk::BackendTopologicalOptimization PSObject_; 
+    ttk::BackendTopologicalOptimization PSObject_;
 
     SimplexId vertexNumber_{};
     bool UseFastPersistenceUpdate{false};
@@ -192,18 +190,19 @@ namespace ttk {
     // Direct Optimization
     double Alpha{0.75};
 
-    // Stopping criterion: when the loss becomes less than a percentage (e.g. 1%) of the original loss (between input diagram and simplified diagram)
+    // Stopping criterion: when the loss becomes less than a percentage (e.g.
+    // 1%) of the original loss (between input diagram and simplified diagram)
     double CoefStopCondition{0.01};
 
-    // 
-    bool OptimizationWithoutMatching{false}; 
-    int ThresholdMethod{0}; 
-    double Threshold{0.0}; 
-    int LowerThreshold{-1}; 
-    int UpperThreshold{2}; 
-    int PairTypeToDelete{1}; 
+    //
+    bool OptimizationWithoutMatching{false};
+    int ThresholdMethod{0};
+    double Threshold{0.0};
+    int LowerThreshold{-1};
+    int UpperThreshold{2};
+    int PairTypeToDelete{1};
 
-    bool ConstraintAveraging{true}; 
+    bool ConstraintAveraging{true};
   };
 } // namespace ttk
 
@@ -216,9 +215,8 @@ int ttk::TopologicalSimplification::execute(
   SimplexId *const offsets,
   const SimplexId constraintNumber,
   const bool addPerturbation,
-  triangulationType &triangulation, 
-  ttk::DiagramType &constraintDiagram
-  ) {
+  triangulationType &triangulation,
+  ttk::DiagramType &constraintDiagram) {
   switch(backend_) {
     case BACKEND::LTS:
       return ltsObject_
@@ -230,27 +228,27 @@ int ttk::TopologicalSimplification::execute(
                                    inputOffsets, offsets, constraintNumber,
                                    triangulation);
 
-    case BACKEND::PS: 
+    case BACKEND::PS:
       PSObject_.setUseFastPersistenceUpdate(UseFastPersistenceUpdate);
-      PSObject_.setFastAssignmentUpdate(FastAssignmentUpdate); 
-      PSObject_.setEpochNumber(EpochNumber); 
-      PSObject_.setPDCMethod(PDCMethod); 
-      PSObject_.setMethodOptimization(MethodOptimization); 
+      PSObject_.setFastAssignmentUpdate(FastAssignmentUpdate);
+      PSObject_.setEpochNumber(EpochNumber);
+      PSObject_.setPDCMethod(PDCMethod);
+      PSObject_.setMethodOptimization(MethodOptimization);
       PSObject_.setFinePairManagement(FinePairManagement);
       PSObject_.setChooseLearningRate(ChooseLearningRate);
       PSObject_.setLearningRate(LearningRate);
       PSObject_.setAlpha(Alpha);
-      PSObject_.setCoefStopCondition(CoefStopCondition); 
-      PSObject_.setOptimizationWithoutMatching(OptimizationWithoutMatching); 
-      PSObject_.setThresholdMethod(ThresholdMethod); 
-      PSObject_.setThresholdPersistence(Threshold); 
-      PSObject_.setLowerThreshold(LowerThreshold); 
-      PSObject_.setUpperThreshold(UpperThreshold); 
-      PSObject_.setPairTypeToDelete(PairTypeToDelete); 
-      PSObject_.setConstraintAveraging(ConstraintAveraging); 
+      PSObject_.setCoefStopCondition(CoefStopCondition);
+      PSObject_.setOptimizationWithoutMatching(OptimizationWithoutMatching);
+      PSObject_.setThresholdMethod(ThresholdMethod);
+      PSObject_.setThresholdPersistence(Threshold);
+      PSObject_.setLowerThreshold(LowerThreshold);
+      PSObject_.setUpperThreshold(UpperThreshold);
+      PSObject_.setPairTypeToDelete(PairTypeToDelete);
+      PSObject_.setConstraintAveraging(ConstraintAveraging);
 
-      return PSObject_.execute(inputScalars, outputScalars, offsets, 
-                        &triangulation, constraintDiagram); 
+      return PSObject_.execute(inputScalars, outputScalars, offsets,
+                               &triangulation, constraintDiagram);
     default:
       this->printErr(
         "Error, the backend for topological simplification is invalid");

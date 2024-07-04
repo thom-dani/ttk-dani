@@ -6,13 +6,12 @@
 #include <vtkNew.h>
 #include <vtkPointData.h>
 #include <vtkPointSet.h>
-#include <vtkUnstructuredGrid.h>
 #include <vtkSmartPointer.h>
+#include <vtkUnstructuredGrid.h>
 
 #include <ttkMacros.h>
 #include <ttkTopologicalSimplification.h>
 #include <ttkUtils.h>
-
 
 vtkStandardNewMacro(ttkTopologicalSimplification);
 
@@ -54,14 +53,12 @@ int ttkTopologicalSimplification::RequestData(
   //   this->setBackend(BACKEND::LEGACY);
   // }
 
-  if(this->Method == 0){
+  if(this->Method == 0) {
     this->setBackend(BACKEND::LTS);
-  }
-  else if(this->Method == 1){
+  } else if(this->Method == 1) {
     this->setBackend(BACKEND::LEGACY);
-  }
-  else if(this->Method == 2){
-    this->setBackend(BACKEND::PS); 
+  } else if(this->Method == 2) {
+    this->setBackend(BACKEND::PS);
   }
 
   const auto domain = vtkDataSet::GetData(inputVector[0]);
@@ -112,9 +109,9 @@ int ttkTopologicalSimplification::RequestData(
     return -1;
   }
 
-  // Constraints 
-  ttk::DiagramType constraintDiagram; 
-  const ttk::Debug dbg; 
+  // Constraints
+  ttk::DiagramType constraintDiagram;
+  const ttk::Debug dbg;
   VTUToDiagram(constraintDiagram, constraints, dbg);
 
   // create output arrays
@@ -141,8 +138,7 @@ int ttkTopologicalSimplification::RequestData(
                        ttkUtils::GetPointer<SimplexId>(inputOrder),
                        ttkUtils::GetPointer<SimplexId>(outputOrder),
                        numberOfConstraints, this->AddPerturbation,
-                       *triangulation->getData(), 
-                       constraintDiagram));
+                       *triangulation->getData(), constraintDiagram));
   }
 
   // something wrong in baseCode

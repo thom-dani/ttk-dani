@@ -53,44 +53,44 @@ namespace ttk {
       return this->distances;
     }
 
-    void setTimeLimit(double timeLimit){
+    void setTimeLimit(double timeLimit) {
       this->TimeLimit = timeLimit;
     }
 
-    void setForceUseOfAlgorithm(bool forceUseOfAlgorithm){
+    void setForceUseOfAlgorithm(bool forceUseOfAlgorithm) {
       this->ForceUseOfAlgorithm = forceUseOfAlgorithm;
     }
 
-    void setDeltaLim(double DeltaLimNew){
+    void setDeltaLim(double DeltaLimNew) {
       this->DeltaLim = DeltaLimNew;
     }
 
-    void setUseAdditionalPrecision(bool Precision){
+    void setUseAdditionalPrecision(bool Precision) {
       this->UseAdditionalPrecision = Precision;
     }
 
-    void setUseProgressive(bool UseProgressive_){
+    void setUseProgressive(bool UseProgressive_) {
       this->UseProgressive = UseProgressive_;
     }
 
-    void setUseInterruptible(bool UseInterruptible_){
+    void setUseInterruptible(bool UseInterruptible_) {
       this->UseInterruptible = UseInterruptible_;
     }
 
-    void setDeterministic(bool Deterministic_){
+    void setDeterministic(bool Deterministic_) {
       this->Deterministic = Deterministic_;
     }
 
-    void setAlpha(double Alpha_){
+    void setAlpha(double Alpha_) {
       this->Alpha = Alpha_;
     }
 
-    void setUseAccelerated(bool UseAccelerated_){
-      this->UseAccelerated = UseAccelerated_; 
+    void setUseAccelerated(bool UseAccelerated_) {
+      this->UseAccelerated = UseAccelerated_;
     }
 
-    void setUseKmeansppInit(bool UseKmeansppInit_){
-      this->UseKmeansppInit = UseKmeansppInit_; 
+    void setUseKmeansppInit(bool UseKmeansppInit_) {
+      this->UseKmeansppInit = UseKmeansppInit_;
     }
 
   protected:
