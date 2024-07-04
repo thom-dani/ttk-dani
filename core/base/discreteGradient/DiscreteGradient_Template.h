@@ -15,8 +15,6 @@
 #pragma once
 
 #include <DiscreteGradient.h>
-#include <string>
-#include <vector>
 
 using ttk::SimplexId;
 using ttk::dcg::Cell;
