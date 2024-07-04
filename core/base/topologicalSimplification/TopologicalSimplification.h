@@ -96,6 +96,9 @@
 #include <LegacyTopologicalSimplification.h>
 #include <LocalizedTopologicalSimplification.h>
 #include <Triangulation.h>
+#include <PersistenceDiagram.h>
+#include <BackendTopologicalOptimization.h>
+
 
 #include <cmath>
 #include <set>
@@ -108,7 +111,7 @@ namespace ttk {
   public:
     TopologicalSimplification();
 
-    enum class BACKEND { LEGACY, LTS };
+    enum class BACKEND { LEGACY, LTS, PS };
     /*
      * Either execute this file "legacy" algorithm, or the
      * lts algorithm. The choice depends on the value of the variable backend_.
@@ -122,7 +125,9 @@ namespace ttk {
                 SimplexId *const offsets,
                 const SimplexId constraintNumber,
                 const bool addPerturbation,
-                const triangulationType &triangulation);
+                triangulationType &triangulation,
+                ttk::DiagramType &constraintDiagram
+                );
 
     inline void setBackend(const BACKEND arg) {
       backend_ = arg;
@@ -142,6 +147,12 @@ namespace ttk {
           ltsObject_.preconditionTriangulation(triangulation);
           break;
 
+        case BACKEND::PS:
+          PSObject_.setDebugLevel(debugLevel_);
+          PSObject_.setThreadNumber(threadNumber_);
+          PSObject_.preconditionTriangulation(triangulation);
+          break;
+
         default:
           this->printErr(
             "Error, the backend for topological simplification is invalid");
@@ -154,6 +165,45 @@ namespace ttk {
     BACKEND backend_{BACKEND::LTS};
     LegacyTopologicalSimplification legacyObject_;
     lts::LocalizedTopologicalSimplification ltsObject_;
+    ttk::BackendTopologicalOptimization PSObject_; 
+
+    SimplexId vertexNumber_{};
+    bool UseFastPersistenceUpdate{false};
+    bool FastAssignmentUpdate{false};
+    int EpochNumber{1000};
+
+    // if PDCMethod == 0 then we use Progressive approach
+    // if PDCMethod == 1 then we use Classical Auction approach
+    int PDCMethod{0};
+
+    // if MethodOptimization == 0 then we use direct optimization
+    // if MethodOptimization == 1 then we use Adam
+    int MethodOptimization{0};
+
+    // if FinePairManagement == 0 then we let the algorithm choose
+    // if FinePairManagement == 1 then we fill the domain
+    // if FinePairManagement == 2 then we cut the domain
+    int FinePairManagement{0};
+
+    // Adam
+    bool ChooseLearningRate{false};
+    double LearningRate{0.0001};
+
+    // Direct Optimization
+    double Alpha{0.75};
+
+    // Stopping criterion: when the loss becomes less than a percentage (e.g. 1%) of the original loss (between input diagram and simplified diagram)
+    double CoefStopCondition{0.01};
+
+    // 
+    bool OptimizationWithoutMatching{false}; 
+    int ThresholdMethod{0}; 
+    double Threshold{0.0}; 
+    int LowerThreshold{-1}; 
+    int UpperThreshold{2}; 
+    int PairTypeToDelete{1}; 
+
+    bool ConstraintAveraging{true}; 
   };
 } // namespace ttk
 
@@ -166,7 +216,9 @@ int ttk::TopologicalSimplification::execute(
   SimplexId *const offsets,
   const SimplexId constraintNumber,
   const bool addPerturbation,
-  const triangulationType &triangulation) {
+  triangulationType &triangulation, 
+  ttk::DiagramType &constraintDiagram
+  ) {
   switch(backend_) {
     case BACKEND::LTS:
       return ltsObject_
@@ -178,6 +230,27 @@ int ttk::TopologicalSimplification::execute(
                                    inputOffsets, offsets, constraintNumber,
                                    triangulation);
 
+    case BACKEND::PS: 
+      PSObject_.setUseFastPersistenceUpdate(UseFastPersistenceUpdate);
+      PSObject_.setFastAssignmentUpdate(FastAssignmentUpdate); 
+      PSObject_.setEpochNumber(EpochNumber); 
+      PSObject_.setPDCMethod(PDCMethod); 
+      PSObject_.setMethodOptimization(MethodOptimization); 
+      PSObject_.setFinePairManagement(FinePairManagement);
+      PSObject_.setChooseLearningRate(ChooseLearningRate);
+      PSObject_.setLearningRate(LearningRate);
+      PSObject_.setAlpha(Alpha);
+      PSObject_.setCoefStopCondition(CoefStopCondition); 
+      PSObject_.setOptimizationWithoutMatching(OptimizationWithoutMatching); 
+      PSObject_.setThresholdMethod(ThresholdMethod); 
+      PSObject_.setThresholdPersistence(Threshold); 
+      PSObject_.setLowerThreshold(LowerThreshold); 
+      PSObject_.setUpperThreshold(UpperThreshold); 
+      PSObject_.setPairTypeToDelete(PairTypeToDelete); 
+      PSObject_.setConstraintAveraging(ConstraintAveraging); 
+
+      return PSObject_.execute(inputScalars, outputScalars, offsets, 
+                        &triangulation, constraintDiagram); 
     default:
       this->printErr(
         "Error, the backend for topological simplification is invalid");

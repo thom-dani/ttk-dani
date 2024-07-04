@@ -6,11 +6,13 @@
 #include <vtkNew.h>
 #include <vtkPointData.h>
 #include <vtkPointSet.h>
+#include <vtkUnstructuredGrid.h>
 #include <vtkSmartPointer.h>
 
 #include <ttkMacros.h>
 #include <ttkTopologicalSimplification.h>
 #include <ttkUtils.h>
+
 
 vtkStandardNewMacro(ttkTopologicalSimplification);
 
@@ -25,7 +27,7 @@ int ttkTopologicalSimplification::FillInputPortInformation(
     info->Set(vtkAlgorithm::INPUT_REQUIRED_DATA_TYPE(), "vtkDataSet");
     return 1;
   } else if(port == 1) {
-    info->Set(vtkAlgorithm::INPUT_REQUIRED_DATA_TYPE(), "vtkPointSet");
+    info->Set(vtkAlgorithm::INPUT_REQUIRED_DATA_TYPE(), "vtkUnstructuredGrid");
     return 1;
   }
   return 0;
@@ -48,12 +50,22 @@ int ttkTopologicalSimplification::RequestData(
   using ttk::SimplexId;
 
   // Warning: this needs to be done before the preconditioning.
-  if(!this->UseLTS) {
+  // if(!this->UseLTS) {
+  //   this->setBackend(BACKEND::LEGACY);
+  // }
+
+  if(this->Method == 0){
+    this->setBackend(BACKEND::LTS);
+  }
+  else if(this->Method == 1){
     this->setBackend(BACKEND::LEGACY);
+  }
+  else if(this->Method == 2){
+    this->setBackend(BACKEND::PS); 
   }
 
   const auto domain = vtkDataSet::GetData(inputVector[0]);
-  const auto constraints = vtkPointSet::GetData(inputVector[1]);
+  const auto constraints = vtkUnstructuredGrid::GetData(inputVector[1]);
   if(!domain || !constraints)
     return !this->printErr("Unable to retrieve required input data objects.");
 
@@ -100,6 +112,11 @@ int ttkTopologicalSimplification::RequestData(
     return -1;
   }
 
+  // Constraints 
+  ttk::DiagramType constraintDiagram; 
+  const ttk::Debug dbg; 
+  VTUToDiagram(constraintDiagram, constraints, dbg);
+
   // create output arrays
   auto outputScalars
     = vtkSmartPointer<vtkDataArray>::Take(inputScalars->NewInstance());
@@ -124,7 +141,8 @@ int ttkTopologicalSimplification::RequestData(
                        ttkUtils::GetPointer<SimplexId>(inputOrder),
                        ttkUtils::GetPointer<SimplexId>(outputOrder),
                        numberOfConstraints, this->AddPerturbation,
-                       *triangulation->getData()));
+                       *triangulation->getData(), 
+                       constraintDiagram));
   }
 
   // something wrong in baseCode

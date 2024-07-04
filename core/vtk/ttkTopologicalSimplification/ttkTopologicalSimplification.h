@@ -125,7 +125,11 @@
 
 // ttk code includes
 #include <TopologicalSimplification.h>
+#include <BackendTopologicalOptimization.h>
 #include <ttkAlgorithm.h>
+#include <ttkUtils.h>
+#include <ttkPersistenceDiagramUtils.h>
+
 
 class vtkDataArray;
 
@@ -149,11 +153,63 @@ public:
   vtkSetMacro(ForceInputVertexScalarField, bool);
   vtkGetMacro(ForceInputVertexScalarField, bool);
 
-  vtkSetMacro(UseLTS, bool);
-  vtkGetMacro(UseLTS, bool);
+  vtkSetMacro(Method, int);
+  vtkGetMacro(Method, int);
 
   vtkSetMacro(PersistenceThreshold, double);
   vtkGetMacro(PersistenceThreshold, double);
+
+  vtkSetMacro(UseFastPersistenceUpdate, bool);
+  vtkGetMacro(UseFastPersistenceUpdate, bool);
+
+  vtkSetMacro(FastAssignmentUpdate, bool);
+  vtkGetMacro(FastAssignmentUpdate, bool);
+
+  vtkSetMacro(EpochNumber, int);
+  vtkGetMacro(EpochNumber, int);
+
+  vtkSetMacro(PDCMethod, int);
+  vtkGetMacro(PDCMethod, int);
+
+  vtkSetMacro(MethodOptimization, int);
+  vtkGetMacro(MethodOptimization, int);
+
+  vtkSetMacro(FinePairManagement, int);
+  vtkGetMacro(FinePairManagement, int);
+
+  vtkSetMacro(ChooseLearningRate, bool);
+  vtkGetMacro(ChooseLearningRate, bool);
+
+  vtkSetMacro(LearningRate, double);
+  vtkGetMacro(LearningRate, double);
+
+  vtkSetMacro(Alpha, double);
+  vtkGetMacro(Alpha, double);
+
+  vtkSetMacro(CoefStopCondition, double);
+  vtkGetMacro(CoefStopCondition, double);
+
+  vtkSetMacro(OptimizationWithoutMatching, bool);
+  vtkGetMacro(OptimizationWithoutMatching, bool);
+
+  vtkSetMacro(ThresholdMethod, int);
+  vtkGetMacro(ThresholdMethod, int);
+
+  vtkSetMacro(Threshold, double);
+  vtkGetMacro(Threshold, double);
+
+  vtkSetMacro(LowerThreshold, int);
+  vtkGetMacro(LowerThreshold, int);
+
+  vtkSetMacro(UpperThreshold, int);
+  vtkGetMacro(UpperThreshold, int);
+
+  vtkSetMacro(PairTypeToDelete, int);
+  vtkGetMacro(PairTypeToDelete, int);
+
+  vtkSetMacro(ConstraintAveraging, bool);
+  vtkGetMacro(ConstraintAveraging, bool);
+  
 
 protected:
   ttkTopologicalSimplification();
@@ -169,6 +225,6 @@ private:
   bool ForceInputOffsetScalarField{false};
   bool ConsiderIdentifierAsBlackList{false};
   bool AddPerturbation{false};
-  bool UseLTS{true};
+  int Method{0}; 
   double PersistenceThreshold{0};
 };
