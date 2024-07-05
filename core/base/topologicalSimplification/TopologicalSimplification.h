@@ -125,7 +125,7 @@ namespace ttk {
                 const SimplexId constraintNumber,
                 const bool addPerturbation,
                 triangulationType &triangulation,
-                ttk::DiagramType &constraintDiagram = {});
+                const ttk::DiagramType &constraintDiagram = {});
 
     inline void setBackend(const BACKEND arg) {
       backend_ = arg;
@@ -216,7 +216,7 @@ int ttk::TopologicalSimplification::execute(
   const SimplexId constraintNumber,
   const bool addPerturbation,
   triangulationType &triangulation,
-  ttk::DiagramType &constraintDiagram) {
+  const ttk::DiagramType &constraintDiagram) {
   switch(backend_) {
     case BACKEND::LTS:
       return ltsObject_

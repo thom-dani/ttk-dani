@@ -32,7 +32,7 @@ namespace ttk {
                 dataType *const outputScalars,
                 SimplexId *const inputOffsets,
                 triangulationType *triangulation,
-                ttk::DiagramType &constraintDiagram) const;
+                const ttk::DiagramType &constraintDiagram) const;
 
     inline int preconditionTriangulation(AbstractTriangulation *triangulation) {
       if(triangulation) {
@@ -52,7 +52,7 @@ namespace ttk {
       triangulationType *triangulation,
       SimplexId *&inputOffsets,
       dataType *const inputScalars,
-      ttk::DiagramType &constraintDiagram,
+      const ttk::DiagramType &constraintDiagram,
       int epoch,
       std::vector<int64_t> &listAllIndicesToChange,
       std::vector<std::vector<SimplexId>> &pair2MatchedPair,
@@ -277,7 +277,7 @@ void ttk::BackendTopologicalOptimization::getIndices(
   triangulationType *triangulation,
   SimplexId *&inputOffsets,
   dataType *const inputScalars,
-  ttk::DiagramType &constraintDiagram,
+  const ttk::DiagramType &constraintDiagram,
   int epoch,
   std::vector<int64_t> &listAllIndicesToChange,
   std::vector<std::vector<SimplexId>> &pair2MatchedPair,
@@ -1173,7 +1173,7 @@ int ttk::BackendTopologicalOptimization::execute(
   dataType *const outputScalars,
   SimplexId *const inputOffsets,
   triangulationType *triangulation,
-  ttk::DiagramType &constraintDiagram) const {
+  const ttk::DiagramType &constraintDiagram) const {
 
   Timer t;
   double stoppingCondition = 0;
