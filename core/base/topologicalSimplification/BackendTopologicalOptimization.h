@@ -1083,7 +1083,7 @@ int ttk::BackendTopologicalOptimization::tensorToVectorFast(
   Given a coordinate vector this function returns the value of maximum
   and minimum for each axis and the number of coordinates per axis.
 */
-std::vector<std::vector<double>>
+inline std::vector<std::vector<double>>
   ttk::BackendTopologicalOptimization::getCoordinatesInformations(
     std::vector<float> coordinatesVertices) const {
   std::vector<double> firstPointCoordinates{};
