@@ -125,7 +125,7 @@ namespace ttk {
                 const SimplexId constraintNumber,
                 const bool addPerturbation,
                 triangulationType &triangulation,
-                ttk::DiagramType &constraintDiagram);
+                ttk::DiagramType &constraintDiagram = {});
 
     inline void setBackend(const BACKEND arg) {
       backend_ = arg;
