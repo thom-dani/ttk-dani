@@ -66,9 +66,8 @@ namespace ttk {
       std::vector<double> &birthPairToChangeTargetDiagram,
       std::vector<int64_t> &deathPairToChangeCurrentDiagram,
       std::vector<double> &deathPairToChangeTargetDiagram,
-      std::vector<std::vector<SimplexId>> &currentVertex2PairsCurrentDiagram
-      = {},
-      std::vector<int> &vertexInHowManyPairs = {}) const;
+      std::vector<std::vector<SimplexId>> &currentVertex2PairsCurrentDiagram,
+      std::vector<int> &vertexInHowManyPairs) const;
 
     /*
       Find all neighbors of a vertex i.
@@ -847,19 +846,8 @@ void ttk::BackendTopologicalOptimization::getIndices(
       std::vector<std::vector<SimplexId>> newVertex2PairsCurrentDiagram(
         vertexNumber_, std::vector<SimplexId>());
 
-      SimplexId numberPairsRemainedTheSame = 0;
       for(SimplexId i = 0; i < (SimplexId)diagramOutput.size(); i++) {
         auto &pair = diagramOutput[i];
-        for(auto &pointBirth :
-            currentVertex2PairsCurrentDiagram[pair.birth.id]) {
-          for(auto &pointDeath :
-              currentVertex2PairsCurrentDiagram[pair.death.id]) {
-            if(pointBirth == pointDeath) {
-              numberPairsRemainedTheSame++;
-            }
-          }
-        }
-
         newVertex2PairsCurrentDiagram[pair.birth.id].push_back(i);
         newVertex2PairsCurrentDiagram[pair.death.id].push_back(i);
       }
