@@ -226,10 +226,6 @@ namespace ttk {
 
 } // namespace ttk
 
-ttk::BackendTopologicalOptimization::BackendTopologicalOptimization() {
-  this->setDebugMsgPrefix("BackendTopologicalOptimization");
-}
-
 #ifdef TTK_ENABLE_TORCH
 class PersistenceGradientDescent : public torch::nn::Module,
                                    public ttk::BackendTopologicalOptimization {
@@ -618,8 +614,8 @@ void ttk::BackendTopologicalOptimization::getIndices(
         pdBarycenter.setWasserstein(wassersteinMetric);
         pdBarycenter.setMethod(2);
         pdBarycenter.setNumberOfInputs(2);
-        pdBarycenter.setDeterministic(1);
-        pdBarycenter.setUseProgressive(1);
+        pdBarycenter.setDeterministic(true);
+        pdBarycenter.setUseProgressive(true);
         pdBarycenter.setDebugLevel(debugLevel_);
         pdBarycenter.setThreadNumber(threadNumber_);
         pdBarycenter.setAlpha(1);
@@ -916,8 +912,8 @@ void ttk::BackendTopologicalOptimization::getIndices(
       pdBarycenter.setWasserstein(wassersteinMetric);
       pdBarycenter.setMethod(2);
       pdBarycenter.setNumberOfInputs(2);
-      pdBarycenter.setDeterministic(1);
-      pdBarycenter.setUseProgressive(1);
+      pdBarycenter.setDeterministic(true);
+      pdBarycenter.setUseProgressive(true);
       pdBarycenter.setDebugLevel(debugLevel_);
       pdBarycenter.setThreadNumber(threadNumber_);
       pdBarycenter.setAlpha(1);
@@ -1197,12 +1193,10 @@ int ttk::BackendTopologicalOptimization::execute(
   //========================================
   if((methodOptimization_ == 0) || !(enableTorch)) {
     std::vector<double> smoothedScalars = dataVector;
-    ttk::DiagramType currentConstraintDiagram = constraintDiagram;
     std::vector<int64_t> listAllIndicesToChangeSmoothing(vertexNumber_, 0);
     std::vector<std::vector<SimplexId>> pair2MatchedPair(
-      currentConstraintDiagram.size(), std::vector<SimplexId>(2));
-    std::vector<SimplexId> pairChangeMatchingPair(
-      currentConstraintDiagram.size(), -1);
+      constraintDiagram.size(), std::vector<SimplexId>(2));
+    std::vector<SimplexId> pairChangeMatchingPair(constraintDiagram.size(), -1);
     std::vector<std::vector<SimplexId>> pair2Delete(
       vertexNumber_, std::vector<SimplexId>());
     std::vector<std::vector<SimplexId>> currentVertex2PairsCurrentDiagram(
@@ -1228,14 +1222,14 @@ int ttk::BackendTopologicalOptimization::execute(
       std::vector<int> vertexInHowManyPairs(vertexNumber_, 0);
 
       getIndices(
-        triangulation, inputOffsetsCopie, dataVector.data(),
-        currentConstraintDiagram, it, listAllIndicesToChangeSmoothing,
-        pair2MatchedPair, pair2Delete, pairChangeMatchingPair,
-        birthPairToDeleteCurrentDiagram, birthPairToDeleteTargetDiagram,
-        deathPairToDeleteCurrentDiagram, deathPairToDeleteTargetDiagram,
-        birthPairToChangeCurrentDiagram, birthPairToChangeTargetDiagram,
-        deathPairToChangeCurrentDiagram, deathPairToChangeTargetDiagram,
-        currentVertex2PairsCurrentDiagram, vertexInHowManyPairs);
+        triangulation, inputOffsetsCopie, dataVector.data(), constraintDiagram,
+        it, listAllIndicesToChangeSmoothing, pair2MatchedPair, pair2Delete,
+        pairChangeMatchingPair, birthPairToDeleteCurrentDiagram,
+        birthPairToDeleteTargetDiagram, deathPairToDeleteCurrentDiagram,
+        deathPairToDeleteTargetDiagram, birthPairToChangeCurrentDiagram,
+        birthPairToChangeTargetDiagram, deathPairToChangeCurrentDiagram,
+        deathPairToChangeTargetDiagram, currentVertex2PairsCurrentDiagram,
+        vertexInHowManyPairs);
       std::fill(listAllIndicesToChangeSmoothing.begin(),
                 listAllIndicesToChangeSmoothing.end(), 0);
 
@@ -1568,11 +1562,9 @@ int ttk::BackendTopologicalOptimization::execute(
     //            Optimization
     //=======================================
 
-    ttk::DiagramType currentConstraintDiagram = constraintDiagram;
     std::vector<std::vector<SimplexId>> pair2MatchedPair(
-      currentConstraintDiagram.size(), std::vector<SimplexId>(2));
-    std::vector<SimplexId> pairChangeMatchingPair(
-      currentConstraintDiagram.size(), -1);
+      constraintDiagram.size(), std::vector<SimplexId>(2));
+    std::vector<SimplexId> pairChangeMatchingPair(constraintDiagram.size(), -1);
     std::vector<int64_t> listAllIndicesToChange(vertexNumber_, 0);
     std::vector<std::vector<SimplexId>> pair2Delete(
       vertexNumber_, std::vector<SimplexId>());
@@ -1607,7 +1599,7 @@ int ttk::BackendTopologicalOptimization::execute(
       // order to match our current diagram to our target diagram.
       getIndices(
         triangulation, inputOffsetsCopie, inputScalarsX.data(),
-        currentConstraintDiagram, i, listAllIndicesToChange, pair2MatchedPair,
+        constraintDiagram, i, listAllIndicesToChange, pair2MatchedPair,
         pair2Delete, pairChangeMatchingPair, birthPairToDeleteCurrentDiagram,
         birthPairToDeleteTargetDiagram, deathPairToDeleteCurrentDiagram,
         deathPairToDeleteTargetDiagram, birthPairToChangeCurrentDiagram,
