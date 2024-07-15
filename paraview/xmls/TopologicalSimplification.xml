@@ -144,25 +144,37 @@ Identifiers.
       </StringVectorProperty>
 
       <IntVectorProperty
+        name="Method"
+        label="Backend"
+        command="SetMethod"
+        number_of_elements="1"
+        default_values="0"
+        panel_visibility="advanced" >
+        <EnumerationDomain name="enum">
+          <Entry value="0" text="LTS (IEEE VIS 2020)"/>
+          <Entry value="1" text="LEGACY (IEEE VIS 2012)"/>
+          <Entry value="2" text="Numerical Optimization (2024)"/>
+        </EnumerationDomain>                      
+        <Documentation>
+          Choose the simplification algorithm.
+        </Documentation>
+      </IntVectorProperty>
+
+      <IntVectorProperty
         name="ForceInputOffsetScalarField"
         command="SetForceInputOffsetScalarField"
         label="Force Input Offset Field"
         number_of_elements="1"
         panel_visibility="advanced"
         default_values="0">
-        <BooleanDomain name="bool" />
-        <Hints>
+      <BooleanDomain name="bool" />
+      <Hints>
           <PropertyWidgetDecorator type="GenericDecorator"
                                    mode="visibility"
                                    property="Method"
-                                   value="0" />
-
-          <PropertyWidgetDecorator type="GenericDecorator"
-                                   mode="visibility"
-                                   property="Method"
-                                   value="1" />
+                                   values="0 1" />
           <!-- enable this widget when <property> equals <value> -->
-        </Hints>
+      </Hints>
         <Documentation>
           Check this box to force the usage of a specific input scalar field
           as vertex offset (used to disambiguate flat plateaus).
@@ -197,22 +209,6 @@ Identifiers.
         </Documentation>
       </StringVectorProperty>
 
-      <IntVectorProperty
-        name="Method"
-        label="Method"
-        command="SetMethod"
-        number_of_elements="1"
-        default_values="0"
-        panel_visibility="advanced" >
-        <EnumerationDomain name="enum">
-          <Entry value="0" text="LTS                        2020"/>
-          <Entry value="1" text="LEGACY                     2012"/>
-          <Entry value="2" text="Topological Optimization   2024"/>
-        </EnumerationDomain>                      
-        <Documentation>
-          Choose the simplification algorithm.
-        </Documentation>
-      </IntVectorProperty>
 
       <IntVectorProperty name="ForceInputVertexScalarField"
         label="Force Input Vertex ScalarField"
@@ -708,15 +704,10 @@ Identifiers.
         <BooleanDomain name="bool" />
         <Hints>
           <PropertyWidgetDecorator type="GenericDecorator"
-                                mode="visibility"
-                                property="Method"
-                                value="0" />
-
-          <PropertyWidgetDecorator type="GenericDecorator"
-                                mode="visibility"
-                                property="Method"
-                                value="1" />
-        <!-- enable this widget when <property> equals <value> -->
+                                   mode="visibility"
+                                   property="Method"
+                                   values="0 1" />
+          <!-- enable this widget when <property> equals <value> -->
         </Hints>
         <Documentation>
           Numerically perturb the output (to avoid the usage of an output
@@ -729,10 +720,6 @@ Identifiers.
       <PropertyGroup panel_widget="Line" label="Input options">
         <Property name="Scalar Field" />
         <Property name="Method" />
-        <Property name="AddPerturbation" />
-      </PropertyGroup>
-
-      <PropertyGroup panel_widget="Line" label="Method options">
         <Property name="MethodOptimization" />
         <Property name="PDCMethod" />
         <Property name="CoefStopCondition" />
@@ -756,6 +743,10 @@ Identifiers.
         <Property name="ChooseLearningRate"/>
         <Property name="LearningRate"/>
         <Property name="Alpha"/>
+      </PropertyGroup>
+
+      <PropertyGroup panel_widget="Line" label="Output options">
+        <Property name="AddPerturbation" />
       </PropertyGroup>
 
       <Hints>
