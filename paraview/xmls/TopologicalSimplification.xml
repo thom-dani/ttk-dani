@@ -152,7 +152,7 @@ Identifiers.
         panel_visibility="advanced" >
         <EnumerationDomain name="enum">
           <Entry value="0" text="LTS (IEEE VIS 2020)"/>
-          <Entry value="1" text="LEGACY (IEEE VIS 2012)"/>
+          <Entry value="1" text="Legacy Approach (IEEE VIS 2012)"/>
           <Entry value="2" text="Numerical Optimization (2024)"/>
         </EnumerationDomain>                      
         <Documentation>
@@ -276,16 +276,17 @@ Identifiers.
         </Documentation>
       </IntVectorProperty>
 
-      
-
-      <IntVectorProperty
-        name="UseFastPersistenceUpdate"
-        command="SetUseFastPersistenceUpdate"
-        label="Fast Persistence Update"
+       <IntVectorProperty
+        name="MethodOptimization"
+        label="Gradient Descent Backend"
+        command="SetMethodOptimization"
         number_of_elements="1"
-        panel_visibility="advanced"
-        default_values="1">
-        <BooleanDomain name="bool" />
+        default_values="0"
+        panel_visibility="advanced" >
+        <EnumerationDomain name="enum">
+          <Entry value="0" text="Direct gradient descent"/>
+          <Entry value="1" text="Adam (requires TORCH)"/>
+        </EnumerationDomain>
         <Hints>
           <PropertyWidgetDecorator type="GenericDecorator"
                                    mode="visibility"
@@ -294,47 +295,8 @@ Identifiers.
           <!-- enable this widget when <property> equals <value> -->
         </Hints>
         <Documentation>
-          Check this box to use fast persistence update.
+          Employed backend for gradient descent. Direct gradient descent provides superior time performance with regard to automatic differentiation with Adam.
         </Documentation>
-      </IntVectorProperty>
-
-      <IntVectorProperty
-        name="FastAssignmentUpdate"
-        command="SetFastAssignmentUpdate"
-        label="Fast Assignment Update"
-        number_of_elements="1"
-        panel_visibility="advanced"
-        default_values="1">
-        <BooleanDomain name="bool" />
-        <Hints>
-          <PropertyWidgetDecorator type="GenericDecorator"
-                                   mode="visibility"
-                                   property="Method"
-                                   value="2" />
-          <!-- enable this widget when <property> equals <value> -->
-        </Hints>
-        <Documentation>
-          Check this box to use the fast assignement update.
-        </Documentation>
-      </IntVectorProperty> 
-
-      <IntVectorProperty
-          name="EpochNumber"
-          label="Maximum Iteration Number"
-          command="SetEpochNumber"
-          number_of_elements="1"
-          default_values="1000"
-          >
-        <Hints>
-          <PropertyWidgetDecorator type="GenericDecorator"
-                                   mode="visibility"
-                                   property="Method"
-                                   value="2" />
-          <!-- enable this widget when <property> equals <value> -->
-        </Hints>
-        <Documentation>
-        Maximum Iteration Number (if the stopping condition has not been satisfied yet).
-      </Documentation>
       </IntVectorProperty>
 
       <IntVectorProperty
@@ -363,16 +325,33 @@ Identifiers.
       </IntVectorProperty>
 
       <IntVectorProperty
-        name="MethodOptimization"
-        label="Gradient Descent Backend"
-        command="SetMethodOptimization"
+        name="UseFastPersistenceUpdate"
+        command="SetUseFastPersistenceUpdate"
+        label="Fast Persistence Update"
         number_of_elements="1"
-        default_values="0"
-        panel_visibility="advanced" >
-        <EnumerationDomain name="enum">
-          <Entry value="0" text="Direct gradient descent"/>
-          <Entry value="1" text="Adam (requires TORCH)"/>
-        </EnumerationDomain>
+        panel_visibility="advanced"
+        default_values="1">
+        <BooleanDomain name="bool" />
+        <Hints>
+          <PropertyWidgetDecorator type="GenericDecorator"
+                                  mode="visibility"
+                                  property="Method"
+                                  value="2" />
+        <!-- enable this widget when <property> equals <value> -->
+        </Hints>
+        <Documentation>
+          Check this box to use fast persistence update (i.e. the persistence diagram will not be completely recomputed from scratch but only the required information will be updated).
+        </Documentation>
+      </IntVectorProperty>
+
+      <IntVectorProperty
+        name="FastAssignmentUpdate"
+        command="SetFastAssignmentUpdate"
+        label="Fast Assignment Update"
+        number_of_elements="1"
+        panel_visibility="advanced"
+        default_values="1">
+        <BooleanDomain name="bool" />
         <Hints>
           <PropertyWidgetDecorator type="GenericDecorator"
                                    mode="visibility"
@@ -381,21 +360,65 @@ Identifiers.
           <!-- enable this widget when <property> equals <value> -->
         </Hints>
         <Documentation>
-          Employed backend for gradient descent. Direct gradient descent provides superior time performance with regard to automatic differentiation with Adam.
+          Check this box to use the fast assignement update (i.e. persistence pairs which are still between consecutive iterations will maintain their assignments).
         </Documentation>
+      </IntVectorProperty> 
+
+
+      <DoubleVectorProperty
+        name="CoefStopCondition"
+        label="Stopping Condition Coefficient"
+        command="SetCoefStopCondition"
+        number_of_elements="1"
+        default_values="0.01"
+        >
+        <Hints>
+          <PropertyWidgetDecorator type="GenericDecorator"
+                                  mode="visibility"
+                                  property="Method"
+                                  value="2" />
+        <!-- enable this widget when <property> equals <value> -->
+        </Hints>
+        <Documentation>
+          Coefficient used in the stopping condition of the algorithm: if the fraction between the current loss and the original loss (between the input and simplified diagrams) is smaller that this coefficient, the algorithm stops.
+        </Documentation>
+      </DoubleVectorProperty>
+
+
+
+
+      <IntVectorProperty
+          name="EpochNumber"
+          label="Maximum Iteration Number"
+          command="SetEpochNumber"
+          number_of_elements="1"
+          default_values="1000"
+          >
+        <Hints>
+          <PropertyWidgetDecorator type="GenericDecorator"
+                                   mode="visibility"
+                                   property="Method"
+                                   value="2" />
+          <!-- enable this widget when <property> equals <value> -->
+        </Hints>
+        <Documentation>
+        Maximum Iteration Number (if the stopping condition has not been satisfied yet).
+      </Documentation>
       </IntVectorProperty>
+
+
 
       <IntVectorProperty
           name="FinePairManagement"
-          label="Fine Pair Management"
+          label="Cancellation Primitive"
           command="SetFinePairManagement"
           number_of_elements="1"
          default_values="0"
          panel_visibility="advanced" >
          <EnumerationDomain name="enum">
-          <Entry value="0" text="Choose removal method"/>
-          <Entry value="1" text="Fill The Domain"/>
-          <Entry value="2" text="Cut Domain"/>
+          <Entry value="0" text="Fill and Cut"/>
+          <Entry value="1" text="Fill-only"/>
+          <Entry value="2" text="Cut-only"/>
         </EnumerationDomain>
         <Hints>
           <PropertyWidgetDecorator type="GenericDecorator"
@@ -405,7 +428,7 @@ Identifiers.
           <!-- enable this widget when <property> equals <value> -->
         </Hints>
         <Documentation>
-          Fine management of pairs of the deletion method
+          Select the persistence pair cancellation primitive. For illustration, for pairs associated to topological handles of the sublevel sets, the primitive Fill-only will destroy a handle by filling a disc in its inside (only the death gradient is used). Cut-only will cut the handle (only the birth gradient is used). Fill and Cut will produce a compromise between the two (both birth and death gradients are used).
         </Documentation>
       </IntVectorProperty>
 
@@ -466,7 +489,7 @@ Identifiers.
 
       <DoubleVectorProperty
           name="Alpha"
-          label="Alpha"
+          label="Gradient Step Size"
           command="SetAlpha"
           number_of_elements="1"
           default_values="0.5"
@@ -485,28 +508,10 @@ Identifiers.
           <!-- enable this widget when <property> equals <value> -->
         </Hints>
         <Documentation>
-        Choose the gradient step.
+        Choose the gradient step size.
         </Documentation>
       </DoubleVectorProperty>
 
-      <DoubleVectorProperty
-        name="CoefStopCondition"
-        label="Stopping Condition Coefficient"
-        command="SetCoefStopCondition"
-        number_of_elements="1"
-        default_values="0.01"
-        >
-        <Hints>
-          <PropertyWidgetDecorator type="GenericDecorator"
-                                  mode="visibility"
-                                  property="Method"
-                                  value="2" />
-        <!-- enable this widget when <property> equals <value> -->
-        </Hints>
-        <Documentation>
-          Coefficient used in the stopping condition of the algorithm: if the fraction between the current loss and the original loss (between the input and simplified diagrams) is smaller that this coefficient, the algorithm stops.
-        </Documentation>
-      </DoubleVectorProperty>
       
       <IntVectorProperty
         name="ConstraintAveraging"
@@ -717,10 +722,6 @@ Identifiers.
       <PropertyGroup panel_widget="Line" label="Input options">
         <Property name="Scalar Field" />
         <Property name="Method" />
-        <Property name="MethodOptimization" />
-        <Property name="PDCMethod" />
-        <Property name="CoefStopCondition" />
-        <Property name="EpochNumber" />
         <Property name="ForceInputVertexScalarField" />
         <Property name="Vertex Identifier Field" />
         <Property name="ForceInputOffsetScalarField" />
@@ -728,18 +729,19 @@ Identifiers.
         <Property name="ConsiderIdentifierAsBlackList" />
       </PropertyGroup>
 
-      <PropertyGroup panel_widget="Line" label="Acceleration options">
+      <PropertyGroup panel_widget="Line" label="Solver options">
+        <Property name="MethodOptimization" />
+        <Property name="PDCMethod" />
         <Property name="UseFastPersistenceUpdate" />
         <Property name="FastAssignmentUpdate" />
-        <Property name="OptimizationWithoutMatching" />
-        <Property name="ConstraintAveraging" />
-      </PropertyGroup>
-
-      <PropertyGroup panel_widget="Line" label="Optimization options">
+        <Property name="CoefStopCondition" />
+        <Property name="EpochNumber" />
         <Property name="FinePairManagement"/>
         <Property name="ChooseLearningRate"/>
         <Property name="LearningRate"/>
         <Property name="Alpha"/>
+        <Property name="ConstraintAveraging" />
+        <Property name="OptimizationWithoutMatching" />
       </PropertyGroup>
 
       <PropertyGroup panel_widget="Line" label="Output options">
