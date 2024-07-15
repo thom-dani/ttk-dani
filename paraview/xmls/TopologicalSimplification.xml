@@ -281,10 +281,10 @@ Identifiers.
       <IntVectorProperty
         name="UseFastPersistenceUpdate"
         command="SetUseFastPersistenceUpdate"
-        label="Use Fast Persistence Update"
+        label="Fast Persistence Update"
         number_of_elements="1"
         panel_visibility="advanced"
-        default_values="0">
+        default_values="1">
         <BooleanDomain name="bool" />
         <Hints>
           <PropertyWidgetDecorator type="GenericDecorator"
@@ -301,10 +301,10 @@ Identifiers.
       <IntVectorProperty
         name="FastAssignmentUpdate"
         command="SetFastAssignmentUpdate"
-        label="Use Fast Assignment Update"
+        label="Fast Assignment Update"
         number_of_elements="1"
         panel_visibility="advanced"
-        default_values="0">
+        default_values="1">
         <BooleanDomain name="bool" />
         <Hints>
           <PropertyWidgetDecorator type="GenericDecorator"
@@ -320,7 +320,7 @@ Identifiers.
 
       <IntVectorProperty
           name="EpochNumber"
-          label="Epoch number"
+          label="Maximum Iteration Number"
           command="SetEpochNumber"
           number_of_elements="1"
           default_values="1000"
@@ -333,20 +333,20 @@ Identifiers.
           <!-- enable this widget when <property> equals <value> -->
         </Hints>
         <Documentation>
-        Epoch Number.
+        Maximum Iteration Number (if the stopping condition has not been satisfied yet).
       </Documentation>
       </IntVectorProperty>
 
       <IntVectorProperty
           name="PDCMethod"
-          label="PDC Method"
+          label="Wasserstein Distance Backend"
           command="SetPDCMethod"
           number_of_elements="1"
          default_values="1"
          panel_visibility="advanced" >
          <EnumerationDomain name="enum">
-          <Entry value="0" text="Progressive approach"/>
-          <Entry value="1" text="Classical Auction approach"/>
+          <Entry value="0" text="Progressive Approach"/>
+          <Entry value="1" text="Classical Auction"/>
         </EnumerationDomain>
         <Hints>
           <PropertyWidgetDecorator type="GenericDecorator"
@@ -356,22 +356,22 @@ Identifiers.
           <!-- enable this widget when <property> equals <value> -->
         </Hints>
         <Documentation>
-          Type of algorithm for the computation of the barycenter.
+          Backend for Wasserstein distance computation.
           The Auction algorithm is computationally more expensive than
-          the progressive approach.
+          the progressive approach, but more accurate.
         </Documentation>
       </IntVectorProperty>
 
       <IntVectorProperty
         name="MethodOptimization"
-        label="Optimization method"
+        label="Gradient Descent Backend"
         command="SetMethodOptimization"
         number_of_elements="1"
         default_values="0"
         panel_visibility="advanced" >
         <EnumerationDomain name="enum">
           <Entry value="0" text="Direct gradient descent"/>
-          <Entry value="1" text="Adam optimizer"/>
+          <Entry value="1" text="Adam (requires TORCH)"/>
         </EnumerationDomain>
         <Hints>
           <PropertyWidgetDecorator type="GenericDecorator"
@@ -381,9 +381,7 @@ Identifiers.
           <!-- enable this widget when <property> equals <value> -->
         </Hints>
         <Documentation>
-          Choose the optimization method.
-          MethodOptimization == 0 : direct gradient descent.
-          MethodOptimization == 1 : automatic differentiation and the Adam optimizer.  
+          Employed backend for gradient descent. Direct gradient descent provides superior time performance with regard to automatic differentiation with Adam.
         </Documentation>
       </IntVectorProperty>
 
@@ -493,7 +491,7 @@ Identifiers.
 
       <DoubleVectorProperty
         name="CoefStopCondition"
-        label="Stop Condition Coefficient"
+        label="Stopping Condition Coefficient"
         command="SetCoefStopCondition"
         number_of_elements="1"
         default_values="0.01"
@@ -506,15 +504,14 @@ Identifiers.
         <!-- enable this widget when <property> equals <value> -->
         </Hints>
         <Documentation>
-          Stopping criterion: when the loss becomes less than a percentage (e.g. 1%) of the original loss (between input diagram and simplified diagram).
+          Coefficient used in the stopping condition of the algorithm: if the fraction between the current loss and the original loss (between the input and simplified diagrams) is smaller that this coefficient, the algorithm stops.
         </Documentation>
       </DoubleVectorProperty>
-
       
       <IntVectorProperty
         name="ConstraintAveraging"
         command="SetConstraintAveraging"
-        label="Use Constraint Averaging"
+        label="Constraint Averaging"
         number_of_elements="1"
         panel_visibility="advanced"
         default_values="1">
@@ -534,7 +531,7 @@ Identifiers.
       <IntVectorProperty
         name="OptimizationWithoutMatching"
         command="SetOptimizationWithoutMatching"
-        label="Use Optimization Without Matching"
+        label="Optimization Without Matching"
         number_of_elements="1"
         panel_visibility="advanced"
         default_values="0">
