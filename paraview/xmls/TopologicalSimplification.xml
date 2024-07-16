@@ -52,7 +52,7 @@ Identifiers.
         - https://topology-tool-kit.github.io/examples/BuiltInExample1/
 
         - https://topology-tool-kit.github.io/examples/contourTreeAlignment/
-        
+
         - https://topology-tool-kit.github.io/examples/ctBones/
 
         - https://topology-tool-kit.github.io/examples/dragon/
@@ -66,7 +66,7 @@ Identifiers.
         - https://topology-tool-kit.github.io/examples/karhunenLoveDigits64Dimensions/
 
         - https://topology-tool-kit.github.io/examples/morsePersistence/
-        
+
         - https://topology-tool-kit.github.io/examples/morseSmaleQuadrangulation/
 
         - https://topology-tool-kit.github.io/examples/persistenceClustering0/
@@ -82,7 +82,7 @@ Identifiers.
         - https://topology-tool-kit.github.io/examples/tectonicPuzzle/
 
         - https://topology-tool-kit.github.io/examples/tribute/
-        
+
         - https://topology-tool-kit.github.io/examples/uncertainStartingVortex/
 
 
@@ -149,7 +149,7 @@ Identifiers.
         command="SetMethod"
         number_of_elements="1"
         default_values="0"
-        panel_visibility="advanced" >
+        >
         <EnumerationDomain name="enum">
           <Entry value="0" text="LTS (IEEE VIS 2020)"/>
           <Entry value="1" text="Legacy Approach (IEEE VIS 2012)"/>
@@ -261,7 +261,9 @@ Identifiers.
         command="SetConsiderIdentifierAsBlackList"
         label="Remove selected extrema"
         number_of_elements="1"
-        default_values="0">
+        default_values="0"
+        panel_visibility="advanced"
+        >
         <BooleanDomain name="bool" />
         <Hints>
           <PropertyWidgetDecorator type="GenericDecorator"
@@ -529,14 +531,14 @@ Identifiers.
         <!-- enable this widget when <property> equals <value> -->
         </Hints>
         <Documentation>
-          Check this box to Use Constraint Averaging.
+          If a given vertex is involved in both signal pairs (i.e. pairs to maintain) and non-signal pairs (i.e. pairs to remove), average the contributions of the constraints (otherwise, the vertex value will not change).
         </Documentation>
       </IntVectorProperty>
 
       <IntVectorProperty
         name="OptimizationWithoutMatching"
         command="SetOptimizationWithoutMatching"
-        label="Optimization Without Matching"
+        label="Online Ad-hoc simplification"
         number_of_elements="1"
         panel_visibility="advanced"
         default_values="0">
@@ -549,7 +551,7 @@ Identifiers.
         <!-- enable this widget when <property> equals <value> -->
         </Hints>
         <Documentation>
-          Check this box to Use Optimization Without Matching.
+          Enable on-line ad-hoc simplification (i.e., specify the non-signal pairs and the non-signal pairs will be re-evaluated at each iteration). Faster but less precise and more restrictive.
         </Documentation>
       </IntVectorProperty>
     
@@ -587,6 +589,7 @@ Identifiers.
           command="SetThreshold"
           number_of_elements="1"
           default_values="0.01"
+           panel_visibility="advanced"
           >
           <Hints>
             <PropertyWidgetDecorator type="GenericDecorator"
@@ -615,7 +618,8 @@ Identifiers.
           label="Lower Threshold"
           command="SetLowerThreshold"
           number_of_elements="1"
-          default_values="-1"
+        default_values="-1"
+         panel_visibility="advanced"
           >
           <Hints>
             <PropertyWidgetDecorator type="GenericDecorator"
@@ -644,7 +648,8 @@ Identifiers.
           label="Upper Threshold"
           command="SetUpperThreshold"
           number_of_elements="1"
-          default_values="2"
+        default_values="2"
+         panel_visibility="advanced"
           >
           <Hints>
             <PropertyWidgetDecorator type="GenericDecorator"
@@ -674,6 +679,7 @@ Identifiers.
         command="SetPairTypeToDelete"
         number_of_elements="1"
         default_values="1"
+         panel_visibility="advanced"
         >
         <Hints>
           <PropertyWidgetDecorator type="GenericDecorator"
@@ -702,7 +708,9 @@ Identifiers.
         command="SetAddPerturbation"
         label="Numerical Perturbation"
         number_of_elements="1"
-        default_values="0">
+        default_values="0"
+        panel_visibility="advanced"
+        >
         <BooleanDomain name="bool" />
         <Hints>
           <PropertyWidgetDecorator type="GenericDecorator"
