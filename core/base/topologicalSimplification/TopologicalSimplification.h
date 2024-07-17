@@ -166,13 +166,13 @@ namespace ttk {
     ttk::BackendTopologicalOptimization PSObject_;
 
     SimplexId vertexNumber_{};
-    bool UseFastPersistenceUpdate{false};
-    bool FastAssignmentUpdate{false};
+    bool UseFastPersistenceUpdate{true};
+    bool FastAssignmentUpdate{true};
     int EpochNumber{1000};
 
     // if PDCMethod == 0 then we use Progressive approach
     // if PDCMethod == 1 then we use Classical Auction approach
-    int PDCMethod{0};
+    int PDCMethod{1};
 
     // if MethodOptimization == 0 then we use direct optimization
     // if MethodOptimization == 1 then we use Adam
@@ -187,8 +187,8 @@ namespace ttk {
     bool ChooseLearningRate{false};
     double LearningRate{0.0001};
 
-    // Direct Optimization
-    double Alpha{0.75};
+    // Direct Optimization : Gradient Step Size
+    double Alpha{0.5};
 
     // Stopping criterion: when the loss becomes less than a percentage (e.g.
     // 1%) of the original loss (between input diagram and simplified diagram)
@@ -196,8 +196,8 @@ namespace ttk {
 
     //
     bool OptimizationWithoutMatching{false};
-    int ThresholdMethod{0};
-    double Threshold{0.0};
+    int ThresholdMethod{1};
+    double Threshold{0.01};
     int LowerThreshold{-1};
     int UpperThreshold{2};
     int PairTypeToDelete{1};

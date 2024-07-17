@@ -1163,11 +1163,13 @@ int ttk::BackendTopologicalOptimization::execute(
   double stoppingCondition = 0;
   bool enableTorch = true;
 
+  if(methodOptimization_ == 1) {
 #ifndef TTK_ENABLE_TORCH
-  this->printWrn("Adam cannot be used because Torch hasn't been found. The "
-                 "code will now default to direct gradient descent.");
-  enableTorch = false;
+    this->printWrn("Adam cannot be used because Torch hasn't been found. The "
+                   "code will now default to direct gradient descent.");
+    enableTorch = false;
 #endif
+  }
 
   //=======================
   //    Copy input data
