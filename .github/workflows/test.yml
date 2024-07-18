@@ -171,6 +171,13 @@ jobs:
         sudo apt update
         sudo python3 -m pip install scikit-learn
 
+    - name: Install Torch
+      shell: bash
+      run: |
+        wget https://download.pytorch.org/libtorch/cpu/libtorch-cxx11-abi-shared-with-deps-2.3.1%2Bcpu.zip
+        unzip libtorch-cxx11-abi-shared-with-deps-2.3.1+cpu.zip
+        sudo cp -R libtorch/* /usr/local/
+
     - name: Fetch TTK-ParaView headless Debian package
       run: |
         wget -O ttk-paraview-headless.deb \
