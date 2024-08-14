@@ -205,8 +205,8 @@ namespace ttk {
 
     template <class dataType>
     dataType forestAssignmentProblem(
-      ftm::FTMTree_MT *tree1,
-      ftm::FTMTree_MT *tree2,
+      ftm::FTMTree_MT *ttkNotUsed(tree1),
+      ftm::FTMTree_MT *ttkNotUsed(tree2),
       std::vector<std::vector<dataType>> &treeTable,
       std::vector<ftm::idNode> &children1,
       std::vector<ftm::idNode> &children2,
@@ -216,35 +216,6 @@ namespace ttk {
       std::vector<std::vector<dataType>> costMatrix(
         nRows + 1, std::vector<dataType>(nCols + 1));
       createCostMatrix(treeTable, children1, children2, costMatrix);
-
-      bool found = false;
-      std::stringstream ss;
-      ss << "==========================================================="
-            "===================="
-         << std::endl;
-      for(unsigned int i = 0; i < costMatrix.size(); ++i) {
-        if(children1[i] != 463 and children1[i] != 485)
-          continue;
-        ss << children1[i] << " : (" << tree1->getValue<dataType>(children1[i])
-           << ", "
-           << tree1->getValue<dataType>(
-                tree1->getNode(children1[i])->getOrigin())
-           << ")" << std::endl;
-        found = true;
-        for(unsigned int j = 0; j < costMatrix[i].size(); ++j) {
-          if(children2[j] != 237 and children2[j] != 229)
-            continue;
-          ss << children2[j] << " : ("
-             << tree2->getValue<dataType>(children2[j]) << ", "
-             << tree2->getValue<dataType>(
-                  tree2->getNode(children2[j])->getOrigin())
-             << ")" << std::endl;
-          ss << costMatrix[i][j] << std::endl;
-        }
-        ss << std::endl;
-      }
-      if(found)
-        std::cout << ss.str();
 
       // assignmentProblemSize[costMatrix.size()*costMatrix[0].size()]++;
 
