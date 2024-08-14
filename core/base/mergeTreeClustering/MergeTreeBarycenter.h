@@ -693,10 +693,24 @@ namespace ttk {
 
       setTreeScalars(baryMergeTree, newScalarsVector);
 
+      std::cout
+        << baryMergeTree.tree.template printPairsFromTree<dataType>(true).str()
+        << std::endl;
+
       std::vector<ftm::idNode> deletedNodesT;
       persistenceThresholding<dataType>(
         &(baryMergeTree.tree), 0, deletedNodesT);
+
+      std::cout
+        << baryMergeTree.tree.template printPairsFromTree<dataType>(true).str()
+        << std::endl;
+
       limitSizeBarycenter(baryMergeTree, trees);
+
+      std::cout
+        << baryMergeTree.tree.template printPairsFromTree<dataType>(true).str()
+        << std::endl;
+
       ftm::cleanMergeTree<dataType>(baryMergeTree);
 
       std::cout
