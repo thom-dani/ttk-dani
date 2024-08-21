@@ -609,6 +609,9 @@ namespace ttk {
       unsigned int indexAddedNodes,
       std::vector<std::vector<std::tuple<ftm::idNode, ftm::idNode, double>>>
         &matchings) {
+
+      std::cout << std::setprecision(15) << std::endl;
+
       ftm::FTMTree_MT *baryTree = &(baryMergeTree.tree);
       bool const isJT = baryTree->isJoinTree<dataType>();
 
@@ -695,7 +698,7 @@ namespace ttk {
       for(unsigned int i = 0; i < newScalarsVector.size(); ++i)
         std::cout << newScalarsVector[i] << std::endl;
 
-      setTreeScalars(baryMergeTree, newScalarsVector);
+      setTreeScalars(baryMergeTree, newScalarsVector, true);
 
       std::cout << std::endl << "before persistenceThresholding" << std::endl;
       std::cout
