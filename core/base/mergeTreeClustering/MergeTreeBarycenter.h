@@ -548,6 +548,9 @@ namespace ttk {
       }
       double const projec = (tempBirth + tempDeath) / 2;
 
+      std::stringstream ss, ss2;
+      ss.precision(64);
+      ss2.precision(64);
       // Compute newBirth and newDeath
       for(unsigned int i = 0; i < trees.size(); ++i) {
         double iBirth = projec, iDeath = projec;
@@ -560,7 +563,19 @@ namespace ttk {
         }
         newBirth += alphas[i] * iBirth;
         newDeath += alphas[i] * iDeath;
+
+        ss << iBirth << " + ";
+        ss2 << iDeath << " + ";
       }
+
+      printMsg(ss.str(), debug::Priority::INFO);
+      std::cout << newBirth << std::endl;
+      printMsg(ss2.str(), debug::Priority::INFO);
+      std::cout << newDeath << std::endl;
+
+      std::cout << static_cast<dataType>(newBirth) << std::endl;
+      std::cout << static_cast<dataType>(newDeath) << std::endl;
+
       if(normalizedWasserstein_) {
         newBirth = newBirth * (mu_max - mu_min) + mu_min;
         newDeath = newDeath * (mu_max - mu_min) + mu_min;
@@ -639,9 +654,19 @@ namespace ttk {
       std::queue<ftm::idNode> queue;
       queue.emplace(root);
       while(!queue.empty()) {
+        std::stringstream ss;
+
         ftm::idNode const node = queue.front();
         queue.pop();
         std::tuple<dataType, dataType> newBirthDeath;
+
+        ss << "================================================================"
+              "==============="
+           << std::endl
+           << node;
+        printMsg(ss.str(), debug::Priority::INFO);
+        ss.str("");
+
         if(node < indexAddedNodes) {
           newBirthDeath
             = interpolation<dataType>(baryMergeTree, node, newScalarsVector,
@@ -665,7 +690,9 @@ namespace ttk {
           queue.emplace(child);
 
         // Print
-        std::stringstream ss;
+        std::cout << std::get<0>(newBirthDeath) << std::endl;
+        std::cout << std::get<1>(newBirthDeath) << std::endl;
+        ss.precision(64);
         ss << node << " : (" << baryTree->getValue<dataType>(node) << ", "
            << baryTree->getValue<dataType>(baryTree->getNode(node)->getOrigin())
            << ") -> (" << nodeScalar << ", " << nodeOriginScalar << ")";
@@ -698,32 +725,14 @@ namespace ttk {
       for(unsigned int i = 0; i < newScalarsVector.size(); ++i)
         std::cout << newScalarsVector[i] << std::endl;
 
-      setTreeScalars(baryMergeTree, newScalarsVector, true);
-
-      std::cout << std::endl << "before persistenceThresholding" << std::endl;
-      std::cout
-        << baryMergeTree.tree.template printPairsFromTree<dataType>(true).str()
-        << std::endl;
+      setTreeScalars(baryMergeTree, newScalarsVector);
 
       std::vector<ftm::idNode> deletedNodesT;
       persistenceThresholding<dataType>(
         &(baryMergeTree.tree), 0, deletedNodesT);
-
-      std::cout << std::endl << "before limitSizeBarycenter" << std::endl;
-      std::cout
-        << baryMergeTree.tree.template printPairsFromTree<dataType>(true).str()
-        << std::endl;
-
       limitSizeBarycenter(baryMergeTree, trees);
-
-      std::cout << std::endl << "before cleanMergeTree" << std::endl;
-      std::cout
-        << baryMergeTree.tree.template printPairsFromTree<dataType>(true).str()
-        << std::endl;
-
       ftm::cleanMergeTree<dataType>(baryMergeTree);
 
-      std::cout << std::endl << "after cleanMergeTree" << std::endl;
       std::cout
         << baryMergeTree.tree.template printPairsFromTree<dataType>(true).str()
         << std::endl;
