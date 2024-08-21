@@ -69,12 +69,13 @@ namespace ttk {
     inline int buildGradient(const void *const scalars,
                              const size_t scalarsMTime,
                              const SimplexId *const offsets,
-                             const triangulationType &triangulation) {
+                             const triangulationType &triangulation,
+                             const std::vector<bool> *updateMask = nullptr) {
       this->dg_.setDebugLevel(this->debugLevel_);
       this->dg_.setThreadNumber(this->threadNumber_);
       this->dg_.setInputOffsets(offsets);
       this->dg_.setInputScalarField(scalars, scalarsMTime);
-      return this->dg_.buildGradient(triangulation);
+      return this->dg_.buildGradient(triangulation, false, updateMask);
     }
 
     /**
@@ -433,24 +434,57 @@ namespace ttk {
       if(dim > 3 || dim < 1) {
         return;
       }
-      this->firstRepMin_.resize(triangulation.getNumberOfVertices());
-      if(dim > 1) {
-        this->firstRepMax_.resize(triangulation.getNumberOfCells());
-      }
-      if(dim > 2) {
-        this->critEdges_.resize(triangulation.getNumberOfEdges());
-        this->edgeTrianglePartner_.resize(triangulation.getNumberOfEdges(), -1);
-        this->onBoundary_.resize(triangulation.getNumberOfEdges(), false);
-        this->s2Mapping_.resize(triangulation.getNumberOfTriangles(), -1);
-        this->s1Mapping_.resize(triangulation.getNumberOfEdges(), -1);
-      }
-      for(int i = 0; i < dim + 1; ++i) {
-        this->pairedCritCells_[i].resize(
-          this->dg_.getNumberOfCells(i, triangulation), false);
-      }
-      for(int i = 1; i < dim + 1; ++i) {
-        this->critCellsOrder_[i].resize(
-          this->dg_.getNumberOfCells(i, triangulation), -1);
+#ifdef TTK_ENABLE_OPENMP
+#pragma omp parallel master num_threads(threadNumber_)
+#endif
+      {
+#ifdef TTK_ENABLE_OPENMP
+#pragma omp task
+#endif // TTK_ENABLE_OPENMP
+        this->firstRepMin_.resize(triangulation.getNumberOfVertices());
+        if(dim > 1) {
+#ifdef TTK_ENABLE_OPENMP
+#pragma omp task
+#endif
+          this->firstRepMax_.resize(triangulation.getNumberOfCells());
+        }
+        if(dim > 2) {
+#ifdef TTK_ENABLE_OPENMP
+#pragma omp task
+#endif
+          this->critEdges_.resize(triangulation.getNumberOfEdges());
+#ifdef TTK_ENABLE_OPENMP
+#pragma omp task
+#endif
+          this->edgeTrianglePartner_.resize(
+            triangulation.getNumberOfEdges(), -1);
+#ifdef TTK_ENABLE_OPENMP
+#pragma omp task
+#endif
+          this->onBoundary_.resize(triangulation.getNumberOfEdges(), false);
+#ifdef TTK_ENABLE_OPENMP
+#pragma omp task
+#endif
+          this->s2Mapping_.resize(triangulation.getNumberOfTriangles(), -1);
+#ifdef TTK_ENABLE_OPENMP
+#pragma omp task
+#endif
+          this->s1Mapping_.resize(triangulation.getNumberOfEdges(), -1);
+        }
+        for(int i = 0; i < dim + 1; ++i) {
+#ifdef TTK_ENABLE_OPENMP
+#pragma omp task
+#endif
+          this->pairedCritCells_[i].resize(
+            this->dg_.getNumberOfCells(i, triangulation), false);
+        }
+        for(int i = 1; i < dim + 1; ++i) {
+#ifdef TTK_ENABLE_OPENMP
+#pragma omp task
+#endif
+          this->critCellsOrder_[i].resize(
+            this->dg_.getNumberOfCells(i, triangulation), -1);
+        }
       }
       this->printMsg("Memory allocations", 1.0, tm.getElapsedTime(), 1,
                      debug::LineMode::NEW, debug::Priority::DETAIL);
@@ -962,6 +996,7 @@ void ttk::DiscreteMorseSandwich::getSaddleSaddlePairs(
   Timer tmseq{};
 
   // extract saddle-saddle pairs from computed boundaries
+
   for(size_t i = 0; i < saddles2.size(); ++i) {
     if(!s2Boundaries[i].empty()) {
       const auto s2 = saddles2[i];

@@ -33,6 +33,9 @@
 ///   href="https://topology-tool-kit.github.io/examples/mergeTreePGA/">Merge
 ///   Tree Principal Geodesic Analysis example</a> \n
 ///   - <a
+///   href="https://topology-tool-kit.github.io/examples/mergeTreeWAE/">Merge
+///   Tree Wasserstein Auto-Encoder example</a> \n
+///   - <a
 ///   href="https://topology-tool-kit.github.io/examples/morseMolecule/">
 ///   Morse Molecule example</a> \n
 ///   - <a
@@ -116,6 +119,9 @@ int ttk::ScalarFieldSmoother::smooth(const triangulationType *triangulation,
   dataType *outputData = (dataType *)outputData_;
   dataType *inputData = (dataType *)inputData_;
   // init the output
+#ifdef TTK_ENABLE_OPENMP
+#pragma omp parallel for num_threads(threadNumber_)
+#endif // TTK_ENABLE_OPENMP
   for(SimplexId i = 0; i < vertexNumber; i++) {
     for(int j = 0; j < dimensionNumber_; j++) {
       outputData[dimensionNumber_ * i + j]
@@ -156,6 +162,9 @@ int ttk::ScalarFieldSmoother::smooth(const triangulationType *triangulation,
 
     if(numberOfIterations) {
       // assign the tmpData back to the output
+#ifdef TTK_ENABLE_OPENMP
+#pragma omp parallel for num_threads(threadNumber_)
+#endif // TTK_ENABLE_OPENMP
       for(SimplexId i = 0; i < vertexNumber; i++) {
         for(int j = 0; j < dimensionNumber_; j++) {
           // only set value for unmasked points

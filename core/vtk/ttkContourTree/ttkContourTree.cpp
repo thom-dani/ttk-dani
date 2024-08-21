@@ -9,6 +9,7 @@
 #include <vtkInformationVector.h>
 #include <vtkPolyData.h>
 #include <vtkThreshold.h>
+#include <vtkVersionMacros.h>
 
 vtkStandardNewMacro(ttkContourTree);
 
@@ -133,10 +134,8 @@ int ttkContourTree::RequestData(vtkInformation *ttkNotUsed(request),
   // now proceed for each triangulation obtained.
 
   if(preconditionTriangulation() == 0) {
-#ifndef TTK_ENABLE_KAMIKAZE
     this->printErr("Error : wrong triangulation.");
     return 0;
-#endif
   }
 
   // Fill the vector of scalar/offset, cut the array in pieces if needed
@@ -214,8 +213,9 @@ int ttkContourTree::getOffsets() {
 
   offsets_.resize(nbCC_);
   for(int cc = 0; cc < nbCC_; cc++) {
-    const auto offsets = this->GetOrderArray(
-      connected_components_[cc], 0, 1, ForceInputOffsetScalarField);
+    const auto offsets
+      = this->GetOrderArray(connected_components_[cc], 0, triangulation_[cc],
+                            false, 1, ForceInputOffsetScalarField);
 
     offsets_[cc].resize(connected_components_[cc]->GetNumberOfPoints());
 
@@ -262,12 +262,10 @@ int ttkContourTree::preconditionTriangulation() {
   for(int cc = 0; cc < nbCC_; cc++) {
     triangulation_[cc]
       = ttkAlgorithm::GetTriangulation(connected_components_[cc]);
-#ifndef TTK_ENABLE_KAMIKAZE
     if(!triangulation_[cc]) {
       this->printErr("Error : ttkTriangulation::getTriangulation() is null.");
       return 0;
     }
-#endif
 
     ftmTree_[cc].tree.setDebugLevel(debugLevel_);
     ftmTree_[cc].tree.setThreadNumber(threadNumber_);

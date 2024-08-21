@@ -18,6 +18,9 @@ using namespace ttk;
 DimensionReduction::DimensionReduction() {
   this->setDebugMsgPrefix("DimensionReduction");
 
+  // default backend
+  this->setInputMethod(METHOD::MDS);
+
 #ifdef TTK_ENABLE_SCIKIT_LEARN
   auto finalize_callback = []() { Py_Finalize(); };
 
@@ -39,39 +42,19 @@ DimensionReduction::DimensionReduction() {
 #endif
 }
 
-bool DimensionReduction::isPythonFound() const {
-#ifdef TTK_ENABLE_SCIKIT_LEARN
-  return true;
-#else
-  this->printErr("Warning: scikit-learn support disabled: Python/Numpy may "
-                 "not be installed properly");
-  this->printErr("Module features disabled.");
-  return false;
-#endif
-}
-
 int DimensionReduction::execute(
   std::vector<std::vector<double>> &outputEmbedding,
-  int *insertionTimeForTopomap,
   const std::vector<double> &inputMatrix,
   const int nRows,
-  const int nColumns) const {
+  const int nColumns,
+  int *insertionTimeForTopomap) const {
 
-#ifdef TTK_ENABLE_SCIKIT_LEARN
-#ifndef TTK_ENABLE_KAMIKAZE
-  if(majorVersion_ < '3')
-    return -1;
-  if(ModulePath.empty())
-    return -2;
-  if(ModuleName.empty())
-    return -3;
-  if(FunctionName.empty())
-    return -4;
+#ifndef TTK_ENABLE_SCIKIT_LEARN
+  TTK_FORCE_USE(nColumns);
 #endif
 
   Timer t;
 
-  const int numberOfComponents = std::max(2, this->NumberOfComponents);
   if(this->Method == METHOD::TOPOMAP) {
     TopoMap topomap(
       this->topomap_AngularSampleNb, topomap_CheckMST, topomap_Strategy);
@@ -93,6 +76,20 @@ int DimensionReduction::execute(
       "Computed TopoMap", 1.0, t.getElapsedTime(), this->threadNumber_);
     return 0;
   }
+
+#ifdef TTK_ENABLE_SCIKIT_LEARN
+#ifndef TTK_ENABLE_KAMIKAZE
+  if(majorVersion_ < '3')
+    return -1;
+  if(ModulePath.empty())
+    return -2;
+  if(ModuleName.empty())
+    return -3;
+  if(FunctionName.empty())
+    return -4;
+#endif
+
+  const int numberOfComponents = std::max(2, this->NumberOfComponents);
 
   const int numberOfNeighbors = std::max(1, this->NumberOfNeighbors);
 
