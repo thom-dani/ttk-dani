@@ -691,8 +691,13 @@ namespace ttk {
         newScalarsVector[mergedRootOrigin] = mergedRootOriginScalar;
       }
 
+      std::cout << std::endl << "before setTreeScalars" << std::endl;
+      for(unsigned int i = 0; i < newScalarsVector.size(); ++i)
+        std::cout << newScalarsVector[i] << std::endl;
+
       setTreeScalars(baryMergeTree, newScalarsVector);
 
+      std::cout << std::endl << "before persistenceThresholding" << std::endl;
       std::cout
         << baryMergeTree.tree.template printPairsFromTree<dataType>(true).str()
         << std::endl;
@@ -701,18 +706,21 @@ namespace ttk {
       persistenceThresholding<dataType>(
         &(baryMergeTree.tree), 0, deletedNodesT);
 
+      std::cout << std::endl << "before limitSizeBarycenter" << std::endl;
       std::cout
         << baryMergeTree.tree.template printPairsFromTree<dataType>(true).str()
         << std::endl;
 
       limitSizeBarycenter(baryMergeTree, trees);
 
+      std::cout << std::endl << "before cleanMergeTree" << std::endl;
       std::cout
         << baryMergeTree.tree.template printPairsFromTree<dataType>(true).str()
         << std::endl;
 
       ftm::cleanMergeTree<dataType>(baryMergeTree);
 
+      std::cout << std::endl << "after cleanMergeTree" << std::endl;
       std::cout
         << baryMergeTree.tree.template printPairsFromTree<dataType>(true).str()
         << std::endl;

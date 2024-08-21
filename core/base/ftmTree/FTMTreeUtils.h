@@ -143,8 +143,23 @@ namespace ttk {
                         std::vector<dataType> &scalarsVector) {
       mergeTree.scalarsValues
         = std::make_shared<std::vector<dataType>>(scalarsVector);
+
+      std::cout << std::endl << "before void *" << std::endl;
+      for(unsigned int i = 0; i < mergeTree.scalarsValues->size(); ++i)
+        std::cout << (*mergeTree.scalarsValues)[i] << std::endl;
+
       mergeTree.scalars->values = (void *)(mergeTree.scalarsValues->data());
       mergeTree.scalars->size = mergeTree.scalarsValues->size();
+
+      std::cout << std::endl << "after void *" << std::endl;
+      for(unsigned int i = 0; i < mergeTree.scalarsValues->size(); ++i)
+        std::cout << static_cast<dataType *>(mergeTree.scalars->values)[i]
+                  << std::endl;
+
+      auto temp = static_cast<void *>(mergeTree.scalarsValues->data());
+      std::cout << std::endl << "after temp" << std::endl;
+      for(unsigned int i = 0; i < mergeTree.scalarsValues->size(); ++i)
+        std::cout << static_cast<dataType *>(temp)[i] << std::endl;
     }
 
     template <class dataType>
