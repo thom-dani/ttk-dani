@@ -451,6 +451,14 @@ jobs:
         echo "$PV_DIR/bin" >> $GITHUB_PATH
         echo "$TTK_DIR/bin" >> $GITHUB_PATH
         conda info --all
+        echo "LISTING $CONDA_ROOT/"
+        ls -lh $CONDA_ROOT/
+        echo "LISTING $CONDA_ROOT/bin"
+        ls -lh $CONDA_ROOT/bin
+        echo "LISTING $CONDA_ROOT/lib"
+        ls -lh $CONDA_ROOT/lib
+        echo "LISTING $CONDA_ROOT/share"
+        ls -lh $CONDA_ROOT/share
 
     - name: Remove hosted Python
       shell: bash
