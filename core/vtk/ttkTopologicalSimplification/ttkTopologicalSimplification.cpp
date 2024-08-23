@@ -53,7 +53,7 @@ int ttkTopologicalSimplification::RequestData(
   } else if(this->Method == 1) {
     this->setBackend(BACKEND::LEGACY);
   } else if(this->Method == 2) {
-    this->setBackend(BACKEND::PS);
+    this->setBackend(BACKEND::TO);
   }
 
   const auto domain = vtkDataSet::GetData(inputVector[0]);
