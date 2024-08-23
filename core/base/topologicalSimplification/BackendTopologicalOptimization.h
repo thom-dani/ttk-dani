@@ -1165,8 +1165,8 @@ int ttk::BackendTopologicalOptimization::execute(
 
   if(methodOptimization_ == 1) {
 #ifndef TTK_ENABLE_TORCH
-    this->printWrn("Adam cannot be used because Torch hasn't been found. The "
-                   "code will now default to direct gradient descent.");
+    this->printWrn("Adam unavailable (Torch not found).");
+    this->printWrn("Using direct gradient descent.");
     enableTorch = false;
 #endif
   }
