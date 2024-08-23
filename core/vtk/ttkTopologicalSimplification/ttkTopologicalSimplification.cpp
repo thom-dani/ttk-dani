@@ -48,11 +48,6 @@ int ttkTopologicalSimplification::RequestData(
 
   using ttk::SimplexId;
 
-  // Warning: this needs to be done before the preconditioning.
-  // if(!this->UseLTS) {
-  //   this->setBackend(BACKEND::LEGACY);
-  // }
-
   if(this->Method == 0) {
     this->setBackend(BACKEND::LTS);
   } else if(this->Method == 1) {
