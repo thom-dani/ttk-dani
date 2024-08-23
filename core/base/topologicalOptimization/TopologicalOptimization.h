@@ -54,17 +54,17 @@ namespace ttk {
       dataType *const inputScalars,
       const ttk::DiagramType &constraintDiagram,
       int epoch,
-      std::vector<int64_t> &listAllIndicesToChange,
+      std::vector<SimplexId> &listAllIndicesToChange,
       std::vector<std::vector<SimplexId>> &pair2MatchedPair,
       std::vector<std::vector<SimplexId>> &pair2Delete,
       std::vector<SimplexId> &pairChangeMatchingPair,
-      std::vector<int64_t> &birthPairToDeleteCurrentDiagram,
+      std::vector<SimplexId> &birthPairToDeleteCurrentDiagram,
       std::vector<double> &birthPairToDeleteTargetDiagram,
-      std::vector<int64_t> &deathPairToDeleteCurrentDiagram,
+      std::vector<SimplexId> &deathPairToDeleteCurrentDiagram,
       std::vector<double> &deathPairToDeleteTargetDiagram,
-      std::vector<int64_t> &birthPairToChangeCurrentDiagram,
+      std::vector<SimplexId> &birthPairToChangeCurrentDiagram,
       std::vector<double> &birthPairToChangeTargetDiagram,
-      std::vector<int64_t> &deathPairToChangeCurrentDiagram,
+      std::vector<SimplexId> &deathPairToChangeCurrentDiagram,
       std::vector<double> &deathPairToChangeTargetDiagram,
       std::vector<std::vector<SimplexId>> &currentVertex2PairsCurrentDiagram,
       std::vector<int> &vertexInHowManyPairs) const;
@@ -79,8 +79,8 @@ namespace ttk {
     */
     template <typename triangulationType>
     int getNeighborsIndices(triangulationType &triangulation,
-                            const int64_t &i,
-                            std::vector<int64_t> &neighborsIndices) const;
+                            const SimplexId &i,
+                            std::vector<SimplexId> &neighborsIndices) const;
 
 /*
   This function allows you to copy the values of a pytorch tensor
@@ -90,12 +90,6 @@ namespace ttk {
     int tensorToVectorFast(const torch::Tensor &tensor,
                            std::vector<double> &result) const;
 #endif
-    /*
-      Given a coordinate vector this function returns the value of maximum
-      and minimum for each axis and the number of coordinates per axis.
-    */
-    std::vector<std::vector<double>>
-      getCoordinatesInformations(std::vector<float> coordinatesVertices) const;
 
     inline void setUseFastPersistenceUpdate(bool UseFastPersistenceUpdate) {
       useFastPersistenceUpdate_ = UseFastPersistenceUpdate;
@@ -249,14 +243,14 @@ public:
 template <typename triangulationType>
 int ttk::TopologicalOptimization::getNeighborsIndices(
   triangulationType &triangulation,
-  const int64_t &i,
-  std::vector<int64_t> &neighborsIndices) const {
+  const SimplexId &i,
+  std::vector<SimplexId> &neighborsIndices) const {
 
   size_t nNeighbors = triangulation->getVertexNeighborNumber(i);
   ttk::SimplexId neighborId{-1};
   for(size_t j = 0; j < nNeighbors; j++) {
     triangulation->getVertexNeighbor(static_cast<SimplexId>(i), j, neighborId);
-    neighborsIndices.push_back(static_cast<int64_t>(neighborId));
+    neighborsIndices.push_back(static_cast<SimplexId>(neighborId));
   }
 
   return 0;
@@ -274,17 +268,17 @@ void ttk::TopologicalOptimization::getIndices(
   dataType *const inputScalars,
   const ttk::DiagramType &constraintDiagram,
   int epoch,
-  std::vector<int64_t> &listAllIndicesToChange,
+  std::vector<SimplexId> &listAllIndicesToChange,
   std::vector<std::vector<SimplexId>> &pair2MatchedPair,
   std::vector<std::vector<SimplexId>> &pair2Delete,
   std::vector<SimplexId> &pairChangeMatchingPair,
-  std::vector<int64_t> &birthPairToDeleteCurrentDiagram,
+  std::vector<SimplexId> &birthPairToDeleteCurrentDiagram,
   std::vector<double> &birthPairToDeleteTargetDiagram,
-  std::vector<int64_t> &deathPairToDeleteCurrentDiagram,
+  std::vector<SimplexId> &deathPairToDeleteCurrentDiagram,
   std::vector<double> &deathPairToDeleteTargetDiagram,
-  std::vector<int64_t> &birthPairToChangeCurrentDiagram,
+  std::vector<SimplexId> &birthPairToChangeCurrentDiagram,
   std::vector<double> &birthPairToChangeTargetDiagram,
-  std::vector<int64_t> &deathPairToChangeCurrentDiagram,
+  std::vector<SimplexId> &deathPairToChangeCurrentDiagram,
   std::vector<double> &deathPairToChangeTargetDiagram,
   std::vector<std::vector<SimplexId>> &currentVertex2PairsCurrentDiagram,
   std::vector<int> &vertexInHowManyPairs) const {
@@ -312,10 +306,10 @@ void ttk::TopologicalOptimization::getIndices(
         if(listAllIndicesToChange[indice] == 1) {
           needUpdate[indice] = true;
           // Find all the neighbors of the vertex
-          std::vector<int64_t> neighborsIndices;
+          std::vector<SimplexId> neighborsIndices;
           getNeighborsIndices(triangulation, indice, neighborsIndices);
 
-          for(int64_t neighborsIndice : neighborsIndices) {
+          for(SimplexId neighborsIndice : neighborsIndices) {
             needUpdate[neighborsIndice] = true;
           }
         }
@@ -360,31 +354,31 @@ void ttk::TopologicalOptimization::getIndices(
       if((thresholdMethod_ == 0)
          && (pair.persistence() < thresholdPersistence_)) {
         birthPairToDeleteCurrentDiagram.push_back(
-          static_cast<int64_t>(pair.birth.id));
+          static_cast<SimplexId>(pair.birth.id));
         birthPairToDeleteTargetDiagram.push_back(
           (pair.birth.sfValue + pair.death.sfValue) / 2);
         deathPairToDeleteCurrentDiagram.push_back(
-          static_cast<int64_t>(pair.death.id));
+          static_cast<SimplexId>(pair.death.id));
         deathPairToDeleteTargetDiagram.push_back(
           (pair.birth.sfValue + pair.death.sfValue) / 2);
       } else if((thresholdMethod_ == 1)
                 && ((pair.dim < lowerThreshold_)
                     || (pair.dim > upperThreshold_))) {
         birthPairToDeleteCurrentDiagram.push_back(
-          static_cast<int64_t>(pair.birth.id));
+          static_cast<SimplexId>(pair.birth.id));
         birthPairToDeleteTargetDiagram.push_back(
           (pair.birth.sfValue + pair.death.sfValue) / 2);
         deathPairToDeleteCurrentDiagram.push_back(
-          static_cast<int64_t>(pair.death.id));
+          static_cast<SimplexId>(pair.death.id));
         deathPairToDeleteTargetDiagram.push_back(
           (pair.birth.sfValue + pair.death.sfValue) / 2);
       } else if((thresholdMethod_ == 2) && (pair.dim == pairTypeToDelete_)) {
         birthPairToDeleteCurrentDiagram.push_back(
-          static_cast<int64_t>(pair.birth.id));
+          static_cast<SimplexId>(pair.birth.id));
         birthPairToDeleteTargetDiagram.push_back(
           (pair.birth.sfValue + pair.death.sfValue) / 2);
         deathPairToDeleteCurrentDiagram.push_back(
-          static_cast<int64_t>(pair.death.id));
+          static_cast<SimplexId>(pair.death.id));
         deathPairToDeleteTargetDiagram.push_back(
           (pair.birth.sfValue + pair.death.sfValue) / 2);
       }
@@ -461,10 +455,10 @@ void ttk::TopologicalOptimization::getIndices(
       matchingPairCurrentDiagram[indicePairCurrentDiagram] = 1;
       matchingPairTargetDiagram[indicePairTargetDiagram] = 1;
 
-      int64_t valueBirthPairToChangeCurrentDiagram
-        = (int64_t)(pairCurrentDiagram.birth.id);
-      int64_t valueDeathPairToChangeCurrentDiagram
-        = (int64_t)(pairCurrentDiagram.death.id);
+      SimplexId valueBirthPairToChangeCurrentDiagram
+        = (SimplexId)(pairCurrentDiagram.birth.id);
+      SimplexId valueDeathPairToChangeCurrentDiagram
+        = (SimplexId)(pairCurrentDiagram.death.id);
 
       double valueBirthPairToChangeTargetDiagram
         = pairTargetDiagram.birth.sfValue;
@@ -490,11 +484,11 @@ void ttk::TopologicalOptimization::getIndices(
          && (pair2Delete[pair.birth.id] == pair2Delete[pair.death.id])) {
 
         birthPairToDeleteCurrentDiagram.push_back(
-          static_cast<int64_t>(pair.birth.id));
+          static_cast<SimplexId>(pair.birth.id));
         birthPairToDeleteTargetDiagram.push_back(
           (pair.birth.sfValue + pair.death.sfValue) / 2);
         deathPairToDeleteCurrentDiagram.push_back(
-          static_cast<int64_t>(pair.death.id));
+          static_cast<SimplexId>(pair.death.id));
         deathPairToDeleteTargetDiagram.push_back(
           (pair.birth.sfValue + pair.death.sfValue) / 2);
         continue;
@@ -535,7 +529,7 @@ void ttk::TopologicalOptimization::getIndices(
           if((vertex2PairsTargetDiagram[pair.birth.id].size() >= 1)
              && (vertex2PairsTargetDiagram[pair.death.id].size() == 0)) {
             deathPairToDeleteCurrentDiagram.push_back(
-              static_cast<int64_t>(pair.death.id));
+              static_cast<SimplexId>(pair.death.id));
             deathPairToDeleteTargetDiagram.push_back(
               (pair.birth.sfValue + pair.death.sfValue) / 2);
             continue;
@@ -547,7 +541,7 @@ void ttk::TopologicalOptimization::getIndices(
           if((vertex2PairsTargetDiagram[pair.birth.id].size() == 0)
              && (vertex2PairsTargetDiagram[pair.death.id].size() >= 1)) {
             birthPairToDeleteCurrentDiagram.push_back(
-              static_cast<int64_t>(pair.birth.id));
+              static_cast<SimplexId>(pair.birth.id));
             birthPairToDeleteTargetDiagram.push_back(
               (pair.birth.sfValue + pair.death.sfValue) / 2);
             continue;
@@ -563,11 +557,11 @@ void ttk::TopologicalOptimization::getIndices(
         }
 
         birthPairToDeleteCurrentDiagram.push_back(
-          static_cast<int64_t>(pair.birth.id));
+          static_cast<SimplexId>(pair.birth.id));
         birthPairToDeleteTargetDiagram.push_back(
           (pair.birth.sfValue + pair.death.sfValue) / 2);
         deathPairToDeleteCurrentDiagram.push_back(
-          static_cast<int64_t>(pair.death.id));
+          static_cast<SimplexId>(pair.death.id));
         deathPairToDeleteTargetDiagram.push_back(
           (pair.birth.sfValue + pair.death.sfValue) / 2);
 
@@ -679,7 +673,7 @@ void ttk::TopologicalOptimization::getIndices(
           if((vertex2PairsTargetDiagram[pair.birth.id].size() >= 1)
              && (vertex2PairsTargetDiagram[pair.death.id].size() == 0)) {
             deathPairToDeleteCurrentDiagram.push_back(
-              static_cast<int64_t>(pair.death.id));
+              static_cast<SimplexId>(pair.death.id));
             deathPairToDeleteTargetDiagram.push_back(
               (pair.birth.sfValue + pair.death.sfValue) / 2);
             continue;
@@ -691,7 +685,7 @@ void ttk::TopologicalOptimization::getIndices(
           if((vertex2PairsTargetDiagram[pair.birth.id].size() == 0)
              && (vertex2PairsTargetDiagram[pair.death.id].size() >= 1)) {
             birthPairToDeleteCurrentDiagram.push_back(
-              static_cast<int64_t>(pair.birth.id));
+              static_cast<SimplexId>(pair.birth.id));
             birthPairToDeleteTargetDiagram.push_back(
               (pair.birth.sfValue + pair.death.sfValue) / 2);
             continue;
@@ -707,11 +701,11 @@ void ttk::TopologicalOptimization::getIndices(
         }
 
         birthPairToDeleteCurrentDiagram.push_back(
-          static_cast<int64_t>(pair.birth.id));
+          static_cast<SimplexId>(pair.birth.id));
         birthPairToDeleteTargetDiagram.push_back(
           (pair.birth.sfValue + pair.death.sfValue) / 2);
         deathPairToDeleteCurrentDiagram.push_back(
-          static_cast<int64_t>(pair.death.id));
+          static_cast<SimplexId>(pair.death.id));
         deathPairToDeleteTargetDiagram.push_back(
           (pair.birth.sfValue + pair.death.sfValue) / 2);
       }
@@ -734,7 +728,7 @@ void ttk::TopologicalOptimization::getIndices(
                                                .death.id]
                      .size()
                    == 0)) {
-              deathPairToDeleteCurrentDiagram.push_back(static_cast<int64_t>(
+              deathPairToDeleteCurrentDiagram.push_back(static_cast<SimplexId>(
                 thresholdCurrentDiagram[entry[0]].death.id));
               deathPairToDeleteTargetDiagram.push_back(
                 (thresholdCurrentDiagram[entry[0]].birth.sfValue
@@ -756,7 +750,7 @@ void ttk::TopologicalOptimization::getIndices(
                                                .death.id]
                      .size()
                    >= 1)) {
-              birthPairToDeleteCurrentDiagram.push_back(static_cast<int64_t>(
+              birthPairToDeleteCurrentDiagram.push_back(static_cast<SimplexId>(
                 thresholdCurrentDiagram[entry[0]].birth.id));
               birthPairToDeleteTargetDiagram.push_back(
                 (thresholdCurrentDiagram[entry[0]].birth.sfValue
@@ -782,13 +776,13 @@ void ttk::TopologicalOptimization::getIndices(
           }
 
           birthPairToDeleteCurrentDiagram.push_back(
-            static_cast<int64_t>(thresholdCurrentDiagram[entry[0]].birth.id));
+            static_cast<SimplexId>(thresholdCurrentDiagram[entry[0]].birth.id));
           birthPairToDeleteTargetDiagram.push_back(
             (thresholdCurrentDiagram[entry[0]].birth.sfValue
              + thresholdCurrentDiagram[entry[0]].death.sfValue)
             / 2);
           deathPairToDeleteCurrentDiagram.push_back(
-            static_cast<int64_t>(thresholdCurrentDiagram[entry[0]].death.id));
+            static_cast<SimplexId>(thresholdCurrentDiagram[entry[0]].death.id));
           deathPairToDeleteTargetDiagram.push_back(
             (thresholdCurrentDiagram[entry[0]].birth.sfValue
              + thresholdCurrentDiagram[entry[0]].death.sfValue)
@@ -797,10 +791,10 @@ void ttk::TopologicalOptimization::getIndices(
         } else if(entry.empty())
           continue;
 
-        int64_t valueBirthPairToChangeCurrentDiagram
-          = static_cast<int64_t>(thresholdCurrentDiagram[entry[0]].birth.id);
-        int64_t valueDeathPairToChangeCurrentDiagram
-          = static_cast<int64_t>(thresholdCurrentDiagram[entry[0]].death.id);
+        SimplexId valueBirthPairToChangeCurrentDiagram
+          = static_cast<SimplexId>(thresholdCurrentDiagram[entry[0]].birth.id);
+        SimplexId valueDeathPairToChangeCurrentDiagram
+          = static_cast<SimplexId>(thresholdCurrentDiagram[entry[0]].death.id);
 
         double valueBirthPairToChangeTargetDiagram
           = thresholdConstraintDiagram[entry[1]].birth.sfValue;
@@ -991,7 +985,7 @@ void ttk::TopologicalOptimization::getIndices(
         if((vertex2PairsTargetDiagram[pair.birth.id].size() >= 1)
            && (vertex2PairsTargetDiagram[pair.death.id].size() == 0)) {
           deathPairToDeleteCurrentDiagram.push_back(
-            static_cast<int64_t>(pair.death.id));
+            static_cast<SimplexId>(pair.death.id));
           deathPairToDeleteTargetDiagram.push_back(
             (pair.birth.sfValue + pair.death.sfValue) / 2);
           continue;
@@ -1003,7 +997,7 @@ void ttk::TopologicalOptimization::getIndices(
         if((vertex2PairsTargetDiagram[pair.birth.id].size() == 0)
            && (vertex2PairsTargetDiagram[pair.death.id].size() >= 1)) {
           birthPairToDeleteCurrentDiagram.push_back(
-            static_cast<int64_t>(pair.birth.id));
+            static_cast<SimplexId>(pair.birth.id));
           birthPairToDeleteTargetDiagram.push_back(
             (pair.birth.sfValue + pair.death.sfValue) / 2);
           continue;
@@ -1019,11 +1013,11 @@ void ttk::TopologicalOptimization::getIndices(
       }
 
       birthPairToDeleteCurrentDiagram.push_back(
-        static_cast<int64_t>(pair.birth.id));
+        static_cast<SimplexId>(pair.birth.id));
       birthPairToDeleteTargetDiagram.push_back(
         (pair.birth.sfValue + pair.death.sfValue) / 2);
       deathPairToDeleteCurrentDiagram.push_back(
-        static_cast<int64_t>(pair.death.id));
+        static_cast<SimplexId>(pair.death.id));
       deathPairToDeleteTargetDiagram.push_back(
         (pair.birth.sfValue + pair.death.sfValue) / 2);
     }
@@ -1032,21 +1026,21 @@ void ttk::TopologicalOptimization::getIndices(
       // Delete pairs that have no equivalence
       if(entry.size() == 1) {
         birthPairToDeleteCurrentDiagram.push_back(
-          static_cast<int64_t>(entry[0].birth.id));
+          static_cast<SimplexId>(entry[0].birth.id));
         birthPairToDeleteTargetDiagram.push_back(
           (entry[0].birth.sfValue + entry[0].death.sfValue) / 2);
         deathPairToDeleteCurrentDiagram.push_back(
-          static_cast<int64_t>(entry[0].death.id));
+          static_cast<SimplexId>(entry[0].death.id));
         deathPairToDeleteTargetDiagram.push_back(
           (entry[0].birth.sfValue + entry[0].death.sfValue) / 2);
         continue;
       } else if(entry.empty())
         continue;
 
-      int64_t valueBirthPairToChangeCurrentDiagram
-        = static_cast<int64_t>(entry[0].birth.id);
-      int64_t valueDeathPairToChangeCurrentDiagram
-        = static_cast<int64_t>(entry[0].death.id);
+      SimplexId valueBirthPairToChangeCurrentDiagram
+        = static_cast<SimplexId>(entry[0].birth.id);
+      SimplexId valueDeathPairToChangeCurrentDiagram
+        = static_cast<SimplexId>(entry[0].death.id);
 
       double valueBirthPairToChangeTargetDiagram = entry[1].birth.sfValue;
       double valueDeathPairToChangeTargetDiagram = entry[1].death.sfValue;
@@ -1078,78 +1072,6 @@ int ttk::TopologicalOptimization::tensorToVectorFast(
   return 0;
 }
 #endif
-
-/*
-  Given a coordinate vector this function returns the value of maximum
-  and minimum for each axis and the number of coordinates per axis.
-*/
-inline std::vector<std::vector<double>>
-  ttk::TopologicalOptimization::getCoordinatesInformations(
-    std::vector<float> coordinatesVertices) const {
-  std::vector<double> firstPointCoordinates{};
-
-  double x_min = std::numeric_limits<double>::max();
-  double x_max = std::numeric_limits<double>::min();
-
-  double y_min = std::numeric_limits<double>::max();
-  double y_max = std::numeric_limits<double>::min();
-
-  double z_min = std::numeric_limits<double>::max();
-  double z_max = std::numeric_limits<double>::min();
-
-  std::set<float> uniqueXValues;
-  std::set<float> uniqueYValues;
-  std::set<float> uniqueZValues;
-
-  for(size_t i = 0; i < coordinatesVertices.size() - 2; i += 3) {
-    double x = coordinatesVertices[i];
-    double y = coordinatesVertices[i + 1];
-    double z = coordinatesVertices[i + 2];
-
-    uniqueXValues.insert(x);
-    uniqueYValues.insert(y);
-    uniqueZValues.insert(z);
-
-    if(x_min > x) {
-      x_min = x;
-    }
-    if(x_max < x) {
-      x_max = x;
-    }
-
-    if(y_min > y) {
-      y_min = y;
-    }
-    if(y_max < y) {
-      y_max = y;
-    }
-
-    if(z_min > z) {
-      z_min = z;
-    }
-    if(z_max < z) {
-      z_max = z;
-    }
-  }
-
-  firstPointCoordinates.push_back(x_min);
-  firstPointCoordinates.push_back(x_max);
-  firstPointCoordinates.push_back(y_min);
-  firstPointCoordinates.push_back(y_max);
-  firstPointCoordinates.push_back(z_min);
-  firstPointCoordinates.push_back(z_max);
-
-  std::vector<double> numberOfVerticesAlongXYZ;
-  numberOfVerticesAlongXYZ.push_back(static_cast<double>(uniqueXValues.size()));
-  numberOfVerticesAlongXYZ.push_back(static_cast<double>(uniqueYValues.size()));
-  numberOfVerticesAlongXYZ.push_back(static_cast<double>(uniqueZValues.size()));
-
-  std::vector<std::vector<double>> resultat;
-  resultat.push_back(firstPointCoordinates);
-  resultat.push_back(numberOfVerticesAlongXYZ);
-
-  return resultat;
-}
 
 template <typename dataType, typename triangulationType>
 int ttk::TopologicalOptimization::execute(
@@ -1195,7 +1117,7 @@ int ttk::TopologicalOptimization::execute(
   //========================================
   if((methodOptimization_ == 0) || !(enableTorch)) {
     std::vector<double> smoothedScalars = dataVector;
-    std::vector<int64_t> listAllIndicesToChangeSmoothing(vertexNumber_, 0);
+    std::vector<SimplexId> listAllIndicesToChangeSmoothing(vertexNumber_, 0);
     std::vector<std::vector<SimplexId>> pair2MatchedPair(
       constraintDiagram.size(), std::vector<SimplexId>(2));
     std::vector<SimplexId> pairChangeMatchingPair(constraintDiagram.size(), -1);
@@ -1209,15 +1131,15 @@ int ttk::TopologicalOptimization::execute(
       this->printMsg("DirectGradientDescent - iteration #" + std::to_string(it),
                      debug::Priority::PERFORMANCE);
       // pairs to change
-      std::vector<int64_t> birthPairToChangeCurrentDiagram{};
+      std::vector<SimplexId> birthPairToChangeCurrentDiagram{};
       std::vector<double> birthPairToChangeTargetDiagram{};
-      std::vector<int64_t> deathPairToChangeCurrentDiagram{};
+      std::vector<SimplexId> deathPairToChangeCurrentDiagram{};
       std::vector<double> deathPairToChangeTargetDiagram{};
 
       // pairs to delete
-      std::vector<int64_t> birthPairToDeleteCurrentDiagram{};
+      std::vector<SimplexId> birthPairToDeleteCurrentDiagram{};
       std::vector<double> birthPairToDeleteTargetDiagram{};
-      std::vector<int64_t> deathPairToDeleteCurrentDiagram{};
+      std::vector<SimplexId> deathPairToDeleteCurrentDiagram{};
       std::vector<double> deathPairToDeleteTargetDiagram{};
 
       std::vector<int> vertexInHowManyPairs(vertexNumber_, 0);
@@ -1239,11 +1161,11 @@ int ttk::TopologicalOptimization::execute(
       //==========================================================================
       double lossDeletePairs = 0;
 
-      std::vector<int64_t> &indexBirthPairToDelete
+      std::vector<SimplexId> &indexBirthPairToDelete
         = birthPairToDeleteCurrentDiagram;
       std::vector<double> &targetValueBirthPairToDelete
         = birthPairToDeleteTargetDiagram;
-      std::vector<int64_t> &indexDeathPairToDelete
+      std::vector<SimplexId> &indexDeathPairToDelete
         = deathPairToDeleteCurrentDiagram;
       std::vector<double> &targetValueDeathPairToDelete
         = deathPairToDeleteTargetDiagram;
@@ -1430,11 +1352,11 @@ int ttk::TopologicalOptimization::execute(
       //==========================================================================
       double lossChangePairs = 0;
 
-      std::vector<int64_t> &indexBirthPairToChange
+      std::vector<SimplexId> &indexBirthPairToChange
         = birthPairToChangeCurrentDiagram;
       std::vector<double> &targetValueBirthPairToChange
         = birthPairToChangeTargetDiagram;
-      std::vector<int64_t> &indexDeathPairToChange
+      std::vector<SimplexId> &indexDeathPairToChange
         = deathPairToChangeCurrentDiagram;
       std::vector<double> &targetValueDeathPairToChange
         = deathPairToChangeTargetDiagram;
@@ -1563,7 +1485,7 @@ int ttk::TopologicalOptimization::execute(
     std::vector<std::vector<SimplexId>> pair2MatchedPair(
       constraintDiagram.size(), std::vector<SimplexId>(2));
     std::vector<SimplexId> pairChangeMatchingPair(constraintDiagram.size(), -1);
-    std::vector<int64_t> listAllIndicesToChange(vertexNumber_, 0);
+    std::vector<SimplexId> listAllIndicesToChange(vertexNumber_, 0);
     std::vector<std::vector<SimplexId>> pair2Delete(
       vertexNumber_, std::vector<SimplexId>());
     std::vector<std::vector<SimplexId>> currentVertex2PairsCurrentDiagram(
@@ -1580,15 +1502,15 @@ int ttk::TopologicalOptimization::execute(
       tensorToVectorFast(model.X.to(torch::kDouble), inputScalarsX);
 
       // pairs to change
-      std::vector<int64_t> birthPairToChangeCurrentDiagram{};
+      std::vector<SimplexId> birthPairToChangeCurrentDiagram{};
       std::vector<double> birthPairToChangeTargetDiagram{};
-      std::vector<int64_t> deathPairToChangeCurrentDiagram{};
+      std::vector<SimplexId> deathPairToChangeCurrentDiagram{};
       std::vector<double> deathPairToChangeTargetDiagram{};
 
       // pairs to delete
-      std::vector<int64_t> birthPairToDeleteCurrentDiagram{};
+      std::vector<SimplexId> birthPairToDeleteCurrentDiagram{};
       std::vector<double> birthPairToDeleteTargetDiagram{};
-      std::vector<int64_t> deathPairToDeleteCurrentDiagram{};
+      std::vector<SimplexId> deathPairToDeleteCurrentDiagram{};
       std::vector<double> deathPairToDeleteTargetDiagram{};
 
       std::vector<int> vertexInHowManyPairs(vertexNumber_, 0);
