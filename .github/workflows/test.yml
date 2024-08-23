@@ -461,6 +461,10 @@ jobs:
         ls -lh $CONDA_ROOT/share
         echo "LISTING $CONDA_ROOT/Library"
         ls -lh $CONDA_ROOT/Library
+        echo "LISTING $CONDA_ROOT/Library/share"
+        ls -lh $CONDA_ROOT/Library/share
+        echo "LISTING $CONDA_ROOT/Library/share/cmake"
+        ls -lh $CONDA_ROOT/Library/share/cmake
 
     - name: Remove hosted Python
       shell: bash
