@@ -124,7 +124,6 @@
 #include <ttkTopologicalSimplificationModule.h>
 
 // ttk code includes
-#include <BackendTopologicalOptimization.h>
 #include <TopologicalSimplification.h>
 #include <ttkAlgorithm.h>
 #include <ttkPersistenceDiagramUtils.h>

@@ -4,6 +4,6 @@ ttk::TopologicalSimplification::TopologicalSimplification() {
   this->setDebugMsgPrefix("TopologicalSimplification");
 }
 
-ttk::BackendTopologicalOptimization::BackendTopologicalOptimization() {
-  this->setDebugMsgPrefix("BackendTopologicalOptimization");
+ttk::TopologicalOptimization::TopologicalOptimization() {
+  this->setDebugMsgPrefix("TopologicalOptimization");
 }

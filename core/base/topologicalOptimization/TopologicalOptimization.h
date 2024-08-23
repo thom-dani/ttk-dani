@@ -1,5 +1,5 @@
 /// \ingroup base
-/// \class ttk::BackendTopologicalOptimization
+/// \class ttk::TopologicalOptimization
 /// \author Julien Tierny <julien.tierny@lip6.fr>
 /// \author Mohamed Amine Kissi <mohamed.kissi@lip6.fr>
 /// \date March 2024
@@ -23,9 +23,9 @@
 
 namespace ttk {
 
-  class BackendTopologicalOptimization : virtual public Debug {
+  class TopologicalOptimization : virtual public Debug {
   public:
-    BackendTopologicalOptimization();
+    TopologicalOptimization();
 
     template <typename dataType, typename triangulationType>
     int execute(const dataType *const inputScalars,
@@ -228,7 +228,7 @@ namespace ttk {
 
 #ifdef TTK_ENABLE_TORCH
 class PersistenceGradientDescent : public torch::nn::Module,
-                                   public ttk::BackendTopologicalOptimization {
+                                   public ttk::TopologicalOptimization {
 public:
   PersistenceGradientDescent(torch::Tensor X_tensor) : torch::nn::Module() {
     X = register_parameter("X", X_tensor, true);
@@ -247,7 +247,7 @@ public:
   vertex i
 */
 template <typename triangulationType>
-int ttk::BackendTopologicalOptimization::getNeighborsIndices(
+int ttk::TopologicalOptimization::getNeighborsIndices(
   triangulationType &triangulation,
   const int64_t &i,
   std::vector<int64_t> &neighborsIndices) const {
@@ -268,7 +268,7 @@ int ttk::BackendTopologicalOptimization::getNeighborsIndices(
   diagram.
 */
 template <typename dataType, typename triangulationType>
-void ttk::BackendTopologicalOptimization::getIndices(
+void ttk::TopologicalOptimization::getIndices(
   triangulationType *triangulation,
   SimplexId *&inputOffsets,
   dataType *const inputScalars,
@@ -1068,7 +1068,7 @@ void ttk::BackendTopologicalOptimization::getIndices(
   to a vector in an optimized way.
 */
 #ifdef TTK_ENABLE_TORCH
-int ttk::BackendTopologicalOptimization::tensorToVectorFast(
+int ttk::TopologicalOptimization::tensorToVectorFast(
   const torch::Tensor &tensor, std::vector<double> &result) const {
   TORCH_CHECK(
     tensor.dtype() == torch::kDouble, "The tensor must be of double type");
@@ -1084,7 +1084,7 @@ int ttk::BackendTopologicalOptimization::tensorToVectorFast(
   and minimum for each axis and the number of coordinates per axis.
 */
 inline std::vector<std::vector<double>>
-  ttk::BackendTopologicalOptimization::getCoordinatesInformations(
+  ttk::TopologicalOptimization::getCoordinatesInformations(
     std::vector<float> coordinatesVertices) const {
   std::vector<double> firstPointCoordinates{};
 
@@ -1152,7 +1152,7 @@ inline std::vector<std::vector<double>>
 }
 
 template <typename dataType, typename triangulationType>
-int ttk::BackendTopologicalOptimization::execute(
+int ttk::TopologicalOptimization::execute(
   const dataType *const inputScalars,
   dataType *const outputScalars,
   SimplexId *const inputOffsets,

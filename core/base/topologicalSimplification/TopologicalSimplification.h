@@ -92,11 +92,12 @@
 #pragma once
 
 // base code includes
-#include <BackendTopologicalOptimization.h>
+
 #include <Debug.h>
 #include <LegacyTopologicalSimplification.h>
 #include <LocalizedTopologicalSimplification.h>
 #include <PersistenceDiagram.h>
+#include <TopologicalOptimization.h>
 #include <Triangulation.h>
 
 #include <cmath>
@@ -163,7 +164,7 @@ namespace ttk {
     BACKEND backend_{BACKEND::LTS};
     LegacyTopologicalSimplification legacyObject_;
     lts::LocalizedTopologicalSimplification ltsObject_;
-    ttk::BackendTopologicalOptimization PSObject_;
+    ttk::TopologicalOptimization PSObject_;
 
     SimplexId vertexNumber_{};
     bool UseFastPersistenceUpdate{true};
