@@ -325,7 +325,7 @@ void ttk::TopologicalOptimization::getIndices(
 
   SimplexId count = std::count(needUpdate.begin(), needUpdate.end(), true);
   this->printMsg(
-    "Get Indices | The number of vertices that need to be updated is : "
+    "Get Indices | The number of vertices that need to be updated is: "
       + std::to_string(count),
     debug::Priority::DETAIL);
 
@@ -515,11 +515,11 @@ void ttk::TopologicalOptimization::getIndices(
       }
     }
 
-    this->printMsg("Get Indices | thresholdCurrentDiagram.size() : "
+    this->printMsg("Get Indices | thresholdCurrentDiagram.size(): "
                      + std::to_string(thresholdCurrentDiagram.size()),
                    debug::Priority::DETAIL);
 
-    this->printMsg("Get Indices | thresholdConstraintDiagram.size() : "
+    this->printMsg("Get Indices | thresholdConstraintDiagram.size(): "
                      + std::to_string(thresholdConstraintDiagram.size()),
                    debug::Priority::DETAIL);
 
@@ -830,7 +830,7 @@ void ttk::TopologicalOptimization::getIndices(
   //=====================================//
   else {
     this->printMsg(
-      "Get Indices | Compute wasserstein distance : ", debug::Priority::DETAIL);
+      "Get Indices | Compute Wasserstein distance: ", debug::Priority::DETAIL);
 
     if(epoch == 0) {
       for(SimplexId i = 0; i < (SimplexId)diagramOutput.size(); i++) {
@@ -922,7 +922,7 @@ void ttk::TopologicalOptimization::getIndices(
     }
 
     this->printMsg(
-      "Get Indices | Time Persistence Diagram Clustering : "
+      "Get Indices | Persistence Diagram Clustering Time: "
         + std::to_string(timePersistenceDiagramClustering.getElapsedTime()),
       debug::Priority::DETAIL);
 
@@ -1206,8 +1206,7 @@ int ttk::TopologicalOptimization::execute(
 
     for(int it = 0; it < epochNumber_; it++) {
 
-      this->printMsg("ExecuteOneBlock | DirectGradientDescent - iteration n° "
-                       + std::to_string(it),
+      this->printMsg("DirectGradientDescent - iteration #" + std::to_string(it),
                      debug::Priority::PERFORMANCE);
       // pairs to change
       std::vector<int64_t> birthPairToChangeCurrentDiagram{};
@@ -1249,10 +1248,9 @@ int ttk::TopologicalOptimization::execute(
       std::vector<double> &targetValueDeathPairToDelete
         = deathPairToDeleteTargetDiagram;
 
-      this->printMsg(
-        "ExecuteOneBlock | DirectGradientDescent - Number of pairs to delete : "
-          + std::to_string(indexBirthPairToDelete.size()),
-        debug::Priority::DETAIL);
+      this->printMsg("DirectGradientDescent - Number of pairs to delete: "
+                       + std::to_string(indexBirthPairToDelete.size()),
+                     debug::Priority::DETAIL);
 
       std::vector<int> vertexInCellMultiple(vertexNumber_, -1);
       std::vector<std::vector<double>> vertexToTargetValue(
@@ -1423,10 +1421,9 @@ int ttk::TopologicalOptimization::execute(
           }
         }
       }
-      this->printMsg(
-        "ExecuteOneBlock | DirectGradientDescent - Loss Delete Pairs : "
-          + std::to_string(lossDeletePairs),
-        debug::Priority::PERFORMANCE);
+      this->printMsg("DirectGradientDescent - Loss Delete Pairs: "
+                       + std::to_string(lossDeletePairs),
+                     debug::Priority::PERFORMANCE);
 
       //==========================================================================
       //      Retrieve the indices for the pairs that we want to change
@@ -1494,10 +1491,9 @@ int ttk::TopologicalOptimization::execute(
         }
       }
 
-      this->printMsg(
-        "ExecuteOneBlock | DirectGradientDescent - Loss Change Pairs : "
-          + std::to_string(lossChangePairs),
-        debug::Priority::PERFORMANCE);
+      this->printMsg("DirectGradientDescent - Loss Change Pairs: "
+                       + std::to_string(lossChangePairs),
+                     debug::Priority::PERFORMANCE);
 
       if(constraintAveraging_) {
         for(SimplexId i = 0; i < (SimplexId)vertexInCellMultiple.size(); i++) {
@@ -1575,8 +1571,8 @@ int ttk::TopologicalOptimization::execute(
 
     for(int i = 0; i < epochNumber_; i++) {
 
-      this->printMsg("ExecuteOneBlock | Adam - epoch : " + std::to_string(i),
-                     debug::Priority::PERFORMANCE);
+      this->printMsg(
+        "Adam - epoch: " + std::to_string(i), debug::Priority::PERFORMANCE);
 
       ttk::Timer timeOneIteration;
 
@@ -1643,7 +1639,7 @@ int ttk::TopologicalOptimization::execute(
           = torch::sum(torch::pow(valueOfXDeleteBirth - valueDeleteBirth, 2));
       }
 
-      this->printMsg("ExecuteOneBlock | Adam - Loss Delete Pairs : "
+      this->printMsg("Adam - Loss Delete Pairs: "
                        + std::to_string(lossDeletePairs.item<double>()),
                      debug::Priority::PERFORMANCE);
 
@@ -1668,7 +1664,7 @@ int ttk::TopologicalOptimization::execute(
         = torch::sum((torch::pow(valueOfXChangeBirth - valueChangeBirth, 2)
                       + torch::pow(valueOfXChangeDeath - valueChangeDeath, 2)));
 
-      this->printMsg("ExecuteOneBlock | Adam - Loss Change Pairs : "
+      this->printMsg("Adam - Loss Change Pairs: "
                        + std::to_string(lossChangePairs.item<double>()),
                      debug::Priority::PERFORMANCE);
 
@@ -1678,8 +1674,7 @@ int ttk::TopologicalOptimization::execute(
 
       auto loss = lossDeletePairs + lossChangePairs;
 
-      this->printMsg("ExecuteOneBlock | Adam - Loss : "
-                       + std::to_string(loss.item<double>()),
+      this->printMsg("Adam - Loss: " + std::to_string(loss.item<double>()),
                      debug::Priority::PERFORMANCE);
 
       //==========================================
@@ -1741,19 +1736,17 @@ int ttk::TopologicalOptimization::execute(
 
   // Total execution time
   double time = t.getElapsedTime();
-  this->printMsg("Total execution time =  " + std::to_string(time),
-                 debug::Priority::PERFORMANCE);
 
   // Number Pairs Constraint Diagram
   SimplexId numberPairsConstraintDiagram = (SimplexId)constraintDiagram.size();
-  this->printMsg("Number Pairs Constraint Diagram =  "
+  this->printMsg("Number of constrained pairs: "
                    + std::to_string(numberPairsConstraintDiagram),
                  debug::Priority::PERFORMANCE);
 
-  this->printMsg("Stop condition : " + std::to_string(stoppingCondition),
+  this->printMsg("Stopping condition: " + std::to_string(stoppingCondition),
                  debug::Priority::PERFORMANCE);
 
-  this->printMsg("Optimization scalar field", 1.0, time, this->threadNumber_);
+  this->printMsg("Scalar field optimized", 1.0, time, this->threadNumber_);
 
   return 0;
 }
