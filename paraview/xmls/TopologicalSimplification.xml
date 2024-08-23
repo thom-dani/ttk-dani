@@ -30,13 +30,18 @@
         Related publications:
         "Generalized Topological Simplification of Scalar Fields on Surfaces"
         Julien Tierny, Valerio Pascucci
+        IEEE Transactions on Visualization and Computer Graphics.
         Proc. of IEEE VIS 2012.
-        IEEE Transactions on Visualization and Computer Graphics, 2012.
 
         "Localized Topological Simplification of Scalar Data"
         Jonas Lukasczyk, Christoph Garth, Ross Maciejewski, Julien Tierny
+        IEEE Transactions on Visualization and Computer Graphics.
         Proc. of IEEE VIS 2020.
-        IEEE Transactions on Visualization and Computer Graphics
+        
+        "A Practical Solver for Scalar Data Topological Simplification"
+        Mohamed Kissi, Mathieu Pont, Joshua A. Levine, Julien Tierny
+        IEEE Transactions on Visualization and Computer Graphics.
+        Proc. of IEEE VIS 2024.
 
         See also ScalarFieldCriticalPoints, IntegralLines, ContourForests,
 Identifiers.
@@ -153,7 +158,7 @@ Identifiers.
         <EnumerationDomain name="enum">
           <Entry value="0" text="LTS (IEEE VIS 2020)"/>
           <Entry value="1" text="Legacy Approach (IEEE VIS 2012)"/>
-          <Entry value="2" text="Numerical Optimization (2024)"/>
+          <Entry value="2" text="Topological Optimization (IEEE VIS 2024)"/>
         </EnumerationDomain>                      
         <Documentation>
           Choose the simplification algorithm.
