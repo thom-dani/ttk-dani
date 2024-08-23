@@ -526,10 +526,10 @@ namespace ttk {
         baryTree, nodeId, newScalarsVector, false);
       dataType mu_min = getMinMaxLocalFromVector<dataType>(
         baryTree, nodeId, newScalarsVector);
-      double newBirth = 0, newDeath = 0;
+      dataType newBirth = 0, newDeath = 0;
 
       // Compute projection
-      double tempBirth = 0, tempDeath = 0;
+      dataType tempBirth = 0, tempDeath = 0;
       double alphaSum = 0;
       for(unsigned int i = 0; i < trees.size(); ++i)
         if(nodes[i] != std::numeric_limits<ftm::idNode>::max())
@@ -539,21 +539,21 @@ namespace ttk {
         if(nodes[i] != std::numeric_limits<ftm::idNode>::max()) {
           auto iBirthDeath
             = getParametrizedBirthDeath<dataType>(trees[i], nodes[i]);
-          double tTempBirth = 0, tTempDeath = 0;
+          dataType tTempBirth = 0, tTempDeath = 0;
           tTempBirth += std::get<0>(iBirthDeath);
           tTempDeath += std::get<1>(iBirthDeath);
           tempBirth += tTempBirth * alphas[i] / alphaSum;
           tempDeath += tTempDeath * alphas[i] / alphaSum;
         }
       }
-      double const projec = (tempBirth + tempDeath) / 2;
+      dataType const projec = (tempBirth + tempDeath) / 2;
 
       std::stringstream ss, ss2;
       ss.precision(64);
       ss2.precision(64);
       // Compute newBirth and newDeath
       for(unsigned int i = 0; i < trees.size(); ++i) {
-        double iBirth = projec, iDeath = projec;
+        dataType iBirth = projec, iDeath = projec;
         // if node is matched in trees[i]
         if(nodes[i] != std::numeric_limits<ftm::idNode>::max()) {
           auto iBirthDeath
@@ -599,9 +599,9 @@ namespace ttk {
         = getMinMaxLocalFromVector<dataType>(baryTree, nodeB, newScalarsVector);
 
       auto birthDeath = getParametrizedBirthDeath<dataType>(tree, nodeId);
-      double newBirth = std::get<0>(birthDeath);
-      double newDeath = std::get<1>(birthDeath);
-      double const projec = (newBirth + newDeath) / 2;
+      dataType newBirth = std::get<0>(birthDeath);
+      dataType newDeath = std::get<1>(birthDeath);
+      dataType const projec = (newBirth + newDeath) / 2;
 
       newBirth = alpha * newBirth + (1 - alpha) * projec;
       newDeath = alpha * newDeath + (1 - alpha) * projec;
