@@ -459,6 +459,8 @@ jobs:
         ls -lh $CONDA_ROOT/lib
         echo "LISTING $CONDA_ROOT/share"
         ls -lh $CONDA_ROOT/share
+        echo "LISTING $CONDA_ROOT/Library"
+        ls -lh $CONDA_ROOT/Library
 
     - name: Remove hosted Python
       shell: bash
