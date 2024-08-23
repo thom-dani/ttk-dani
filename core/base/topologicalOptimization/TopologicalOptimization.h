@@ -302,15 +302,15 @@ void ttk::TopologicalOptimization::getIndices(
 #ifdef TTK_ENABLE_OPENMP
 #pragma omp parallel for num_threads(threadNumber_)
 #endif
-      for(size_t indice = 0; indice < listAllIndicesToChange.size(); indice++) {
-        if(listAllIndicesToChange[indice] == 1) {
-          needUpdate[indice] = true;
+      for(size_t index = 0; index < listAllIndicesToChange.size(); index++) {
+        if(listAllIndicesToChange[index] == 1) {
+          needUpdate[index] = true;
           // Find all the neighbors of the vertex
           std::vector<SimplexId> neighborsIndices;
-          getNeighborsIndices(triangulation, indice, neighborsIndices);
+          getNeighborsIndices(triangulation, index, neighborsIndices);
 
-          for(SimplexId neighborsIndice : neighborsIndices) {
-            needUpdate[neighborsIndice] = true;
+          for(SimplexId neighborsIndex : neighborsIndices) {
+            needUpdate[neighborsIndex] = true;
           }
         }
       }
