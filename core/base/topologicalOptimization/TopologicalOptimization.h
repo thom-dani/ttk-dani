@@ -820,7 +820,7 @@ void ttk::TopologicalOptimization::getIndices(
     }
   }
   //=====================================//
-  //            Bassic Matching          //
+  //            Basic Matching          //
   //=====================================//
   else {
     this->printMsg(
