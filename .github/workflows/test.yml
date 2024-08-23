@@ -467,6 +467,10 @@ jobs:
         ls -lh $CONDA_ROOT/Library/share/cmake
         echo "LISTING $CONDA_ROOT/Library/share/cmake/Modules"
         ls -lh $CONDA_ROOT/Library/share/cmake/Modules
+        echo "Trying to find BoostConfig.make from current directory"
+        find . -name 'BoostConfig.cmake'
+        echo "Trying to find BoostConfig.make from $CONDA_ROOT"
+        find $CONDA_ROOT -name 'BoostConfig.cmake'
 
     - name: Remove hosted Python
       shell: bash

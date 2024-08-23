@@ -7,7 +7,5 @@ ttk_add_base_library(topologicalSimplification
     triangulation
     legacyTopologicalSimplification
     localizedTopologicalSimplification
-    persistenceDiagram
-    persistenceDiagramClustering
     topologicalOptimization
     )
