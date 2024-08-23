@@ -110,7 +110,7 @@ namespace ttk {
   public:
     TopologicalSimplification();
 
-    enum class BACKEND { LEGACY, LTS, PS };
+    enum class BACKEND { LEGACY, LTS, TO };
     /*
      * Either execute this file "legacy" algorithm, or the
      * lts algorithm. The choice depends on the value of the variable backend_.
@@ -145,10 +145,10 @@ namespace ttk {
           ltsObject_.preconditionTriangulation(triangulation);
           break;
 
-        case BACKEND::PS:
-          PSObject_.setDebugLevel(debugLevel_);
-          PSObject_.setThreadNumber(threadNumber_);
-          PSObject_.preconditionTriangulation(triangulation);
+        case BACKEND::TO:
+          topologyOptimizer_.setDebugLevel(debugLevel_);
+          topologyOptimizer_.setThreadNumber(threadNumber_);
+          topologyOptimizer_.preconditionTriangulation(triangulation);
           break;
 
         default:
@@ -163,7 +163,7 @@ namespace ttk {
     BACKEND backend_{BACKEND::LTS};
     LegacyTopologicalSimplification legacyObject_;
     lts::LocalizedTopologicalSimplification ltsObject_;
-    ttk::TopologicalOptimization PSObject_;
+    ttk::TopologicalOptimization topologyOptimizer_;
 
     SimplexId vertexNumber_{};
     bool UseFastPersistenceUpdate{true};
@@ -228,27 +228,28 @@ int ttk::TopologicalSimplification::execute(
                                    inputOffsets, offsets, constraintNumber,
                                    triangulation);
 
-    case BACKEND::PS:
-      PSObject_.setUseFastPersistenceUpdate(UseFastPersistenceUpdate);
-      PSObject_.setFastAssignmentUpdate(FastAssignmentUpdate);
-      PSObject_.setEpochNumber(EpochNumber);
-      PSObject_.setPDCMethod(PDCMethod);
-      PSObject_.setMethodOptimization(MethodOptimization);
-      PSObject_.setFinePairManagement(FinePairManagement);
-      PSObject_.setChooseLearningRate(ChooseLearningRate);
-      PSObject_.setLearningRate(LearningRate);
-      PSObject_.setAlpha(Alpha);
-      PSObject_.setCoefStopCondition(CoefStopCondition);
-      PSObject_.setOptimizationWithoutMatching(OptimizationWithoutMatching);
-      PSObject_.setThresholdMethod(ThresholdMethod);
-      PSObject_.setThresholdPersistence(Threshold);
-      PSObject_.setLowerThreshold(LowerThreshold);
-      PSObject_.setUpperThreshold(UpperThreshold);
-      PSObject_.setPairTypeToDelete(PairTypeToDelete);
-      PSObject_.setConstraintAveraging(ConstraintAveraging);
+    case BACKEND::TO:
+      topologyOptimizer_.setUseFastPersistenceUpdate(UseFastPersistenceUpdate);
+      topologyOptimizer_.setFastAssignmentUpdate(FastAssignmentUpdate);
+      topologyOptimizer_.setEpochNumber(EpochNumber);
+      topologyOptimizer_.setPDCMethod(PDCMethod);
+      topologyOptimizer_.setMethodOptimization(MethodOptimization);
+      topologyOptimizer_.setFinePairManagement(FinePairManagement);
+      topologyOptimizer_.setChooseLearningRate(ChooseLearningRate);
+      topologyOptimizer_.setLearningRate(LearningRate);
+      topologyOptimizer_.setAlpha(Alpha);
+      topologyOptimizer_.setCoefStopCondition(CoefStopCondition);
+      topologyOptimizer_.setOptimizationWithoutMatching(
+        OptimizationWithoutMatching);
+      topologyOptimizer_.setThresholdMethod(ThresholdMethod);
+      topologyOptimizer_.setThresholdPersistence(Threshold);
+      topologyOptimizer_.setLowerThreshold(LowerThreshold);
+      topologyOptimizer_.setUpperThreshold(UpperThreshold);
+      topologyOptimizer_.setPairTypeToDelete(PairTypeToDelete);
+      topologyOptimizer_.setConstraintAveraging(ConstraintAveraging);
 
-      return PSObject_.execute(inputScalars, outputScalars, offsets,
-                               &triangulation, constraintDiagram);
+      return topologyOptimizer_.execute(inputScalars, outputScalars, offsets,
+                                        &triangulation, constraintDiagram);
     default:
       this->printErr(
         "Error, the backend for topological simplification is invalid");
