@@ -326,7 +326,7 @@ jobs:
       shell: bash
       run: |
         conda install -c conda-forge "qt>=5.12" libboost-devel eigen spectralib zfp \
-          scikit-learn llvm-openmp graphviz websocketpp clangxx
+          scikit-learn llvm-openmp graphviz clangxx
 
     - name: Remove hosted Python
       shell: bash
@@ -412,7 +412,7 @@ jobs:
       shell: bash
       run: |
         conda install -c conda-forge "qt>=5.12" libboost-devel eigen spectralib zfp \
-          scikit-learn openmp graphviz websocketpp
+          scikit-learn openmp graphviz 
 
     - name: Remove hosted Python
       shell: bash
