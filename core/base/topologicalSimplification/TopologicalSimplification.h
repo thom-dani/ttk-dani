@@ -96,7 +96,6 @@
 #include <Debug.h>
 #include <LegacyTopologicalSimplification.h>
 #include <LocalizedTopologicalSimplification.h>
-#include <PersistenceDiagram.h>
 #include <TopologicalOptimization.h>
 #include <Triangulation.h>
 
