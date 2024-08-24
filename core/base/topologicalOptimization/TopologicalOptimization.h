@@ -69,19 +69,6 @@ namespace ttk {
       std::vector<std::vector<SimplexId>> &currentVertex2PairsCurrentDiagram,
       std::vector<int> &vertexInHowManyPairs) const;
 
-    /*
-      Find all neighbors of a vertex i.
-      Variable :
-        -   triangulation : domain triangulation
-        -   i : vertex for which we want to find his neighbors
-        -   neighborsIndices : vector which contains the neighboring vertices of
-      vertex i
-    */
-    template <typename triangulationType>
-    int getNeighborsIndices(triangulationType &triangulation,
-                            const SimplexId &i,
-                            std::vector<SimplexId> &neighborsIndices) const;
-
 /*
   This function allows you to copy the values of a pytorch tensor
   to a vector in an optimized way.
@@ -232,29 +219,6 @@ public:
 
 #endif
 
-/*
-  Find all neighbors of a vertex i.
-  Variable :
-    -   triangulation : domain triangulation
-    -   i : vertex for which we want to find his neighbors
-    -   neighborsIndices : vector which contains the neighboring vertices of
-  vertex i
-*/
-template <typename triangulationType>
-int ttk::TopologicalOptimization::getNeighborsIndices(
-  triangulationType &triangulation,
-  const SimplexId &i,
-  std::vector<SimplexId> &neighborsIndices) const {
-
-  size_t nNeighbors = triangulation->getVertexNeighborNumber(i);
-  ttk::SimplexId neighborId{-1};
-  for(size_t j = 0; j < nNeighbors; j++) {
-    triangulation->getVertexNeighbor(static_cast<SimplexId>(i), j, neighborId);
-    neighborsIndices.push_back(static_cast<SimplexId>(neighborId));
-  }
-
-  return 0;
-}
 
 /*
   This function allows us to retrieve the indices of the critical points
@@ -305,12 +269,13 @@ void ttk::TopologicalOptimization::getIndices(
       for(size_t index = 0; index < listAllIndicesToChange.size(); index++) {
         if(listAllIndicesToChange[index] == 1) {
           needUpdate[index] = true;
-          // Find all the neighbors of the vertex
-          std::vector<SimplexId> neighborsIndices;
-          getNeighborsIndices(triangulation, index, neighborsIndices);
 
-          for(SimplexId neighborsIndex : neighborsIndices) {
-            needUpdate[neighborsIndex] = true;
+          // Find all the neighbors of the vertex
+          int vertexNumber = triangulation->getVertexNeighborNumber(index);
+          for(int i = 0; i < vertexNumber; i++){
+            int vertexNeighborId = -1;
+            triangulation->getVertexNeighbor(index, i, vertexNeighborId);
+            needUpdate[vertexNeighborId] = true;
           }
         }
       }
@@ -1096,7 +1061,7 @@ int ttk::TopologicalOptimization::execute(
   //=======================
   //    Copy input data
   //=======================
-  std::vector<double> dataVector(vertexNumber_);
+  std::vector<dataType> dataVector(vertexNumber_);
   SimplexId *inputOffsetsCopie = inputOffsets;
 
 #ifdef TTK_ENABLE_OPENMP
@@ -1116,7 +1081,7 @@ int ttk::TopologicalOptimization::execute(
   //          Direct gradient descent
   //========================================
   if((methodOptimization_ == 0) || !(enableTorch)) {
-    std::vector<double> smoothedScalars = dataVector;
+    std::vector<dataType> smoothedScalars = dataVector;
     std::vector<SimplexId> listAllIndicesToChangeSmoothing(vertexNumber_, 0);
     std::vector<std::vector<SimplexId>> pair2MatchedPair(
       constraintDiagram.size(), std::vector<SimplexId>(2));
