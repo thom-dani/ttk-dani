@@ -219,7 +219,6 @@ public:
 
 #endif
 
-
 /*
   This function allows us to retrieve the indices of the critical points
   that we must modify in order to match our current diagram to our target
@@ -272,7 +271,7 @@ void ttk::TopologicalOptimization::getIndices(
 
           // Find all the neighbors of the vertex
           int vertexNumber = triangulation->getVertexNeighborNumber(index);
-          for(int i = 0; i < vertexNumber; i++){
+          for(int i = 0; i < vertexNumber; i++) {
             int vertexNeighborId = -1;
             triangulation->getVertexNeighbor(index, i, vertexNeighborId);
             needUpdate[vertexNeighborId] = true;
