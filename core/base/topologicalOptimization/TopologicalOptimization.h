@@ -12,10 +12,6 @@
 #endif
 
 // base code includes
-#include "DataTypes.h"
-#include "ImplicitPreconditions.h"
-#include "PersistenceDiagramUtils.h"
-#include "Timer.h"
 #include <Debug.h>
 #include <PersistenceDiagram.h>
 #include <PersistenceDiagramClustering.h>
@@ -272,7 +268,7 @@ void ttk::TopologicalOptimization::getIndices(
           // Find all the neighbors of the vertex
           int vertexNumber = triangulation->getVertexNeighborNumber(index);
           for(int i = 0; i < vertexNumber; i++) {
-            int vertexNeighborId = -1;
+            SimplexId vertexNeighborId = -1;
             triangulation->getVertexNeighbor(index, i, vertexNeighborId);
             needUpdate[vertexNeighborId] = true;
           }
