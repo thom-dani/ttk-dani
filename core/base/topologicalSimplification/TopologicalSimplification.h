@@ -208,6 +208,8 @@ namespace ttk {
     int PairTypeToDelete{1};
 
     bool ConstraintAveraging{true};
+
+    int PrintFrequency{10};
   };
 } // namespace ttk
 
@@ -252,6 +254,7 @@ int ttk::TopologicalSimplification::execute(
       topologyOptimizer_.setUpperThreshold(UpperThreshold);
       topologyOptimizer_.setPairTypeToDelete(PairTypeToDelete);
       topologyOptimizer_.setConstraintAveraging(ConstraintAveraging);
+      topologyOptimizer_.setPrintFrequency(PrintFrequency);
 
       return topologyOptimizer_.execute(inputScalars, outputScalars, offsets,
                                         &triangulation, constraintDiagram);

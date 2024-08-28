@@ -213,6 +213,9 @@ public:
   vtkSetMacro(ConstraintAveraging, bool);
   vtkGetMacro(ConstraintAveraging, bool);
 
+  vtkSetMacro(PrintFrequency, int);
+  vtkGetMacro(PrintFrequency, int);
+
 protected:
   ttkTopologicalSimplification();
 

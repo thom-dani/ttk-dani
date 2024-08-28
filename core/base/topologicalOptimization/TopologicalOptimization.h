@@ -143,6 +143,10 @@ namespace ttk {
       constraintAveraging_ = ConstraintAveraging;
     }
 
+    inline void setPrintFrequency(int printFrequency) {
+      printFrequency_ = printFrequency;
+    }
+
   protected:
     SimplexId vertexNumber_{};
     int epochNumber_;
@@ -199,6 +203,8 @@ namespace ttk {
     int pairTypeToDelete_;
 
     bool constraintAveraging_;
+
+    int printFrequency_{10};
   };
 
 } // namespace ttk
@@ -254,8 +260,10 @@ void ttk::TopologicalOptimization::getIndices(
     /*
       There is a 10% loss of performance
     */
-    this->printMsg(
-      "Get Indices | UseFastPersistenceUpdate_", debug::Priority::DETAIL);
+    if(epoch % printFrequency_ == 0) {
+      this->printMsg(
+        "Get Indices | UseFastPersistenceUpdate_", debug::Priority::DETAIL);
+    }
 
     if(not(epoch == 0 || epoch < 0)) {
 #ifdef TTK_ENABLE_OPENMP
@@ -278,11 +286,13 @@ void ttk::TopologicalOptimization::getIndices(
   }
 
   SimplexId count = std::count(needUpdate.begin(), needUpdate.end(), true);
-  this->printMsg(
-    "Get Indices | The number of vertices that need to be updated is: "
-      + std::to_string(count),
-    debug::Priority::DETAIL);
 
+  if(epoch % printFrequency_ == 0) {
+    this->printMsg(
+      "Get Indices | The number of vertices that need to be updated is: "
+        + std::to_string(count),
+      debug::Priority::DETAIL);
+  }
   //=========================================
   //     Compute the persistence diagram
   //=========================================
@@ -469,13 +479,15 @@ void ttk::TopologicalOptimization::getIndices(
       }
     }
 
-    this->printMsg("Get Indices | thresholdCurrentDiagram.size(): "
-                     + std::to_string(thresholdCurrentDiagram.size()),
-                   debug::Priority::DETAIL);
+    if(epoch % printFrequency_ == 0) {
+      this->printMsg("Get Indices | thresholdCurrentDiagram.size(): "
+                       + std::to_string(thresholdCurrentDiagram.size()),
+                     debug::Priority::DETAIL);
 
-    this->printMsg("Get Indices | thresholdConstraintDiagram.size(): "
-                     + std::to_string(thresholdConstraintDiagram.size()),
-                   debug::Priority::DETAIL);
+      this->printMsg("Get Indices | thresholdConstraintDiagram.size(): "
+                       + std::to_string(thresholdConstraintDiagram.size()),
+                     debug::Priority::DETAIL);
+    }
 
     if(thresholdConstraintDiagram.size() == 0) {
       for(SimplexId i = 0; i < (SimplexId)thresholdCurrentDiagram.size(); i++) {
@@ -783,8 +795,10 @@ void ttk::TopologicalOptimization::getIndices(
   //            Basic Matching          //
   //=====================================//
   else {
-    this->printMsg(
-      "Get Indices | Compute Wasserstein distance: ", debug::Priority::DETAIL);
+    if(epoch % printFrequency_ == 0) {
+      this->printMsg("Get Indices | Compute Wasserstein distance: ",
+                     debug::Priority::DETAIL);
+    }
 
     if(epoch == 0) {
       for(SimplexId i = 0; i < (SimplexId)diagramOutput.size(); i++) {
@@ -875,10 +889,12 @@ void ttk::TopologicalOptimization::getIndices(
       pdBarycenter.execute(intermediateDiagrams, centroids[0], allMatchings);
     }
 
-    this->printMsg(
-      "Get Indices | Persistence Diagram Clustering Time: "
-        + std::to_string(timePersistenceDiagramClustering.getElapsedTime()),
-      debug::Priority::DETAIL);
+    if(epoch % printFrequency_ == 0) {
+      this->printMsg(
+        "Get Indices | Persistence Diagram Clustering Time: "
+          + std::to_string(timePersistenceDiagramClustering.getElapsedTime()),
+        debug::Priority::DETAIL);
+    }
 
     //=========================================
     //             Find matched pairs
@@ -1056,7 +1072,7 @@ int ttk::TopologicalOptimization::execute(
   //=======================
   //    Copy input data
   //=======================
-  std::vector<dataType> dataVector(vertexNumber_);
+  std::vector<double> dataVector(vertexNumber_);
   SimplexId *inputOffsetsCopie = inputOffsets;
 
 #ifdef TTK_ENABLE_OPENMP
@@ -1069,6 +1085,20 @@ int ttk::TopologicalOptimization::execute(
       outputScalars[k] = 0;
   }
 
+  //===============================
+  //        Normalize the data
+  //===============================
+
+  dataType minVal = *std::min_element(dataVector.begin(), dataVector.end());
+  dataType maxVal = *std::max_element(dataVector.begin(), dataVector.end());
+
+#ifdef TTK_ENABLE_OPENMP
+#pragma omp parallel for num_threads(threadNumber_)
+#endif
+  for(size_t i = 0; i < dataVector.size(); ++i) {
+    dataVector[i] = (dataVector[i] - minVal) / (maxVal - minVal);
+  }
+
   std::vector<double> losses;
   std::vector<double> inputScalarsX(vertexNumber_);
 
@@ -1076,7 +1106,6 @@ int ttk::TopologicalOptimization::execute(
   //          Direct gradient descent
   //========================================
   if((methodOptimization_ == 0) || !(enableTorch)) {
-    std::vector<dataType> smoothedScalars = dataVector;
     std::vector<SimplexId> listAllIndicesToChangeSmoothing(vertexNumber_, 0);
     std::vector<std::vector<SimplexId>> pair2MatchedPair(
       constraintDiagram.size(), std::vector<SimplexId>(2));
@@ -1088,8 +1117,15 @@ int ttk::TopologicalOptimization::execute(
 
     for(int it = 0; it < epochNumber_; it++) {
 
+      if(it % printFrequency_ == 0) {
+        debugLevel_ = 3;
+      } else {
+        debugLevel_ = 0;
+      }
+
       this->printMsg("DirectGradientDescent - iteration #" + std::to_string(it),
                      debug::Priority::PERFORMANCE);
+
       // pairs to change
       std::vector<SimplexId> birthPairToChangeCurrentDiagram{};
       std::vector<double> birthPairToChangeTargetDiagram{};
@@ -1152,10 +1188,10 @@ int ttk::TopologicalOptimization::execute(
           if(!(finePairManagement_ == 2) && !(finePairManagement_ == 1)) {
             if(constraintAveraging_) {
               if(vertexInHowManyPairs[indexMax] == 1) {
-                smoothedScalars[indexMax]
-                  = smoothedScalars[indexMax]
+                dataVector[indexMax]
+                  = dataVector[indexMax]
                     - alpha_ * 2
-                        * (smoothedScalars[indexMax]
+                        * (dataVector[indexMax]
                            - targetValueBirthPairToDelete[i]);
                 listAllIndicesToChangeSmoothing[indexMax] = 1;
               } else {
@@ -1165,10 +1201,10 @@ int ttk::TopologicalOptimization::execute(
               }
 
               if(vertexInHowManyPairs[indexSelle] == 1) {
-                smoothedScalars[indexSelle]
-                  = smoothedScalars[indexSelle]
+                dataVector[indexSelle]
+                  = dataVector[indexSelle]
                     - alpha_ * 2
-                        * (smoothedScalars[indexSelle]
+                        * (dataVector[indexSelle]
                            - targetValueDeathPairToDelete[i]);
                 listAllIndicesToChangeSmoothing[indexSelle] = 1;
               } else {
@@ -1177,15 +1213,14 @@ int ttk::TopologicalOptimization::execute(
                   targetValueDeathPairToDelete[i]);
               }
             } else {
-              smoothedScalars[indexMax]
-                = smoothedScalars[indexMax]
+              dataVector[indexMax] = dataVector[indexMax]
+                                     - alpha_ * 2
+                                         * (dataVector[indexMax]
+                                            - targetValueBirthPairToDelete[i]);
+              dataVector[indexSelle]
+                = dataVector[indexSelle]
                   - alpha_ * 2
-                      * (smoothedScalars[indexMax]
-                         - targetValueBirthPairToDelete[i]);
-              smoothedScalars[indexSelle]
-                = smoothedScalars[indexSelle]
-                  - alpha_ * 2
-                      * (smoothedScalars[indexSelle]
+                      * (dataVector[indexSelle]
                          - targetValueDeathPairToDelete[i]);
               listAllIndicesToChangeSmoothing[indexMax] = 1;
               listAllIndicesToChangeSmoothing[indexSelle] = 1;
@@ -1193,10 +1228,10 @@ int ttk::TopologicalOptimization::execute(
           } else if(finePairManagement_ == 1) {
             if(constraintAveraging_) {
               if(vertexInHowManyPairs[indexSelle] == 1) {
-                smoothedScalars[indexSelle]
-                  = smoothedScalars[indexSelle]
+                dataVector[indexSelle]
+                  = dataVector[indexSelle]
                     - alpha_ * 2
-                        * (smoothedScalars[indexSelle]
+                        * (dataVector[indexSelle]
                            - targetValueDeathPairToDelete[i]);
                 listAllIndicesToChangeSmoothing[indexSelle] = 1;
               } else {
@@ -1205,20 +1240,20 @@ int ttk::TopologicalOptimization::execute(
                   targetValueDeathPairToDelete[i]);
               }
             } else {
-              smoothedScalars[indexSelle]
-                = smoothedScalars[indexSelle]
+              dataVector[indexSelle]
+                = dataVector[indexSelle]
                   - alpha_ * 2
-                      * (smoothedScalars[indexSelle]
+                      * (dataVector[indexSelle]
                          - targetValueDeathPairToDelete[i]);
               listAllIndicesToChangeSmoothing[indexSelle] = 1;
             }
           } else if(finePairManagement_ == 2) {
             if(constraintAveraging_) {
               if(vertexInHowManyPairs[indexMax] == 1) {
-                smoothedScalars[indexMax]
-                  = smoothedScalars[indexMax]
+                dataVector[indexMax]
+                  = dataVector[indexMax]
                     - alpha_ * 2
-                        * (smoothedScalars[indexMax]
+                        * (dataVector[indexMax]
                            - targetValueBirthPairToDelete[i]);
                 listAllIndicesToChangeSmoothing[indexMax] = 1;
               } else {
@@ -1227,11 +1262,10 @@ int ttk::TopologicalOptimization::execute(
                   targetValueBirthPairToDelete[i]);
               }
             } else {
-              smoothedScalars[indexMax]
-                = smoothedScalars[indexMax]
-                  - alpha_ * 2
-                      * (smoothedScalars[indexMax]
-                         - targetValueBirthPairToDelete[i]);
+              dataVector[indexMax] = dataVector[indexMax]
+                                     - alpha_ * 2
+                                         * (dataVector[indexMax]
+                                            - targetValueBirthPairToDelete[i]);
               listAllIndicesToChangeSmoothing[indexMax] = 1;
             }
           }
@@ -1246,10 +1280,10 @@ int ttk::TopologicalOptimization::execute(
           if(!(finePairManagement_ == 1)) {
             if(constraintAveraging_) {
               if(vertexInHowManyPairs[indexMax] == 1) {
-                smoothedScalars[indexMax]
-                  = smoothedScalars[indexMax]
+                dataVector[indexMax]
+                  = dataVector[indexMax]
                     - alpha_ * 2
-                        * (smoothedScalars[indexMax]
+                        * (dataVector[indexMax]
                            - targetValueBirthPairToDelete[i]);
                 listAllIndicesToChangeSmoothing[indexMax] = 1;
               } else {
@@ -1258,11 +1292,10 @@ int ttk::TopologicalOptimization::execute(
                   targetValueBirthPairToDelete[i]);
               }
             } else {
-              smoothedScalars[indexMax]
-                = smoothedScalars[indexMax]
-                  - alpha_ * 2
-                      * (smoothedScalars[indexMax]
-                         - targetValueBirthPairToDelete[i]);
+              dataVector[indexMax] = dataVector[indexMax]
+                                     - alpha_ * 2
+                                         * (dataVector[indexMax]
+                                            - targetValueBirthPairToDelete[i]);
               listAllIndicesToChangeSmoothing[indexMax] = 1;
             }
           } else { // finePairManagement_ == 1
@@ -1279,10 +1312,10 @@ int ttk::TopologicalOptimization::execute(
           if(!(finePairManagement_ == 2)) {
             if(constraintAveraging_) {
               if(vertexInHowManyPairs[indexSelle] == 1) {
-                smoothedScalars[indexSelle]
-                  = smoothedScalars[indexSelle]
+                dataVector[indexSelle]
+                  = dataVector[indexSelle]
                     - alpha_ * 2
-                        * (smoothedScalars[indexSelle]
+                        * (dataVector[indexSelle]
                            - targetValueDeathPairToDelete[i]);
                 listAllIndicesToChangeSmoothing[indexSelle] = 1;
               } else {
@@ -1291,10 +1324,10 @@ int ttk::TopologicalOptimization::execute(
                   targetValueDeathPairToDelete[i]);
               }
             } else {
-              smoothedScalars[indexSelle]
-                = smoothedScalars[indexSelle]
+              dataVector[indexSelle]
+                = dataVector[indexSelle]
                   - alpha_ * 2
-                      * (smoothedScalars[indexSelle]
+                      * (dataVector[indexSelle]
                          - targetValueDeathPairToDelete[i]);
               listAllIndicesToChangeSmoothing[indexSelle] = 1;
             }
@@ -1303,10 +1336,10 @@ int ttk::TopologicalOptimization::execute(
           }
         }
       }
+
       this->printMsg("DirectGradientDescent - Loss Delete Pairs: "
                        + std::to_string(lossDeletePairs),
                      debug::Priority::PERFORMANCE);
-
       //==========================================================================
       //      Retrieve the indices for the pairs that we want to change
       //==========================================================================
@@ -1334,11 +1367,10 @@ int ttk::TopologicalOptimization::execute(
 
         if(constraintAveraging_) {
           if(vertexInHowManyPairs[indexMax] == 1) {
-            smoothedScalars[indexMax]
-              = smoothedScalars[indexMax]
+            dataVector[indexMax]
+              = dataVector[indexMax]
                 - alpha_ * 2
-                    * (smoothedScalars[indexMax]
-                       - targetValueBirthPairToChange[i]);
+                    * (dataVector[indexMax] - targetValueBirthPairToChange[i]);
             listAllIndicesToChangeSmoothing[indexMax] = 1;
           } else {
             vertexInCellMultiple[indexMax] = 1;
@@ -1347,11 +1379,10 @@ int ttk::TopologicalOptimization::execute(
           }
 
           if(vertexInHowManyPairs[indexSelle] == 1) {
-            smoothedScalars[indexSelle]
-              = smoothedScalars[indexSelle]
-                - alpha_ * 2
-                    * (smoothedScalars[indexSelle]
-                       - targetValueDeathPairToChange[i]);
+            dataVector[indexSelle] = dataVector[indexSelle]
+                                     - alpha_ * 2
+                                         * (dataVector[indexSelle]
+                                            - targetValueDeathPairToChange[i]);
             listAllIndicesToChangeSmoothing[indexSelle] = 1;
           } else {
             vertexInCellMultiple[indexSelle] = 1;
@@ -1359,15 +1390,14 @@ int ttk::TopologicalOptimization::execute(
               targetValueDeathPairToChange[i]);
           }
         } else {
-          smoothedScalars[indexMax] = smoothedScalars[indexMax]
-                                      - alpha_ * 2
-                                          * (smoothedScalars[indexMax]
-                                             - targetValueBirthPairToChange[i]);
-          smoothedScalars[indexSelle]
-            = smoothedScalars[indexSelle]
+          dataVector[indexMax]
+            = dataVector[indexMax]
               - alpha_ * 2
-                  * (smoothedScalars[indexSelle]
-                     - targetValueDeathPairToChange[i]);
+                  * (dataVector[indexMax] - targetValueBirthPairToChange[i]);
+          dataVector[indexSelle]
+            = dataVector[indexSelle]
+              - alpha_ * 2
+                  * (dataVector[indexSelle] - targetValueDeathPairToChange[i]);
           listAllIndicesToChangeSmoothing[indexMax] = 1;
           listAllIndicesToChangeSmoothing[indexSelle] = 1;
         }
@@ -1388,15 +1418,12 @@ int ttk::TopologicalOptimization::execute(
             averageTargetValue
               = averageTargetValue / (int)vertexToTargetValue[i].size();
 
-            smoothedScalars[i]
-              = smoothedScalars[i]
-                - alpha_ * 2 * (smoothedScalars[i] - averageTargetValue);
+            dataVector[i] = dataVector[i]
+                            - alpha_ * 2 * (dataVector[i] - averageTargetValue);
             listAllIndicesToChangeSmoothing[i] = 1;
           }
         }
       }
-
-      dataVector = smoothedScalars;
 
       //==================================
       //          Stop Condition
@@ -1411,14 +1438,14 @@ int ttk::TopologicalOptimization::execute(
         break;
     }
 
-//============================================
-//              Update output data
-//============================================
+//========================================================
+//              De-normalize data &  Update output data
+//========================================================
 #ifdef TTK_ENABLE_OPENMP
 #pragma omp parallel for num_threads(threadNumber_)
 #endif
     for(SimplexId k = 0; k < vertexNumber_; ++k) {
-      outputScalars[k] = dataVector[k];
+      outputScalars[k] = dataVector[k] * (maxVal - minVal) + minVal;
     }
   }
 
@@ -1432,8 +1459,8 @@ int ttk::TopologicalOptimization::execute(
     //=====================================================
     torch::Tensor F
       = torch::from_blob(dataVector.data(), {SimplexId(dataVector.size())},
-                         torch::dtype(torch::kFloat64))
-          .to(torch::kFloat64);
+                         torch::dtype(torch::kDouble))
+          .to(torch::kDouble);
     PersistenceGradientDescent model(F);
 
     torch::optim::Adam optimizer(model.parameters(), learningRate_);
@@ -1452,6 +1479,12 @@ int ttk::TopologicalOptimization::execute(
       vertexNumber_, std::vector<SimplexId>());
 
     for(int i = 0; i < epochNumber_; i++) {
+
+      if(i % printFrequency_ == 0) {
+        debugLevel_ = 3;
+      } else {
+        debugLevel_ = 0;
+      }
 
       this->printMsg(
         "Adam - epoch: " + std::to_string(i), debug::Priority::PERFORMANCE);
@@ -1506,7 +1539,7 @@ int ttk::TopologicalOptimization::execute(
         {static_cast<SimplexId>(deathPairToDeleteTargetDiagram.size())},
         torch::kDouble);
 
-      torch::Tensor lossDeletePairs = torch::zeros({1}, torch::kFloat32);
+      torch::Tensor lossDeletePairs = torch::zeros({1}, torch::kDouble);
       if(!(finePairManagement_ == 2) && !(finePairManagement_ == 1)) {
         lossDeletePairs
           = torch::sum(torch::pow(valueOfXDeleteBirth - valueDeleteBirth, 2));
@@ -1600,13 +1633,14 @@ int ttk::TopologicalOptimization::execute(
     }
 
 //============================================
-//              Update output data
+//   De-normalize data &  Update output data
 //============================================
 #ifdef TTK_ENABLE_OPENMP
 #pragma omp parallel for num_threads(threadNumber_)
 #endif
     for(SimplexId k = 0; k < vertexNumber_; ++k) {
-      outputScalars[k] = model.X[k].item().to<double>();
+      outputScalars[k]
+        = model.X[k].item().to<double>() * (maxVal - minVal) + minVal;
       if(std::isnan((double)outputScalars[k]))
         outputScalars[k] = 0;
     }
@@ -1615,6 +1649,7 @@ int ttk::TopologicalOptimization::execute(
   //========================================
   //            Information display
   //========================================
+  debugLevel_ = 3;
 
   // Total execution time
   double time = t.getElapsedTime();

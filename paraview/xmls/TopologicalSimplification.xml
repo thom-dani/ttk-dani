@@ -709,6 +709,25 @@ Identifiers.
       </IntVectorProperty>
 
       <IntVectorProperty
+          name="PrintFrequency"
+          label="Print Frequency"
+          command="SetPrintFrequency"
+          number_of_elements="1"
+          default_values="10"
+          >
+        <Hints>
+          <PropertyWidgetDecorator type="GenericDecorator"
+                                   mode="visibility"
+                                   property="Method"
+                                   value="2" />
+          <!-- enable this widget when <property> equals <value> -->
+        </Hints>
+        <Documentation>
+        A print is made every PrintFrequency iterations.
+      </Documentation>
+      </IntVectorProperty>
+
+      <IntVectorProperty
         name="AddPerturbation"
         command="SetAddPerturbation"
         label="Numerical Perturbation"
@@ -755,6 +774,7 @@ Identifiers.
         <Property name="Alpha"/>
         <Property name="ConstraintAveraging" />
         <Property name="OptimizationWithoutMatching" />
+        <Property name="PrintFrequency" />
       </PropertyGroup>
 
       <PropertyGroup panel_widget="Line" label="Output options">
