@@ -506,7 +506,7 @@ namespace ttk {
       std::tuple<dataType, dataType> birthDeath;
       // Normalized Wasserstein
       if(normalizedWasserstein_)
-        birthDeath = getNormalizedBirthDeathDouble<dataType>(tree1, nodeId1);
+        birthDeath = getNormalizedBirthDeath<dataType>(tree1, nodeId1);
       // Classical Wasserstein
       else
         birthDeath = tree1->getBirthDeath<dataType>(nodeId1);
