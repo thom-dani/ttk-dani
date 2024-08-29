@@ -548,9 +548,6 @@ namespace ttk {
       }
       dataType const projec = (tempBirth + tempDeath) / 2;
 
-      std::stringstream ss, ss2;
-      ss.precision(64);
-      ss2.precision(64);
       // Compute newBirth and newDeath
       for(unsigned int i = 0; i < trees.size(); ++i) {
         dataType iBirth = projec, iDeath = projec;
