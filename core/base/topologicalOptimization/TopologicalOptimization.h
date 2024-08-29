@@ -260,10 +260,8 @@ void ttk::TopologicalOptimization::getIndices(
     /*
       There is a 10% loss of performance
     */
-    if(epoch % printFrequency_ == 0) {
-      this->printMsg(
-        "Get Indices | UseFastPersistenceUpdate_", debug::Priority::DETAIL);
-    }
+    this->printMsg(
+      "Get Indices | UseFastPersistenceUpdate_", debug::Priority::DETAIL);
 
     if(not(epoch == 0 || epoch < 0)) {
 #ifdef TTK_ENABLE_OPENMP
@@ -287,12 +285,11 @@ void ttk::TopologicalOptimization::getIndices(
 
   SimplexId count = std::count(needUpdate.begin(), needUpdate.end(), true);
 
-  if(epoch % printFrequency_ == 0) {
-    this->printMsg(
-      "Get Indices | The number of vertices that need to be updated is: "
-        + std::to_string(count),
-      debug::Priority::DETAIL);
-  }
+  this->printMsg(
+    "Get Indices | The number of vertices that need to be updated is: "
+      + std::to_string(count),
+    debug::Priority::DETAIL);
+
   //=========================================
   //     Compute the persistence diagram
   //=========================================
@@ -479,15 +476,13 @@ void ttk::TopologicalOptimization::getIndices(
       }
     }
 
-    if(epoch % printFrequency_ == 0) {
-      this->printMsg("Get Indices | thresholdCurrentDiagram.size(): "
-                       + std::to_string(thresholdCurrentDiagram.size()),
-                     debug::Priority::DETAIL);
+    this->printMsg("Get Indices | thresholdCurrentDiagram.size(): "
+                     + std::to_string(thresholdCurrentDiagram.size()),
+                   debug::Priority::DETAIL);
 
-      this->printMsg("Get Indices | thresholdConstraintDiagram.size(): "
-                       + std::to_string(thresholdConstraintDiagram.size()),
-                     debug::Priority::DETAIL);
-    }
+    this->printMsg("Get Indices | thresholdConstraintDiagram.size(): "
+                     + std::to_string(thresholdConstraintDiagram.size()),
+                   debug::Priority::DETAIL);
 
     if(thresholdConstraintDiagram.size() == 0) {
       for(SimplexId i = 0; i < (SimplexId)thresholdCurrentDiagram.size(); i++) {
@@ -795,10 +790,8 @@ void ttk::TopologicalOptimization::getIndices(
   //            Basic Matching          //
   //=====================================//
   else {
-    if(epoch % printFrequency_ == 0) {
-      this->printMsg("Get Indices | Compute Wasserstein distance: ",
-                     debug::Priority::DETAIL);
-    }
+    this->printMsg(
+      "Get Indices | Compute Wasserstein distance: ", debug::Priority::DETAIL);
 
     if(epoch == 0) {
       for(SimplexId i = 0; i < (SimplexId)diagramOutput.size(); i++) {
@@ -889,12 +882,10 @@ void ttk::TopologicalOptimization::getIndices(
       pdBarycenter.execute(intermediateDiagrams, centroids[0], allMatchings);
     }
 
-    if(epoch % printFrequency_ == 0) {
-      this->printMsg(
-        "Get Indices | Persistence Diagram Clustering Time: "
-          + std::to_string(timePersistenceDiagramClustering.getElapsedTime()),
-        debug::Priority::DETAIL);
-    }
+    this->printMsg(
+      "Get Indices | Persistence Diagram Clustering Time: "
+        + std::to_string(timePersistenceDiagramClustering.getElapsedTime()),
+      debug::Priority::DETAIL);
 
     //=========================================
     //             Find matched pairs
@@ -1099,6 +1090,18 @@ int ttk::TopologicalOptimization::execute(
     dataVector[i] = (dataVector[i] - minVal) / (maxVal - minVal);
   }
 
+  ttk::DiagramType normalizedConstraintDiagram(constraintDiagram.size());
+
+#ifdef TTK_ENABLE_OPENMP
+#pragma omp parallel for num_threads(threadNumber_)
+#endif
+  for(SimplexId i = 0; i < (SimplexId)constraintDiagram.size(); i++) {
+    auto pair = constraintDiagram[i];
+    pair.birth.sfValue = (pair.birth.sfValue - minVal) / (maxVal - minVal);
+    pair.death.sfValue = (pair.death.sfValue - minVal) / (maxVal - minVal);
+    normalizedConstraintDiagram[i] = pair;
+  }
+
   std::vector<double> losses;
   std::vector<double> inputScalarsX(vertexNumber_);
 
@@ -1141,14 +1144,14 @@ int ttk::TopologicalOptimization::execute(
       std::vector<int> vertexInHowManyPairs(vertexNumber_, 0);
 
       getIndices(
-        triangulation, inputOffsetsCopie, dataVector.data(), constraintDiagram,
-        it, listAllIndicesToChangeSmoothing, pair2MatchedPair, pair2Delete,
-        pairChangeMatchingPair, birthPairToDeleteCurrentDiagram,
-        birthPairToDeleteTargetDiagram, deathPairToDeleteCurrentDiagram,
-        deathPairToDeleteTargetDiagram, birthPairToChangeCurrentDiagram,
-        birthPairToChangeTargetDiagram, deathPairToChangeCurrentDiagram,
-        deathPairToChangeTargetDiagram, currentVertex2PairsCurrentDiagram,
-        vertexInHowManyPairs);
+        triangulation, inputOffsetsCopie, dataVector.data(),
+        normalizedConstraintDiagram, it, listAllIndicesToChangeSmoothing,
+        pair2MatchedPair, pair2Delete, pairChangeMatchingPair,
+        birthPairToDeleteCurrentDiagram, birthPairToDeleteTargetDiagram,
+        deathPairToDeleteCurrentDiagram, deathPairToDeleteTargetDiagram,
+        birthPairToChangeCurrentDiagram, birthPairToChangeTargetDiagram,
+        deathPairToChangeCurrentDiagram, deathPairToChangeTargetDiagram,
+        currentVertex2PairsCurrentDiagram, vertexInHowManyPairs);
       std::fill(listAllIndicesToChangeSmoothing.begin(),
                 listAllIndicesToChangeSmoothing.end(), 0);
 
@@ -1512,13 +1515,13 @@ int ttk::TopologicalOptimization::execute(
       // order to match our current diagram to our target diagram.
       getIndices(
         triangulation, inputOffsetsCopie, inputScalarsX.data(),
-        constraintDiagram, i, listAllIndicesToChange, pair2MatchedPair,
-        pair2Delete, pairChangeMatchingPair, birthPairToDeleteCurrentDiagram,
-        birthPairToDeleteTargetDiagram, deathPairToDeleteCurrentDiagram,
-        deathPairToDeleteTargetDiagram, birthPairToChangeCurrentDiagram,
-        birthPairToChangeTargetDiagram, deathPairToChangeCurrentDiagram,
-        deathPairToChangeTargetDiagram, currentVertex2PairsCurrentDiagram,
-        vertexInHowManyPairs);
+        normalizedConstraintDiagram, i, listAllIndicesToChange,
+        pair2MatchedPair, pair2Delete, pairChangeMatchingPair,
+        birthPairToDeleteCurrentDiagram, birthPairToDeleteTargetDiagram,
+        deathPairToDeleteCurrentDiagram, deathPairToDeleteTargetDiagram,
+        birthPairToChangeCurrentDiagram, birthPairToChangeTargetDiagram,
+        deathPairToChangeCurrentDiagram, deathPairToChangeTargetDiagram,
+        currentVertex2PairsCurrentDiagram, vertexInHowManyPairs);
 
       std::fill(
         listAllIndicesToChange.begin(), listAllIndicesToChange.end(), 0);
