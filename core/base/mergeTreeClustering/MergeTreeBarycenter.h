@@ -580,8 +580,10 @@ namespace ttk {
         // std::cout << newBirth * (mu_max - mu_min) << std::endl;
         // std::cout << newDeath * (mu_max - mu_min) << std::endl;
         auto diff = (mu_max - mu_min);
-        newBirth = newBirth * diff + mu_min;
-        newDeath = newDeath * diff + mu_min;
+        newBirth = newBirth * diff;
+        newBirth += mu_min;
+        newDeath = newDeath * diff;
+        newDeath += mu_min;
       }
 
       std::cout << newBirth << std::endl;
