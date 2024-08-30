@@ -569,17 +569,20 @@ namespace ttk {
       }
 
       printMsg(ss.str(), debug::Priority::INFO);
-      std::cout << newBirth << std::endl;
       printMsg(ss2.str(), debug::Priority::INFO);
+      std::cout << newBirth << std::endl;
       std::cout << newDeath << std::endl;
 
-      std::cout << static_cast<dataType>(newBirth) << std::endl;
-      std::cout << static_cast<dataType>(newDeath) << std::endl;
-
       if(normalizedWasserstein_) {
+        std::cout << mu_max << std::endl;
+        std::cout << mu_min << std::endl;
+        std::cout << (mu_max - mu_min) << std::endl;
         newBirth = newBirth * (mu_max - mu_min) + mu_min;
         newDeath = newDeath * (mu_max - mu_min) + mu_min;
       }
+      
+      std::cout << newBirth << std::endl;
+      std::cout << newDeath << std::endl;
 
       return std::make_tuple(newBirth, newDeath);
     }
