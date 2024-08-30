@@ -562,8 +562,12 @@ namespace ttk {
         newDeath += alphas[i] * iDeath;
       }
       if(normalizedWasserstein_) {
-        newBirth = newBirth * (mu_max - mu_min) + mu_min;
-        newDeath = newDeath * (mu_max - mu_min) + mu_min;
+        // Forbid compiler optimization to have same results on different
+        // computers
+        volatile dataType tempBirthT = newBirth * (mu_max - mu_min);
+        volatile dataType tempDeathT = newDeath * (mu_max - mu_min);
+        newBirth = tempBirthT + mu_min;
+        newDeath = tempDeathT + mu_min;
       }
 
       return std::make_tuple(newBirth, newDeath);
@@ -592,8 +596,12 @@ namespace ttk {
       newDeath = alpha * newDeath + (1 - alpha) * projec;
 
       if(normalizedWasserstein_) {
-        newBirth = newBirth * (mu_max - mu_min) + mu_min;
-        newDeath = newDeath * (mu_max - mu_min) + mu_min;
+        // Forbid compiler optimization to have same results on different
+        // computers
+        volatile dataType tempBirthT = newBirth * (mu_max - mu_min);
+        volatile dataType tempDeathT = newDeath * (mu_max - mu_min);
+        newBirth = tempBirthT + mu_min;
+        newDeath = tempDeathT + mu_min;
       }
 
       return std::make_tuple(newBirth, newDeath);
