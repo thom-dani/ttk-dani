@@ -577,10 +577,11 @@ namespace ttk {
         std::cout << mu_max << std::endl;
         std::cout << mu_min << std::endl;
         std::cout << (mu_max - mu_min) << std::endl;
-        std::cout << newBirth * (mu_max - mu_min) << std::endl;
-        std::cout << newDeath * (mu_max - mu_min) << std::endl;
-        newBirth = newBirth * (mu_max - mu_min) + mu_min;
-        newDeath = newDeath * (mu_max - mu_min) + mu_min;
+        // std::cout << newBirth * (mu_max - mu_min) << std::endl;
+        // std::cout << newDeath * (mu_max - mu_min) << std::endl;
+        auto diff = (mu_max - mu_min);
+        newBirth = newBirth * diff + mu_min;
+        newDeath = newDeath * diff + mu_min;
       }
 
       std::cout << newBirth << std::endl;
@@ -616,9 +617,7 @@ namespace ttk {
         newDeath = newDeath * (mu_max - mu_min) + mu_min;
       }
 
-      dataType newBirthT = newBirth;
-      dataType newDeathT = newDeath;
-      return std::make_tuple(newBirthT, newDeathT);
+      return std::make_tuple(newBirth, newDeath);
     }
 
     template <class dataType>
