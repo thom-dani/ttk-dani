@@ -577,10 +577,12 @@ namespace ttk {
         std::cout << mu_max << std::endl;
         std::cout << mu_min << std::endl;
         std::cout << (mu_max - mu_min) << std::endl;
+        std::cout << newBirth * (mu_max - mu_min) << std::endl;
+        std::cout << newDeath * (mu_max - mu_min) << std::endl;
         newBirth = newBirth * (mu_max - mu_min) + mu_min;
         newDeath = newDeath * (mu_max - mu_min) + mu_min;
       }
-      
+
       std::cout << newBirth << std::endl;
       std::cout << newDeath << std::endl;
 
