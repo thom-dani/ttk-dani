@@ -50,7 +50,7 @@ jobs:
         sudo apt update
         # TTK dependencies
         sudo apt install -y \
-          sccache \
+          cargo \
           libboost-system-dev \
           libeigen3-dev \
           libgraphviz-dev \
@@ -64,6 +64,8 @@ jobs:
           libqhull-dev \
           dpkg-dev
         sudo python3 -m pip install scikit-learn
+        cargo install sccache --version 0.4.2 --locked
+        echo "PATH=/root/.cargo/bin:$PATH" >> $GITHUB_ENV
 
     - name: Install and setup sccache
       uses: f3d-app/sccache-setup-action@v1
