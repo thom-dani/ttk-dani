@@ -587,7 +587,7 @@ jobs:
         asset_name: ttk-$tag.exe
 
     - name: Delete package artifacts
-      uses: geekyeggo/delete-artifact@v3
+      uses: geekyeggo/delete-artifact@v2
       with:
           name: |
               ttk*
