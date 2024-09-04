@@ -86,7 +86,7 @@ jobs:
         cpack -G DEB
 
     - name: Upload TTK .deb package
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: ttk-${{ matrix.os }}.deb
         path: build/ttk.deb
@@ -230,7 +230,7 @@ jobs:
         cpack -G TGZ
 
     - name: Upload compressed binaries
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: ttk.tar.gz
         path: build/ttk.tar.gz
@@ -387,7 +387,7 @@ jobs:
         cpack -C Release -G NSIS64
 
     - name: Upload TTK .exe package
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: ttk.exe
         path: build/ttk.exe
