@@ -45,7 +45,7 @@ jobs:
       CCACHE_MAXSIZE: 500M
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
       name: Checkout TTK source code
 
     - name: Install Ubuntu dependencies
@@ -196,7 +196,7 @@ jobs:
       run: |
         sudo apt install ./ttk.deb
 
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
       with:
         repository: "topology-tool-kit/ttk-data"
         ref: "dev"
@@ -283,7 +283,7 @@ jobs:
       CCACHE_DIR: /Users/runner/work/ttk/.ccache
       CCACHE_MAXSIZE: 200M
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
       name: Checkout TTK source code
 
     - name: Remove hosted Python
@@ -367,7 +367,7 @@ jobs:
     - name: Run TTK tests
       uses: ./.github/actions/test-ttk-unix
 
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
       with:
         repository: "topology-tool-kit/ttk-data"
         ref: "dev"
@@ -435,7 +435,7 @@ jobs:
       CONDA_ROOT: C:\Miniconda
       SCCACHE_CACHE_SIZE: 200M
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
       name: Checkout TTK source code
 
     - uses: s-weigand/setup-conda@v1
@@ -580,7 +580,7 @@ jobs:
         cd %GITHUB_WORKSPACE%\examples\vtk-c++
         ttkHelloWorldCmd.exe -i %GITHUB_WORKSPACE%\examples\data\inputData.vtu
 
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
       with:
         repository: "topology-tool-kit/ttk-data"
         ref: "dev"

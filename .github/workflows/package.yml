@@ -26,7 +26,7 @@ jobs:
       matrix:
         os: [ubuntu-20.04, ubuntu-22.04]
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
       name: Checkout TTK source code
 
     - name: Install Ubuntu dependencies
@@ -101,7 +101,7 @@ jobs:
       matrix:
         os: [ubuntu-20.04, ubuntu-22.04]
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
       name: Checkout TTK source code
 
     - name: Fetch TTK-ParaView headless Debian package
@@ -129,7 +129,7 @@ jobs:
     - name: Run TTK tests
       uses: ./.github/actions/test-ttk-unix
 
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
       with:
         repository: "topology-tool-kit/ttk-data"
         ref: "dev"
@@ -168,7 +168,7 @@ jobs:
   build-macos:
     runs-on: macos-12
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
       name: Checkout TTK source code
 
     - name: Remove hosted Python
@@ -242,7 +242,7 @@ jobs:
     needs: build-macos
     runs-on: macos-12
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
       name: Checkout TTK source code
 
     - name: Remove hosted Python
@@ -287,7 +287,7 @@ jobs:
     - name: Run TTK tests
       uses: ./.github/actions/test-ttk-unix
 
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
       with:
         repository: "topology-tool-kit/ttk-data"
         ref: "dev"
@@ -317,7 +317,7 @@ jobs:
     env:
       CONDA_ROOT: C:\Miniconda
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
       name: Checkout TTK source code
 
     - uses: s-weigand/setup-conda@v1
@@ -403,7 +403,7 @@ jobs:
       TTK_DIR: C:\Program Files\TTK
       CONDA_ROOT: C:\Miniconda
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
       name: Checkout TTK source code
 
     - uses: s-weigand/setup-conda@v1
@@ -484,7 +484,7 @@ jobs:
         cd %GITHUB_WORKSPACE%\examples\vtk-c++
         ttkHelloWorldCmd.exe -i %GITHUB_WORKSPACE%\examples\data\inputData.vtu
 
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
       with:
         repository: "topology-tool-kit/ttk-data"
         ref: "dev"
