@@ -295,7 +295,7 @@ jobs:
         # ParaView dependencies
         brew reinstall python
         brew install --cask xquartz
-        brew install wget llvm libomp ninja open-mpi
+        brew install llvm ninja open-mpi
         # TTK dependencies
         brew install boost eigen graphviz numpy qhull ccache
         # prepend ccache to system path

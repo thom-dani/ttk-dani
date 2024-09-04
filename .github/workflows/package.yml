@@ -181,7 +181,7 @@ jobs:
         # ParaView dependencies
         brew reinstall python
         brew install --cask xquartz
-        brew install wget llvm libomp mesa glew qt@5 ninja 
+        brew install llvm mesa glew qt@5 ninja 
         # TTK dependencies
         brew install boost eigen graphviz numpy websocketpp 
 
@@ -255,7 +255,7 @@ jobs:
         # ParaView dependencies
         brew reinstall python
         brew install --cask xquartz
-        brew install wget llvm libomp mesa glew qt@5 ninja 
+        brew install llvm mesa glew qt@5 ninja 
         # TTK dependencies
         brew install boost eigen graphviz numpy websocketpp 
 
