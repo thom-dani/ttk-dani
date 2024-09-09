@@ -33,7 +33,6 @@
 ///   href="https://topology-tool-kit.github.io/examples/persistenceDiagramPGA/">Persistence
 ///   Diagram Principal Geodesic Analysis example</a> \n
 
-
 #pragma once
 
 // VTK Module
