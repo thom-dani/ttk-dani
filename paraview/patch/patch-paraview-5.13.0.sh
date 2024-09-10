@@ -80,6 +80,8 @@ $PATCH_BIN Qt/ApplicationComponents/Resources/UI/pqExampleVisualizationsDialog.u
   < "${PATCH_DIR}/paraview-5.13.0-ApplicationComponents.patch"
 $PATCH_BIN Qt/ApplicationComponents/pqExampleVisualizationsDialog.cxx \
   < "${PATCH_DIR}/paraview-5.13.0-pqExampleVisualizationsDialog.cxx.patch"
+$PATCH_BIN Qt/ApplicationComponents/Resources/pqApplicationComponents.qrc \
+  < "${PATCH_DIR}/paraview-5.13.0-pqApplicationComponents.qrc.patch"
 $PATCH_BIN VTK/ThirdParty/libproj/vtklibproj/data/CMakeLists.txt \
   < "${PATCH_DIR}/paraview-5.13.0-NSIS64.patch"
 
