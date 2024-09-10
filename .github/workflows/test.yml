@@ -318,11 +318,11 @@ jobs:
 
     - name: Fetch TTK-ParaView headless macOS binary archive
       run: |
-        wget https://github.com/${{ env.PV_REPO }}/releases/download/${{ env.PV_TAG }}/ttk-paraview-headless.tar.gz
+        wget https://github.com/${{ env.PV_REPO }}/releases/download/${{ env.PV_TAG }}/ttk-paraview-headless-macos-12.tar.gz
 
     - name: Install ParaView
       run: |
-        tar xzf ttk-paraview-headless.tar.gz
+        tar xzf ttk-paraview-headless-macos-12.tar.gz
         sudo cp -r ttk-paraview/* /usr/local
         pvpython -m pip install --break-system-packages scikit-learn
 
