@@ -42,7 +42,7 @@ jobs:
         os: [ubuntu-20.04, ubuntu-22.04]
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
       name: Checkout TTK source code
 
     - name: Install Ubuntu dependencies
@@ -130,11 +130,10 @@ jobs:
       uses: ./.github/actions/test-ttk-unix
 
     - name: Upload TTK .deb package for fast install in tests
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: ttk-for-tests-${{ matrix.os }}.deb
         path: build/ttk.deb
-
 
   # ------------------#
   # Tests on ttk-data #
@@ -169,7 +168,7 @@ jobs:
         sudo apt install ./ttk-paraview-headless.deb
 
     - name: Fetch TTK packages we just built in the test-build-ubuntu job
-      uses: actions/download-artifact@v3
+      uses: actions/download-artifact@v4.1.7
       with:
         name: ttk-for-tests-${{ matrix.os }}.deb
 
@@ -177,7 +176,7 @@ jobs:
       run: |
         sudo apt install ./ttk.deb
 
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
       with:
         repository: "topology-tool-kit/ttk-data"
         ref: "dev"
@@ -226,7 +225,7 @@ jobs:
 
     - name: Upload result screenshots
       if: steps.validate.outcome == 'failure' && matrix.testSet == 'screenshotTests'
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: screenshots-${{ matrix.os }}.tar.gz
         path: ttk-data/tests/screenshots.tar.gz
@@ -262,7 +261,7 @@ jobs:
     if: ${{ github.repository_owner == 'topology-tool-kit' || !contains(github.ref, 'heads') }}
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
       name: Checkout TTK source code
 
     - name: Remove hosted Python
@@ -274,7 +273,7 @@ jobs:
         # ParaView dependencies
         brew reinstall python
         brew install --cask xquartz
-        brew install wget llvm libomp ninja open-mpi
+        brew install llvm ninja open-mpi
         # TTK dependencies
         brew install boost eigen graphviz numpy qhull
 
@@ -288,11 +287,11 @@ jobs:
 
     - name: Fetch TTK-ParaView headless macOS binary archive
       run: |
-        wget https://github.com/${{ env.PV_REPO }}/releases/download/${{ env.PV_TAG }}/ttk-paraview-headless.tar.gz
+        wget https://github.com/${{ env.PV_REPO }}/releases/download/${{ env.PV_TAG }}/ttk-paraview-headless-macos-12.tar.gz
 
     - name: Install ParaView
       run: |
-        tar xzf ttk-paraview-headless.tar.gz
+        tar xzf ttk-paraview-headless-macos-12.tar.gz
         sudo cp -r ttk-paraview/* /usr/local
         pvpython -m pip install --break-system-packages scikit-learn
 
@@ -341,7 +340,7 @@ jobs:
     - name: Run TTK tests
       uses: ./.github/actions/test-ttk-unix
 
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
       with:
         repository: "topology-tool-kit/ttk-data"
         ref: "dev"
@@ -361,7 +360,7 @@ jobs:
 
     - name: Upload result screenshots
       if: steps.validate.outcome == 'failure'
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: screenshots-macOS.tar.gz
         path: ttk-data/tests/screenshots.tar.gz
@@ -392,7 +391,7 @@ jobs:
       TTK_DIR: C:\Program Files (x86)\ttk
       CONDA_ROOT: C:\Miniconda
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
       name: Checkout TTK source code
 
     - uses: s-weigand/setup-conda@v1
@@ -429,7 +428,7 @@ jobs:
     - name: Create & configure TTK build directory
       shell: cmd
       run: |
-        set CMAKE_PREFIX_PATH=%CONDA_ROOT%\Library\lib\cmake;%CONDA_ROOT%\Library\share\eigen3\cmake;%CONDA_ROOT%\Library\share\Qull\cmake;%CONDA_ROOT%\Library\cmake;%ProgramFiles%\TTK-ParaView\lib\cmake
+        set CMAKE_PREFIX_PATH=%CONDA_ROOT%\Library\lib\cmake;%CONDA_ROOT%\Library\share\eigen3\cmake;%CONDA_ROOT%\Library\share\Qull\cmake;%CONDA_ROOT%\Library\cmake;%ProgramFiles%\TTK-ParaView\lib\cmake;
         set CC=clang-cl.exe
         set CXX=clang-cl.exe
         call "%ProgramFiles%\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
@@ -529,7 +528,7 @@ jobs:
         cd %GITHUB_WORKSPACE%\examples\vtk-c++
         ttkHelloWorldCmd.exe -i %GITHUB_WORKSPACE%\examples\data\inputData.vtu
 
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
       with:
         repository: "topology-tool-kit/ttk-data"
         ref: "dev"
