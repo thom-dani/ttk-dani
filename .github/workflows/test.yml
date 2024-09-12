@@ -290,8 +290,14 @@ jobs:
 
     - name: Fetch TTK-ParaView headless macOS binary archive
       run: |
-        wget -O ttk-paraview-headless.tar.gz \
-          https://github.com/${{ env.PV_REPO }}/releases/download/${{ env.PV_TAG }}/ttk-paraview-headless-${{ matrix.os }}.tar.gz
+        if [[ "${{ matrix.os }}" == "macos12" ]]; then
+          wget -O ttk-paraview-headless.tar.gz \
+            https://github.com/${{ env.PV_REPO }}/releases/download/${{ env.PV_TAG }}/ttk-paraview-headless-${{ matrix.os }}.tar.gz
+        fi
+        if [[ "${{ matrix.os }}" == "macos14" ]]; then
+          wget -O ttk-paraview-headless.tar.gz \
+            https://github.com/${{ env.PV_REPO }}/releases/download/${{ env.PV_TAG }}/ttk-paraview-headless-${{ matrix.os }}-arm64.tar.gz
+        fi
 
     - name: Install ParaView
       run: |
