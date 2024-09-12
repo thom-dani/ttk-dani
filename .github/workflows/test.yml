@@ -300,6 +300,7 @@ jobs:
         fi
 
     - name: Install ParaView
+      continue-on-error: true
       run: |
         tar xzf ttk-paraview-headless.tar.gz
         sudo cp -r ttk-paraview/* /usr/local
