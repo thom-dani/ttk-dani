@@ -290,11 +290,11 @@ jobs:
 
     - name: Fetch TTK-ParaView headless macOS binary archive
       run: |
-        if [[ "${{ matrix.os }}" == "macos12" ]]; then
+        if [[ "${{ matrix.os }}" == "macos-12" ]]; then
           wget -O ttk-paraview-headless.tar.gz \
             https://github.com/${{ env.PV_REPO }}/releases/download/${{ env.PV_TAG }}/ttk-paraview-headless-${{ matrix.os }}.tar.gz
         fi
-        if [[ "${{ matrix.os }}" == "macos14" ]]; then
+        if [[ "${{ matrix.os }}" == "macos-14" ]]; then
           wget -O ttk-paraview-headless.tar.gz \
             https://github.com/${{ env.PV_REPO }}/releases/download/${{ env.PV_TAG }}/ttk-paraview-headless-${{ matrix.os }}-arm64.tar.gz
         fi
