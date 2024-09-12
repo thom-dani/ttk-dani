@@ -513,7 +513,7 @@ namespace ttk {
     mutable std::vector<EdgeSimplex> critEdges_{};
     mutable std::array<std::vector<bool>, 4> pairedCritCells_{};
     mutable std::vector<bool> onBoundary_{};
-    mutable std::array<std::vector<SimplexId>, 4> critCellsOrder_{};
+    mutable std::vector<std::vector<SimplexId>, 4> critCellsOrder_{};
     mutable std::vector<std::vector<SimplexId>> s2Children_{};
 
     bool ComputeMinSad{true};
