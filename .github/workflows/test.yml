@@ -257,7 +257,10 @@ jobs:
   # Test macOS build #
   # -----------------#
   test-build-macos:
-    runs-on: macos-12
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [macos-12, macos-14]
     if: ${{ github.repository_owner == 'topology-tool-kit' || !contains(github.ref, 'heads') }}
 
     steps:
@@ -275,7 +278,7 @@ jobs:
         brew install --cask xquartz
         brew install llvm ninja open-mpi
         # TTK dependencies
-        brew install boost eigen graphviz numpy qhull
+        brew install boost eigen graphviz sqlite zlib numpy qhull
 
     - name: Install and setup sccache
       uses: f3d-app/sccache-setup-action@v1
@@ -287,11 +290,12 @@ jobs:
 
     - name: Fetch TTK-ParaView headless macOS binary archive
       run: |
-        wget https://github.com/${{ env.PV_REPO }}/releases/download/${{ env.PV_TAG }}/ttk-paraview-headless-macos-12.tar.gz
+        wget -O ttk-paraview-headless.tar.gz \ 
+          https://github.com/${{ env.PV_REPO }}/releases/download/${{ env.PV_TAG }}/ttk-paraview-headless-${{ matrix.os }.tar.gz
 
     - name: Install ParaView
       run: |
-        tar xzf ttk-paraview-headless-macos-12.tar.gz
+        tar xzf ttk-paraview-headless.tar.gz
         sudo cp -r ttk-paraview/* /usr/local
         pvpython -m pip install --break-system-packages scikit-learn
 
