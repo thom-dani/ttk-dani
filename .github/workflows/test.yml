@@ -31,9 +31,6 @@ jobs:
   # ------------------#
   # Test Ubuntu build #
   # ------------------#
-  # NOTES: 
-  #   - pv513-headless does not build at the moment with ubuntu-24.04
-  #   - waiting for the fix in the next pv release 
   test-build-ubuntu:
     runs-on: ${{ matrix.os }}
     # trigger job when push event on a branch (not on a tag) only for
