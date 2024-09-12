@@ -471,14 +471,14 @@ namespace ttk {
 #endif
           this->s1Mapping_.resize(triangulation.getNumberOfEdges(), -1);
         }
-        for(int i = 0; i < dim + 1; ++i) {
+        for(int i = 0; i < dim; ++i) {
 #ifdef TTK_ENABLE_OPENMP
 #pragma omp task
 #endif
           this->pairedCritCells_[i].resize(
             this->dg_.getNumberOfCells(i, triangulation), false);
         }
-        for(int i = 1; i < dim + 1; ++i) {
+        for(int i = 1; i < dim; ++i) {
 #ifdef TTK_ENABLE_OPENMP
 #pragma omp task
 #endif
@@ -513,7 +513,7 @@ namespace ttk {
     mutable std::vector<EdgeSimplex> critEdges_{};
     mutable std::array<std::vector<bool>, 4> pairedCritCells_{};
     mutable std::vector<bool> onBoundary_{};
-    mutable std::vector<std::vector<SimplexId>, 4> critCellsOrder_{};
+    mutable std::array<std::vector<SimplexId>, 4> critCellsOrder_{};
     mutable std::vector<std::vector<SimplexId>> s2Children_{};
 
     bool ComputeMinSad{true};
