@@ -579,7 +579,7 @@ jobs:
         set PYTHONPATH=%PV_DIR%\bin\Lib\site-packages;%TTK_DIR%\bin\Lib\site-packages;%CONDA_ROOT%\Lib;%CONDA_ROOT%\DLLs
         set PV_PLUGIN_PATH=%TTK_DIR%\bin\plugins
         cd ttk-data
-        rm ttk-data/states/nestedTrackingFromOverlap.py
+        rm ttk-data/python/nestedTrackingFromOverlap.py
         pvpython.exe -u python\run.py
 
     - name: Test ttk-data Python scripts results [NOT ENFORCED]
