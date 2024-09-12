@@ -31,6 +31,9 @@ jobs:
   # ------------------#
   # Test Ubuntu build #
   # ------------------#
+  # NOTES: 
+  #   - pv513-headless does not build at the moment with ubuntu-24.04
+  #   - waiting for the fix in the next pv release 
   test-build-ubuntu:
     runs-on: ${{ matrix.os }}
     # trigger job when push event on a branch (not on a tag) only for
@@ -207,6 +210,9 @@ jobs:
           rm ttk-data/states/mergeTreeTemporalReduction.pvsm
           rm ttk-data/states/persistentGenerators_darkSky.pvsm
         fi
+        # remove buggy example
+        # related issue: https://github.com/topology-tool-kit/ttk/issues/1055
+        rm ttk-data/states/nestedTrackingFromOverlap.py
 
         cd ttk-data/tests
         mkdir output_screenshots
@@ -235,6 +241,9 @@ jobs:
       if: matrix.testSet == 'pyTests'
       run: |
         cd ttk-data
+        # remove buggy example
+        # related issue: https://github.com/topology-tool-kit/ttk/issues/1055
+        rm python/nestedTrackingFromOverlap.py
         python3 -u python/run.py
 
     - name: Test ttk-data Python scripts results [NOT ENFORCED]
@@ -365,6 +374,9 @@ jobs:
       id: validate
       continue-on-error: true
       run: |
+        # remove buggy example
+        # related issue: https://github.com/topology-tool-kit/ttk/issues/1055
+        rm ttk-data/states/nestedTrackingFromOverlap.py
         cd ttk-data/tests
         mkdir output_screenshots
         pvpython -u validate.py || (tar zcf screenshots.tar.gz output_screenshots && false)
@@ -383,6 +395,9 @@ jobs:
       continue-on-error: true
       run: |
         cd ttk-data
+        # remove buggy example
+        # related issue: https://github.com/topology-tool-kit/ttk/issues/1055
+        rm python/nestedTrackingFromOverlap.py
         pvpython -u python/run.py
       env:
         PV_PLUGIN_PATH: /usr/local/bin/plugins/TopologyToolKit
@@ -564,6 +579,7 @@ jobs:
         set PYTHONPATH=%PV_DIR%\bin\Lib\site-packages;%TTK_DIR%\bin\Lib\site-packages;%CONDA_ROOT%\Lib;%CONDA_ROOT%\DLLs
         set PV_PLUGIN_PATH=%TTK_DIR%\bin\plugins
         cd ttk-data
+        rm ttk-data/states/nestedTrackingFromOverlap.py
         pvpython.exe -u python\run.py
 
     - name: Test ttk-data Python scripts results [NOT ENFORCED]
