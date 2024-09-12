@@ -59,11 +59,11 @@ jobs:
           libsqlite3-dev \
           libwebsocketpp-dev \
           graphviz \
+          python3-sklearn \
           ninja-build \
           zlib1g-dev \
           libqhull-dev \
           dpkg-dev
-        sudo python3 -m pip install scikit-learn
         cargo install sccache --version 0.4.2 --locked
         echo "PATH=/root/.cargo/bin:$PATH" >> $GITHUB_ENV
 
