@@ -39,7 +39,7 @@ jobs:
     if: ${{ github.repository_owner == 'topology-tool-kit' || !contains(github.ref, 'heads') }}
     strategy:
       matrix:
-        os: [ubuntu-20.04, ubuntu-22.04]
+        os: [ubuntu-20.04, ubuntu-22.04, ubuntu-24.04]
 
     steps:
     - uses: actions/checkout@v4
@@ -144,7 +144,7 @@ jobs:
     needs: test-build-ubuntu
     strategy:
       matrix:
-        os: [ubuntu-20.04, ubuntu-22.04]
+        os: [ubuntu-20.04, ubuntu-22.04, ubuntu-24.04]
         testSet: [pyTests, screenshotTests]
     steps:
     - name: Install Ubuntu dependencies
@@ -201,7 +201,7 @@ jobs:
       run: |
         VERS=$(hostnamectl | grep "Operating System")
         # Ubuntu 22.04 OOM killer also kills the parent process...
-        if [[ "$VERS" == *"22.04"* ]]; then
+        if [[ "$VERS" == *"22.04"* ]] || [[ "$VERS" == *"24.04"* ]]; then
           rm ttk-data/states/mergeTreeClustering.pvsm
           rm ttk-data/states/mergeTreePGA.pvsm
           rm ttk-data/states/mergeTreeTemporalReduction.pvsm
@@ -215,7 +215,7 @@ jobs:
         mkdir output_screenshots
         if ! python3 -u validate.py; then
 
-          if [[ "$VERS" == *"22.04"* ]]; then
+          if [[ "$VERS" == *"22.04"* ]] || [[ "$VERS" == *"24.04"* ]]; then
             # weird opacity difference between the two Ubuntus
             rm -f output_screenshots/clusteringKelvinHelmholtzInstabilities_1.png
             rm -f output_screenshots/clusteringKelvinHelmholtzInstabilities_2.png
