@@ -478,7 +478,6 @@ namespace ttk {
           this->pairedCritCells_[i].resize(
             this->dg_.getNumberOfCells(i, triangulation), false);
         }
-        
         // NOTE:
         // a for loop used to stand here, but gcc 13 looks buggy with it...
         if(dim >= 1) {
@@ -488,7 +487,6 @@ namespace ttk {
           this->critCellsOrder_[1].resize(
             this->dg_.getNumberOfCells(1, triangulation), -1);
         }
-
         if(dim >= 2) {
 #ifdef TTK_ENABLE_OPENMP
 #pragma omp task
@@ -496,7 +494,6 @@ namespace ttk {
           this->critCellsOrder_[2].resize(
             this->dg_.getNumberOfCells(2, triangulation), -1);
         }
-
         if(dim >= 3) {
 #ifdef TTK_ENABLE_OPENMP
 #pragma omp task
