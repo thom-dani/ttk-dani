@@ -481,7 +481,7 @@ namespace ttk {
         
         // NOTE:
         // a for loop used to stand here, but gcc 13 looks buggy with it...
-        if(dim >= 1){
+        if(dim >= 1) {
 #ifdef TTK_ENABLE_OPENMP
 #pragma omp task
 #endif
@@ -489,7 +489,7 @@ namespace ttk {
             this->dg_.getNumberOfCells(1, triangulation), -1);
         }
 
-        if(dim >= 2){
+        if(dim >= 2) {
 #ifdef TTK_ENABLE_OPENMP
 #pragma omp task
 #endif
@@ -497,7 +497,7 @@ namespace ttk {
             this->dg_.getNumberOfCells(2, triangulation), -1);
         }
 
-        if(dim >= 3){
+        if(dim >= 3) {
 #ifdef TTK_ENABLE_OPENMP
 #pragma omp task
 #endif
