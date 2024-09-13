@@ -478,13 +478,24 @@ namespace ttk {
           this->pairedCritCells_[i].resize(
             this->dg_.getNumberOfCells(i, triangulation), false);
         }
-        for(int i = 1; i < dim + 1; ++i) {
+        
+        // NOTE:
+        // a for loop used to stand here, but gcc 13 looks buggy with it...
 #ifdef TTK_ENABLE_OPENMP
 #pragma omp task
 #endif
-          this->critCellsOrder_[i].resize(
-            this->dg_.getNumberOfCells(i, triangulation), -1);
-        }
+        this->critCellsOrder_[1].resize(
+          this->dg_.getNumberOfCells(1, triangulation), -1);
+#ifdef TTK_ENABLE_OPENMP
+#pragma omp task
+#endif
+        this->critCellsOrder_[2].resize(
+          this->dg_.getNumberOfCells(2, triangulation), -1);
+#ifdef TTK_ENABLE_OPENMP
+#pragma omp task
+#endif
+        this->critCellsOrder_[3].resize(
+          this->dg_.getNumberOfCells(3, triangulation), -1);
       }
       this->printMsg("Memory allocations", 1.0, tm.getElapsedTime(), 1,
                      debug::LineMode::NEW, debug::Priority::DETAIL);
