@@ -268,6 +268,8 @@ jobs:
       matrix:
         os: [macos-12, macos-14]
     if: ${{ github.repository_owner == 'topology-tool-kit' || !contains(github.ref, 'heads') }}
+    env:
+      DYLD_LIBRARY_PATH: /usr/local/lib
 
     steps:
     - uses: actions/checkout@v4
@@ -305,9 +307,7 @@ jobs:
             https://github.com/${{ env.PV_REPO }}/releases/download/${{ env.PV_TAG }}/ttk-paraview-headless-${{ matrix.os }}-arm64.tar.gz
         fi
 
-    # NOTE: pvpython is broken on macos-14, but not on macos-12 (?)
     - name: Install ParaView
-      continue-on-error: true
       run: |
         tar xzf ttk-paraview-headless.tar.gz
         sudo cp -r ttk-paraview/* /usr/local
@@ -356,7 +356,6 @@ jobs:
         echo "PYTHONPATH=/usr/local/lib/python3.12/site-packages:$PYTHONPATH" >> $GITHUB_ENV
 
     - name: Run TTK tests
-      continue-on-error: true
       uses: ./.github/actions/test-ttk-unix
 
     - uses: actions/checkout@v4
@@ -389,7 +388,6 @@ jobs:
         retention-days: 10
 
     - name: Run ttk-data Python scripts
-      continue-on-error: true
       run: |
         cd ttk-data
         # remove buggy example
