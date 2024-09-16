@@ -92,7 +92,6 @@ jobs:
       run: |
         sudo apt install ./ttk-paraview-headless.deb
 
-    # TODO: more aggressive warnings? (ubuntu-24.04)
     - name: Create & configure TTK build directory
       run: |
         mkdir build
@@ -241,6 +240,8 @@ jobs:
         # remove buggy example
         # related issue: https://github.com/topology-tool-kit/ttk/issues/1055
         rm python/nestedTrackingFromOverlap.py
+        # remove examples which fill up the memory
+        rm python/topologicalOptimization_darkSky.py
         python3 -u python/run.py
 
     - name: Test ttk-data Python scripts results [NOT ENFORCED]
