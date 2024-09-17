@@ -116,6 +116,9 @@
 ///   href="https://topology-tool-kit.github.io/examples/tectonicPuzzle/">Tectonic
 ///   Puzzle example</a> \n
 ///   - <a
+///   href="https://topology-tool-kit.github.io/examples/topologicalOptimization_darkSky//">Topological
+///   Optimization DarkSky</a>\n
+///   - <a
 ///   href="https://topology-tool-kit.github.io/examples/tribute/">Tribute
 ///   example</a> \n
 ///   - <a

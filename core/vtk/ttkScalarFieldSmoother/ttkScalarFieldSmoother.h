@@ -49,6 +49,9 @@
 ///   - <a
 ///   href="https://topology-tool-kit.github.io/examples/persistentGenerators_darkSky/">Persistent
 ///   Generators Dark Sky example</a> \n
+///   - <a
+///   href="https://topology-tool-kit.github.io/examples/topologicalOptimization_darkSky//">Topological
+///   Optimization DarkSky</a>\n
 
 #pragma once
 
