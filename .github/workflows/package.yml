@@ -354,6 +354,8 @@ jobs:
   build-windows:
     runs-on: windows-2022
     env:
+      PV_DIR: C:\Program Files\TTK-ParaView
+      TTK_DIR: C:\Program Files (x86)\ttk
       CONDA_ROOT: C:\Miniconda
     steps:
     - uses: actions/checkout@v4
@@ -365,7 +367,7 @@ jobs:
       shell: bash
       run: |
         conda install -c conda-forge "qt>=5.12" libboost-devel glew eigen spectralib zfp \
-          sqlite scikit-learn zlib qhull llvm-openmp graphviz clangxx
+          sqlite scikit-learn python=3.10 zlib qhull llvm-openmp graphviz clangxx
 
     - name: Remove hosted Python
       shell: bash
@@ -389,9 +391,14 @@ jobs:
       shell: cmd
       run: |
         set CMAKE_PREFIX_PATH=%CONDA_ROOT%\Library\lib\cmake;%CONDA_ROOT%\Library\share\eigen3\cmake;%CONDA_ROOT%\Library\cmake;%ProgramFiles%\TTK-ParaView\lib\cmake
+        set CC=clang-cl.exe
+        set CXX=clang-cl.exe
+        call "%ProgramFiles%\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
         mkdir build
         cd build
         cmake ^
+          -DCMAKE_BUILD_TYPE=Release ^
+          -DCMAKE_POLICY_DEFAULT_CMP0074=NEW ^
           -DCMAKE_POLICY_DEFAULT_CMP0092=NEW ^
           -DBUILD_SHARED_LIBS:BOOL=TRUE ^
           -DCMAKE_INSTALL_PREFIX="%ProgramFiles%\TTK" ^
@@ -401,6 +408,8 @@ jobs:
           -DGraphviz_GVC_LIBRARY="%CONDA_ROOT%\Library\lib\gvc.lib" ^
           -DGraphviz_CGRAPH_LIBRARY="%CONDA_ROOT%\Library\lib\cgraph.lib" ^
           -DGraphviz_PATHPLAN_LIBRARY="%CONDA_ROOT%\Library\lib\pathplan.lib" ^
+          -DZLIB_ROOT="%CONDA_ROOT%\Library" ^
+          -DSQLite3_ROOT="%CONDA_ROOT%\Library" ^
           -DTTK_BUILD_PARAVIEW_PLUGINS=TRUE ^
           -DTTK_BUILD_VTK_WRAPPERS=TRUE ^
           -DTTK_BUILD_STANDALONE_APPS=TRUE ^
@@ -413,10 +422,16 @@ jobs:
           -Tclangcl ^
           ..
 
+    - name: Fix clang-cl OpenMP flags in build.ninja
+      shell: bash
+      run: |
+        sed -i 's/-Xclang -fopenmp/-openmp/' build/build.ninja
+
     - name: Build TTK
       shell: bash
       run: |
         cd build
+        call "%ProgramFiles%\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
         cmake --build . --config Release --parallel
 
     - name: Package TTK
