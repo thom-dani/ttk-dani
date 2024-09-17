@@ -517,7 +517,7 @@ jobs:
         cd build
         cmake -DCMAKE_BUILD_TYPE=Release -GNinja ..
         cmake --build . --config Release --parallel
-        Release\ttkExample-c++.exe -i ..\..\data\inputData.off
+        ttkExample-c++.exe -i ..\..\data\inputData.off
 
     - name: Test VTK-C++ example
       shell: cmd
@@ -531,7 +531,7 @@ jobs:
         cd build
         cmake -DCMAKE_BUILD_TYPE=Release -GNinja ..
         cmake --build . --config Release --parallel
-        Release\ttkExample-vtk-c++.exe -i ..\..\data\inputData.vtu
+        ttkExample-vtk-c++.exe -i ..\..\data\inputData.vtu
 
     - name: Test Python example [TEMPORARILY NOT ENFORCED]
       continue-on-error: true
