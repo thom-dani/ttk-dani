@@ -25,6 +25,8 @@
 
         - https://topology-tool-kit.github.io/examples/topologicalOptimization_darkSky/
 
+        https://topology-tool-kit.github.io/examples/topologicalOptimization_pegasus/
+
       </Documentation>
       <InputProperty
         name="Input"
