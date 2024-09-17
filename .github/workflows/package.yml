@@ -342,7 +342,7 @@ jobs:
           rm python/geometryApproximation.py
           rm python/harmonicSkeleton.py
           rm python/topologicalOptimization_torus.py
-        if
+        fi
         pvpython -u python/run.py
       env:
         PV_PLUGIN_PATH: /usr/local/bin/plugins/TopologyToolKit
