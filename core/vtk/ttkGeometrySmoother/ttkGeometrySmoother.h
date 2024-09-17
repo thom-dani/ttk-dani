@@ -48,6 +48,9 @@
 ///   - <a
 ///   href="https://topology-tool-kit.github.io/examples/persistenceDiagramPGA/">Persistence
 ///   Diagram Principal Geodesic Analysis example</a> \n
+///   - <a
+///   href="https://topology-tool-kit.github.io/examples/topologicalOptimization_pegasus//">Topological
+///   Optimization for Pegasus Genus Repair example</a>\n
 ///
 
 #pragma once
