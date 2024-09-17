@@ -22,6 +22,11 @@
         - https://topology-tool-kit.github.io/examples/morsePersistence/   
 
         - https://topology-tool-kit.github.io/examples/persistentGenerators_darkSky/
+
+        - https://topology-tool-kit.github.io/examples/topologicalOptimization_darkSky/
+
+        https://topology-tool-kit.github.io/examples/topologicalOptimization_pegasus/
+
       </Documentation>
       <InputProperty
         name="Input"

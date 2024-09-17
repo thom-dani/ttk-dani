@@ -117,7 +117,13 @@
 ///   Puzzle example</a> \n
 ///   - <a
 ///   href="https://topology-tool-kit.github.io/examples/topologicalOptimization_darkSky//">Topological
-///   Optimization DarkSky</a>\n
+///   Optimization DarkSky example</a>\n
+///   - <a
+///   href="https://topology-tool-kit.github.io/examples/topologicalOptimization_pegasus//">Topological
+///   Optimization for Pegasus Genus Repair example</a>\n
+///   - <a
+///   href="https://topology-tool-kit.github.io/examples/topologicalOptimization_torus//">Topological
+///   Optimization for Torus Repair example</a>\n
 ///   - <a
 ///   href="https://topology-tool-kit.github.io/examples/tribute/">Tribute
 ///   example</a> \n
