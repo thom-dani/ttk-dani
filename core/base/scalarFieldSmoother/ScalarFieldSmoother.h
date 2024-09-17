@@ -42,13 +42,16 @@
 ///   href="https://topology-tool-kit.github.io/examples/morseSmaleSegmentation_at/">Morse-Smale
 ///   segmentation example</a> \n
 ///   - <a
+///   href="https://topology-tool-kit.github.io/examples/mpiExample/">
+///   MPI example</a> \n
+///   - <a
 ///   href="https://topology-tool-kit.github.io/examples/persistenceDiagramPGA/">Persistence
 ///   Diagram Principal Geodesic Analysis example</a> \n
 ///   - <a
-///   href="https://topology-tool-kit.github.io/examples/topologicalOptimization_darkSky//">Topological
+///   href="https://topology-tool-kit.github.io/examples/topologicalOptimization_darkSky/">Topological
 ///   Optimization DarkSky</a>\n
 ///   - <a
-///   href="https://topology-tool-kit.github.io/examples/topologicalOptimization_pegasus//">Topological
+///   href="https://topology-tool-kit.github.io/examples/topologicalOptimization_pegasus/">Topological
 ///   Optimization for Pegasus Genus Repair example</a>\n
 
 #pragma once
