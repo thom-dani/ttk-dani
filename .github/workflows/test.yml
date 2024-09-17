@@ -241,6 +241,8 @@ jobs:
         # remove buggy example
         # related issue: https://github.com/topology-tool-kit/ttk/issues/1055
         rm python/nestedTrackingFromOverlap.py
+        # tmp removal of mpi example
+        rm python/mpiExample.py
         python3 -u python/run.py
 
     - name: Test ttk-data Python scripts results [NOT ENFORCED]
@@ -393,6 +395,8 @@ jobs:
         # remove buggy example
         # related issue: https://github.com/topology-tool-kit/ttk/issues/1055
         rm python/nestedTrackingFromOverlap.py
+        # tmp removal of mpi example
+        rm python/mpiExample.py
         pvpython -u python/run.py
       env:
         PV_PLUGIN_PATH: /usr/local/bin/plugins/TopologyToolKit
@@ -575,6 +579,8 @@ jobs:
         set PV_PLUGIN_PATH=%TTK_DIR%\bin\plugins
         cd ttk-data
         rm python/nestedTrackingFromOverlap.py
+        # tmp removal of mpi example
+        rm python/mpiExample.py
         pvpython.exe -u python\run.py
 
     - name: Test ttk-data Python scripts results [NOT ENFORCED]
