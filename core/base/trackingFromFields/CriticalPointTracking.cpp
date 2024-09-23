@@ -26,24 +26,36 @@ void ttk::CriticalPointTracking::sortCriticalPoint(
     std::vector<double> &maxScalar,
     std::vector<double> &sad_1Scalar,
     std::vector<double> &sad_2Scalar,
-    std::vector<double> &minScalar)
+    std::vector<double> &minScalar,
+    std::vector<std::vector<SimplexId>> &mapMax,
+    std::vector<std::vector<SimplexId>> &mapSad_1,
+    std::vector<std::vector<SimplexId>> &mapSad_2,
+    std::vector<std::vector<SimplexId>> &mapMin)
     {
         for (unsigned int i = 0 ; i < d.size() ; i++ ){
           std::array<float,3> birthCoords = d[i].birth.coords;
           std::array<float,3> deathCoords = d[i].death.coords;
+          SimplexId birthId = d[i].birth.id;
+          SimplexId deathId = d[i].death.id;
             switch(d[i].birth.type){
                 case CriticalType::Local_maximum:
                     maxCoords.push_back(birthCoords);
                     maxScalar.push_back(d[i].birth.sfValue);
+                    mapMax.back().push_back(birthId);
+                    break;
                 case CriticalType::Saddle1:
                     sad_1Coords.push_back(birthCoords);
                     sad_1Scalar.push_back(d[i].birth.sfValue);
+                    mapSad_1.back().push_back(birthId);
+                    break;                    
                 case CriticalType::Saddle2:
                     sad_2Coords.push_back(birthCoords);
                     sad_2Scalar.push_back(d[i].birth.sfValue);
+                    mapSad_2.back().push_back(birthId);
                 case CriticalType::Local_minimum:
                     minCoords.push_back(birthCoords);
                     minScalar.push_back(d[i].birth.sfValue);
+                    mapMin.back().push_back(birthId);
                 default : 
                     break;
             }
@@ -51,15 +63,19 @@ void ttk::CriticalPointTracking::sortCriticalPoint(
                 case CriticalType::Local_maximum:
                     maxCoords.push_back(deathCoords);
                     maxScalar.push_back(d[i].death.sfValue);
+                    mapMax.back().push_back(deathId);
                 case CriticalType::Saddle1:
                     sad_1Coords.push_back(deathCoords);
                     sad_1Scalar.push_back(d[i].death.sfValue);
+                    mapSad_1.back().push_back(deathId);
                 case CriticalType::Saddle2:
                     sad_2Coords.push_back(deathCoords);
                     sad_2Scalar.push_back(d[i].death.sfValue);
+                    mapSad_2.back().push_back(deathId);
                 case CriticalType::Local_minimum:
                     minCoords.push_back(deathCoords);
                     minScalar.push_back(d[i].death.sfValue);
+                    mapMin.back().push_back(deathId);
                 default : 
                     break;
             }
@@ -98,61 +114,71 @@ void ttk::CriticalPointTracking::performMatchings(
     std::vector<std::vector<MatchingType>> &sad_1_Matchings,
     std::vector<std::vector<MatchingType>> &sad_2_Matchings,
     std::vector<std::vector<MatchingType>> &minimaMatchings, 
+    std::vector<std::vector<SimplexId>> &mapMax,
+    std::vector<std::vector<SimplexId>> &mapSad_1,
+    std::vector<std::vector<SimplexId>> &mapSad_2,
+    std::vector<std::vector<SimplexId>> &mapMin,
     int fieldNumber)
     {
+    
+    mapMax.push_back(std::vector<SimplexId>(0,0));
+    mapSad_1.push_back(std::vector<SimplexId>(0,0));
+    mapSad_2.push_back(std::vector<SimplexId>(0,0));
+    mapMin.push_back(std::vector<SimplexId>(0,0));
+    
+    std::vector<std::array<float, 3>> *maxCoords_1;
+    std::vector<std::array<float, 3>> *sad_1Coords_1;
+    std::vector<std::array<float, 3>> *sad_2Coords_1;
+    std::vector<std::array<float, 3>> *minCoords_1;
 
-    std::vector<std::vector<int>> mapMax(fieldNumber);
-    std::vector<std::vector<int>> mapSad_1(fieldNumber);
-    std::vector<std::vector<int>> mapSad_2(fieldNumber);
-    std::vector<std::vector<int>> mapMin(fieldNumber);
+    std::vector<double> *maxScalar_1;
+    std::vector<double> *sad_1Scalar_1;
+    std::vector<double> *sad_2Scalar_1;
+    std::vector<double> *minScalar_1;
+
+    sortCriticalPoint(persistenceDiagrams[0], 
+                           *maxCoords_1, *sad_1Coords_1, *sad_2Coords_1, *minCoords_1, 
+                           *maxScalar_1, *sad_1Scalar_1, *sad_2Scalar_1, *minScalar_1,
+                           mapMax, mapSad_1, mapSad_2, mapMin);
+
+    std::vector<std::array<float, 3>> *maxCoords_2;
+    std::vector<std::array<float, 3>> *sad_1Coords_2;
+    std::vector<std::array<float, 3>> *sad_2Coords_2;
+    std::vector<std::array<float, 3>> *minCoords_2;
+
+    std::vector<double> *maxScalar_2;
+    std::vector<double> *sad_1Scalar_2;
+    std::vector<double> *sad_2Scalar_2;
+    std::vector<double> *minScalar_2;
    
     for (int i = 0 ; i < fieldNumber-1 ; i++){
 
-        std::vector<std::array<float, 3>> maxCoords_1;
-        std::vector<std::array<float, 3>> sad_1Coords_1;
-        std::vector<std::array<float, 3>> sad_2Coords_1;
-        std::vector<std::array<float, 3>> minCoords_1;
-
-        std::vector<double> maxScalar_1;
-        std::vector<double> sad_1Scalar_1;
-        std::vector<double> sad_2Scalar_1;
-        std::vector<double> minScalar_1;
-
-        sortCriticalPoint(persistenceDiagrams[i], 
-                            maxCoords_1, sad_1Coords_1, sad_2Coords_1, minCoords_1, 
-                            maxScalar_1, sad_1Scalar_1, sad_2Scalar_1, minScalar_1,
-                            mapMax, mapSad_1, mapSad_2, mapMin);
-
-        std::vector<std::array<float, 3>> maxCoords_2;
-        std::vector<std::array<float, 3>> sad_1Coords_2;
-        std::vector<std::array<float, 3>> sad_2Coords_2;
-        std::vector<std::array<float, 3>> minCoords_2;
-
-        std::vector<double> maxScalar_2;
-        std::vector<double> sad_1Scalar_2;
-        std::vector<double> sad_2Scalar_2;
-        std::vector<double> minScalar_2;
+        mapMax.push_back(std::vector<SimplexId>(0,0));
+        mapSad_1.push_back(std::vector<SimplexId>(0,0));
+        mapSad_2.push_back(std::vector<SimplexId>(0,0));
+        mapMin.push_back(std::vector<SimplexId>(0,0));
 
         sortCriticalPoint(persistenceDiagrams[i+1], 
-                            maxCoords_2, sad_1Coords_2, sad_2Coords_2, minCoords_2, 
-                          maxScalar_2, sad_1Scalar_2, sad_2Scalar_2, minScalar_2);
+                            *maxCoords_2, *sad_1Coords_2, *sad_2Coords_2, *minCoords_2, 
+                            *maxScalar_2, *sad_1Scalar_2, *sad_2Scalar_2, *minScalar_2,
+                            mapMax, mapSad_1, mapSad_2, mapMin);
         
         float costDeathBirth = computeBoundingBoxRadius(persistenceDiagrams[i], persistenceDiagrams[i+1]);
         
-        int maxSize = maxCoords_1.size()+maxCoords_2.size();
-        int sad_1Size = sad_2Coords_1.size()+sad_1Coords_2.size();
-        int sad_2Size = sad_2Coords_1.size()+sad_2Coords_2.size();
-        int minSize = minCoords_1.size()+minCoords_2.size();
+        int maxSize = maxCoords_1->size()+maxCoords_2->size();
+        int sad_1Size = sad_2Coords_1->size()+sad_1Coords_2->size();
+        int sad_2Size = sad_2Coords_1->size()+sad_2Coords_2->size();
+        int minSize = minCoords_1->size()+minCoords_2->size();
 
         std::vector<std::vector<double>> maxMatrix(maxSize, std::vector<double>(maxSize, 0));
         std::vector<std::vector<double>> sad_1Matrix(sad_1Size, std::vector<double>(sad_1Size, 0));
         std::vector<std::vector<double>> sad_2Matrix(sad_2Size, std::vector<double>(sad_2Size, 0));
         std::vector<std::vector<double>> minMatrix(minSize, std::vector<double>(minSize, 0));
 
-        buildCostMatrix(maxCoords_1, maxScalar_1, maxCoords_2, maxScalar_2, maxMatrix, costDeathBirth);
-        buildCostMatrix(sad_1Coords_1, sad_1Scalar_1, maxCoords_2, maxScalar_2, sad_1Matrix, costDeathBirth);
-        buildCostMatrix(sad_2Coords_1, maxScalar_1, maxCoords_2, maxScalar_2, sad_2Matrix, costDeathBirth);
-        buildCostMatrix(maxCoords_1, maxScalar_1, maxCoords_2, maxScalar_2, minMatrix, costDeathBirth);
+        buildCostMatrix(*maxCoords_1, *maxScalar_1, *maxCoords_2, *maxScalar_2, maxMatrix, costDeathBirth);
+        buildCostMatrix(*sad_1Coords_1, *sad_1Scalar_1, *maxCoords_2, *maxScalar_2, sad_1Matrix, costDeathBirth);
+        buildCostMatrix(*sad_2Coords_1, *maxScalar_1, *maxCoords_2, *maxScalar_2, sad_2Matrix, costDeathBirth);
+        buildCostMatrix(*maxCoords_1, *maxScalar_1, *maxCoords_2, *maxScalar_2, minMatrix, costDeathBirth);
 
         std::vector<ttk::MatchingType> maxMatching;
         std::vector<ttk::MatchingType> sad_1_Matching;
@@ -164,12 +190,38 @@ void ttk::CriticalPointTracking::performMatchings(
         auctionAssignement(sad_2Matrix, sad_2_Matching);
         auctionAssignement(minMatrix, minMatching);
 
-        maximaMatchings.push_back(maxMatching);
-        sad_1_Matchings.push_back(sad_1_Matching);
-        sad_1_Matchings.push_back(sad_2_Matching);
-        minimaMatchings.push_back(minMatching);
+        delete(maxCoords_1);
+        delete(sad_1Coords_1);
+        delete(sad_2Coords_1);
+        delete(minCoords_1);
+        delete(maxScalar_1);
+        delete(sad_1Scalar_1);
+        delete(sad_2Scalar_1);
+        delete(minScalar_1);
 
+        maxCoords_1 = maxCoords_2;
+        sad_1Coords_1 = sad_1Coords_2;
+        sad_2Coords_1 = sad_2Coords_2;
+        minCoords_1 = minCoords_2;
+        maxScalar_1 = maxScalar_2;
+        sad_1Scalar_1 = sad_1Scalar_2;
+        sad_2Scalar_1 = sad_2Scalar_2;
+        minScalar_1 = minScalar_2;
       }
+    }
+
+    void ttk::CriticalPointTracking::localToGlobalMatching(std::vector<std::vector<MatchingType>> &matchings, 
+                                                            const std::vector<std::vector<int>> &map){
+
+        for (int i = 0 ; i < matchings.size() ; i++){
+            for (int j = 0 ; j < matchings[i].size() ; j++){
+                MatchingType current_matching = matchings[i][j];
+                int id1 = std::get<0>(current_matching);
+                int id2 = std::get<1>(current_matching);
+                std::get<0>(current_matching)=map[i][id1]; 
+                std::get<1>(current_matching)=map[i+1][id2]; 
+            }
+        }
     }
 
 

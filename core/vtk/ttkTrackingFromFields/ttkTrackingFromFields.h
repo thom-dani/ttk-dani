@@ -35,6 +35,7 @@
 
 // VTK Module
 #include <TrackingFromFields.h>
+#include<CriticalPointTracking.h>
 #include <ttkAlgorithm.h>
 #include <ttkTrackingFromFieldsModule.h>
 
@@ -185,6 +186,11 @@ private:
 
   template <class dataType, class triangulationType>
   int trackWithPersistenceMatching(vtkUnstructuredGrid *output,
+                                   unsigned long fieldNumber,
+                                   const triangulationType *triangulation);
+
+  template <class dataType, class triangulationType>
+  int trackWithCriticalPointMatching(vtkUnstructuredGrid *output,
                                    unsigned long fieldNumber,
                                    const triangulationType *triangulation);
 };

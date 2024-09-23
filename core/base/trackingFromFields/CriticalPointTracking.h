@@ -13,10 +13,11 @@
 // base code includes
 #include <PersistenceDiagram.h>
 #include <Triangulation.h>
+#include <TrackingFromPersistenceDiagrams.h>
 
 namespace ttk {
 
-  class CriticalPointTracking : virtual public Debug {
+  class CriticalPointTracking : public TrackingFromPersistenceDiagrams, virtual public Debug {
 
 
     private:
@@ -27,25 +28,25 @@ namespace ttk {
       CriticalPointTracking(){
       }
 
-      void setBoudingBoxRadius(double r){
+      void setMeshDiamater(double r){
         meshDiameter=r;
       }
 
-      void setBoudingBoxRadius(double e){
+      void setEpsilon(double e){
         epsilon=e;
       }
 
       double computeBoundingBoxRadius(const DiagramType &d1, const DiagramType &d2){
         double maxScalar, minScalar;
 
-        for (int i = 0 ; i < d1.size(); i++){
+        for (unsigned int i = 0 ; i < d1.size(); i++){
           maxScalar = std::max(maxScalar, d1[i].birth.sfValue);
           maxScalar = std::max(maxScalar, d1[i].death.sfValue);
           minScalar = std::min(minScalar, d1[i].birth.sfValue);
           minScalar = std::min(minScalar, d1[i].death.sfValue);
         }
 
-        for (int i = 0 ; i < d2.size(); i++){
+        for (unsigned int i = 0 ; i < d2.size(); i++){
           maxScalar = std::max(maxScalar, d2[i].birth.sfValue);
           maxScalar = std::max(maxScalar, d2[i].death.sfValue);
           minScalar = std::min(minScalar, d2[i].birth.sfValue);
@@ -77,7 +78,11 @@ namespace ttk {
           std::vector<double> &maxScalar,
           std::vector<double> &sad1Scalar,
           std::vector<double> &sad_2Scalar,
-          std::vector<double> &minScalar);
+          std::vector<double> &minScalar,
+          std::vector<std::vector<SimplexId>> &mapMax,
+          std::vector<std::vector<SimplexId>> &mapSad_1,
+          std::vector<std::vector<SimplexId>> &mapSad_2,
+          std::vector<std::vector<SimplexId>> &mapMin);
 
       void buildCostMatrix(
           const std::vector<std::array<float, 3>> coords_1,
@@ -86,59 +91,26 @@ namespace ttk {
           const std::vector<double> sfValues_2,
           std::vector<std::vector<double>> &matrix,
           float costDeathBirth);
-       
-      void buildCostMatrices(
-        const std::vector<std::array<float, 3>> pointSetCoords_1,
-        const std::vector<double> pointSetScalar_1,
-        const std::vector<std::array<float, 3>> pointSetCoords_2,
-        const std::vector<double> pointSetScalar_2,
-        std::vector<std::vector<double>> &costMatrice);
-
-      void auctionAssignement(
-          std::vector<std::vector<double>> &costMatrix,
-          std::vector<ttk::MatchingType> &matching);
-        
-
 
       void performMatchings(
-        std::vector<DiagramType> persistenceDiagrams, 
-        std::vector<std::vector<MatchingType>> &maximaMatchings,
-        std::vector<std::vector<MatchingType>> &sad_1_Matchings,
-        std::vector<std::vector<MatchingType>> &sad_2_Matchings,
-        std::vector<std::vector<MatchingType>> &minimaMatchings, 
-        int fieldNumber);
-         
-
-      void buildCostMatrix(
-        const std::vector<std::array<float, 3>> coords_1,
-        const std::vector<double> sfValues_1,
-        const std::vector<std::array<float, 3>> coords_2,
-        const std::vector<double> sfValues_2,
-        std::vector<std::vector<double>> &matrix,
-        float costDeathBirth
-        );
-
-      void buildCostMatrices(
-        const std::vector<SimplexId> &idDiagram_1,
-        const std::vector<SimplexId> &idDiagram_2,
-        const DiagramType &d1,
-        const DiagramType &d2,
-        std::vector<std::vector<double>> &costMatrix);
-       
-        void auctionAssignement(
-            std::vector<std::vector<double>> &costMatrix,
-            std::vector<ttk::MatchingType> &matching);
-       
-
-
-        void performMatchings(
           std::vector<DiagramType> persistenceDiagrams, 
           std::vector<std::vector<MatchingType>> &maximaMatchings,
           std::vector<std::vector<MatchingType>> &sad_1_Matchings,
           std::vector<std::vector<MatchingType>> &sad_2_Matchings,
           std::vector<std::vector<MatchingType>> &minimaMatchings, 
+          std::vector<std::vector<SimplexId>> &mapMax,
+          std::vector<std::vector<SimplexId>> &mapSad_1,
+          std::vector<std::vector<SimplexId>> &mapSad_2,
+          std::vector<std::vector<SimplexId>> &mapMin,
           int fieldNumber);
 
-    
+
+      void localToGlobalMatching(std::vector<std::vector<MatchingType>> &matchings, 
+                                  const std::vector<std::vector<int>> &map);
+
+      void auctionAssignement(
+          std::vector<std::vector<double>> &costMatrix,
+          std::vector<ttk::MatchingType> &matching);
+        
       };
 }
