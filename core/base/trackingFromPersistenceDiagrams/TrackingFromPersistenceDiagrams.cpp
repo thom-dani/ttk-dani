@@ -97,7 +97,6 @@ int ttk::TrackingFromPersistenceDiagrams::performTracking(
     auto matchingsSize1 = (int)matchings1.size();
     auto matchingsSize2 = (int)matchings2.size();
 
-    std::cout<<"at time = "<<in<<" (matchingsSize1, matchingsSize2) = "<<matchingsSize1<<", "<<matchingsSize1<<std::endl;
 
     int const endIndex = numPersistenceDiagramsInput - 2;
 

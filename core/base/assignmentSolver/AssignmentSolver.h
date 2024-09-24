@@ -41,7 +41,6 @@ namespace ttk {
     }
 
     virtual inline int setInput(std::vector<std::vector<dataType>> &C_) {
-      std::cout<<"enter set input"<<std::endl;
       rowSize = C_.size();
       colSize = C_[0].size();
 
