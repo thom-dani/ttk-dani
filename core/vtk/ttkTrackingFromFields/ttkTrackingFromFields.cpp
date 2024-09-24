@@ -185,7 +185,7 @@ template <class dataType, class triangulationType>
     }
 
     double const spacing = Spacing;
-    bool const useGeometricSpacing = UseGeometricSpacing;
+    bool const useGeometricSpacing = true;
     std::cout<<"balise 8"<<std::endl;
 
     // Build mesh.
