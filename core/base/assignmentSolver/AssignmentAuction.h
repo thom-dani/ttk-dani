@@ -249,7 +249,6 @@ namespace ttk {
 
   template <typename dataType>
   int AssignmentAuction<dataType>::run(std::vector<MatchingType> &matchings) {
-    std::cout<<"run 1"<<std::endl;
     initEpsilon();
     dataType bestCost = std::numeric_limits<dataType>::max();
 
@@ -264,7 +263,6 @@ namespace ttk {
       auto t = old - goodPrices[i];
       savedPrices.push_back(t);
     }
-    std::cout<<"run 2"<<std::endl;
 
     // Make balanced cost matrix
     if(not this->balancedAssignment)
@@ -277,7 +275,6 @@ namespace ttk {
     initFirstRound();
     while(not stoppingCriterion(this->costMatrix)) {
       initBiddersAndGoods();
-      std::cout<<"run 2.1"<<std::endl;
 
       runAuctionRound(this->costMatrix);
 
@@ -294,7 +291,6 @@ namespace ttk {
         break;
     }
     bidderAssignments = bestBidderAssignments;
-    std::cout<<"run 3"<<std::endl;
 
     // Create output matching
     for(unsigned int bidderId = 0; bidderId < bidderAssignments.size();

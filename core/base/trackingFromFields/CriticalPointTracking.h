@@ -21,13 +21,14 @@ namespace ttk {
 
 
     private:
-      double epsilon;
-      double meshDiameter;
+      double epsilon{10e-1};
+      double meshDiameter{1};
+      double tolerance{10e-3};
+
           
     public:
       CriticalPointTracking(){
-        meshDiameter=0;
-        epsilon=0;
+      
       }
 
       void setMeshDiamater(double r){
@@ -36,6 +37,10 @@ namespace ttk {
 
       void setEpsilon(double e){
         epsilon=e;
+      }
+
+      void setTolerance(double t){
+        tolerance = t;
       }
 
       double computeBoundingBoxRadius(const DiagramType &d1, const DiagramType &d2){
@@ -65,6 +70,20 @@ namespace ttk {
           int fieldNumber);
     protected:
 
+      double computeRelevantPersistence(const DiagramType &d1, const DiagramType &d2){
+        double persistMax = std::abs(d1[0].persistence()); 
+        double persistMin = std::abs(d1[0].persistence()); 
+        for (unsigned int i = 1 ; i < d1.size() ; i++){
+          persistMax = std::max(persistMax, std::abs(d2[i].persistence()));
+          persistMin = std::min(persistMin, std::abs(d2[i].persistence()));
+        }
+        for (unsigned int i = 0 ; i < d2.size() ; i++ ){
+          persistMax = std::max(persistMax, std::abs(d1[i].persistence()));
+          persistMin = std::min(persistMin, std::abs(d1[i].persistence()));
+        }
+        return (this->tolerance*(persistMax - persistMin));
+      }
+
       //Compute L_p distance betweem (p,f(p)) and (q,f(q)) where p and q are critical points
 
       double criticalPointDistance(
@@ -79,6 +98,8 @@ namespace ttk {
 
       void sortCriticalPoint(
           const DiagramType &d, 
+          const int t,
+          const double minimumRelevantPersistence,
           std::vector<std::array<float, 3>> &maxCoords,
           std::vector<std::array<float, 3>> &sad_1Coords,
           std::vector<std::array<float, 3>> &sad_2Coords,
