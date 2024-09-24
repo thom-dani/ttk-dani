@@ -109,17 +109,19 @@ void ttk::CriticalPointTracking::buildCostMatrix(
   }
 
 void ttk::CriticalPointTracking::performMatchings(
-    std::vector<DiagramType> persistenceDiagrams, 
-    std::vector<std::vector<MatchingType>> &maximaMatchings,
-    std::vector<std::vector<MatchingType>> &sad_1_Matchings,
-    std::vector<std::vector<MatchingType>> &sad_2_Matchings,
-    std::vector<std::vector<MatchingType>> &minimaMatchings, 
-    std::vector<std::vector<SimplexId>> &mapMax,
-    std::vector<std::vector<SimplexId>> &mapSad_1,
-    std::vector<std::vector<SimplexId>> &mapSad_2,
-    std::vector<std::vector<SimplexId>> &mapMin,
+    std::vector<DiagramType> persistenceDiagrams,
+    std::vector<std::vector<MatchingType>> &outuputs,
     int fieldNumber)
     {
+        
+    std::vector<std::vector<MatchingType>> maximaMatchings;
+    std::vector<std::vector<MatchingType>> sad_1_Matchings;
+    std::vector<std::vector<MatchingType>> sad_2_Matchings;
+    std::vector<std::vector<MatchingType>> minimaMatchings; 
+    std::vector<std::vector<SimplexId>> mapMax;
+    std::vector<std::vector<SimplexId>> mapSad_1;
+    std::vector<std::vector<SimplexId>> mapSad_2;
+    std::vector<std::vector<SimplexId>> mapMin;
     
     mapMax.push_back(std::vector<SimplexId>(0,0));
     mapSad_1.push_back(std::vector<SimplexId>(0,0));
@@ -190,6 +192,11 @@ void ttk::CriticalPointTracking::performMatchings(
         auctionAssignement(sad_2Matrix, sad_2_Matching);
         auctionAssignement(minMatrix, minMatching);
 
+        maximaMatchings.push_back(maxMatching);
+        sad_1_Matchings.push_back(sad_1_Matching);
+        sad_2_Matchings.push_back(sad_2_Matching);
+        minimaMatchings.push_back(minMatching);
+
         delete(maxCoords_1);
         delete(sad_1Coords_1);
         delete(sad_2Coords_1);
@@ -208,6 +215,15 @@ void ttk::CriticalPointTracking::performMatchings(
         sad_2Scalar_1 = sad_2Scalar_2;
         minScalar_1 = minScalar_2;
       }
+      localToGlobalMatching(maximaMatchings, mapMax);
+      localToGlobalMatching(sad_1_Matchings, mapSad_1);
+      localToGlobalMatching(sad_2_Matchings, mapSad_2);
+      localToGlobalMatching(minimaMatchings, mapMin);
+
+      for (int i = 0 ; i < fieldNumber-1 ; i++){
+
+      }
+
     }
 
     void ttk::CriticalPointTracking::localToGlobalMatching(std::vector<std::vector<MatchingType>> &matchings, 

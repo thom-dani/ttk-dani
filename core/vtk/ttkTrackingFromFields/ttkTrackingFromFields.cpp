@@ -130,26 +130,26 @@ template <class dataType, class triangulationType>
     }
 
     float meshDiameter = std::sqrt(std::pow(maxX-minX, 2)  + std::pow(maxY - minY, 2) + std::pow(maxZ - minZ, 2));
-    tracker.setMeshDiamater(meshDiamater);
+    tracker.setMeshDiamater(meshDiameter);
 
-    std::vector<DiagramType> persistenceDiagrams;
+    std::vector<ttk::DiagramType> persistenceDiagrams;
     this->performDiagramComputation<dataType, triangulationType>(
     (int)fieldNumber, persistenceDiagrams, triangulation);
 
-    std::vector<std::vector<ttk::MatchingType>> &maximaMatchings;
-    std::vector<std::vector<ttk::MatchingType>> &sad_1Matchings;
-    std::vector<std::vector<ttk::MatchingType>> &sad_2Matchings;
-    std::vector<std::vector<ttk::MatchingType>> &minimaMatchings; 
-    std::vector<std::vector<SimplexId>> &mapMax;
-    std::vector<std::vector<SimplexId>> &mapSad_1;
-    std::vector<std::vector<SimplexId>> &mapSad_2;
-    std::vector<std::vector<SimplexId>> &mapMin;
+    std::vector<std::vector<ttk::MatchingType>> maximaMatchings;
+    std::vector<std::vector<ttk::MatchingType>> sad_1Matchings;
+    std::vector<std::vector<ttk::MatchingType>> sad_2Matchings;
+    std::vector<std::vector<ttk::MatchingType>> minimaMatchings; 
+    std::vector<std::vector<SimplexId>> mapMax;
+    std::vector<std::vector<SimplexId>> mapSad_1;
+    std::vector<std::vector<SimplexId>> mapSad_2;
+    std::vector<std::vector<SimplexId>> mapMin;
 
     tracker.performMatchings(persistenceDiagrams, 
                               maximaMatchings, sad_1Matchings, sad_2Matchings, minimaMatchings, 
-                              mapMax, mapSad_1, mapSad_2, mapMin);
-  
-
+                              mapMax, mapSad_1, mapSad_2, mapMin, fieldNumber);
+                  
+   
     std::vector<ttk::trackingTuple> allTracking;
     std::vector<ttk::trackingTuple> trackingSad_1;
     std::vector<ttk::trackingTuple> trackingSad_2;
@@ -160,9 +160,9 @@ template <class dataType, class triangulationType>
     tracker.performTracking(persistenceDiagrams, sad_2Matchings, trackingSad_2);
     tracker.performTracking(persistenceDiagrams, minimaMatchings, trackingMin);
 
-    std::vector<ttk::trackingTuple> allTracking.insert(allTracking.end(), trackingSad_1.begin(), trackingSad_1.end());
-    std::vector<ttk::trackingTuple> allTracking.insert(allTracking.end(), trackingSad_2.begin(), trackingSad_2.end());
-    std::vector<ttk::trackingTuple> allTracking.insert(allTracking.end(), trackingMin.begin(), trackingMin.end());
+    allTracking.insert(allTracking.end(), trackingSad_1.begin(), trackingSad_1.end());
+    allTracking.insert(allTracking.end(), trackingSad_2.begin(), trackingSad_2.end());
+    allTracking.insert(allTracking.end(), trackingMin.begin(), trackingMin.end());
 
     vtkNew<vtkPoints> const points{};
     vtkNew<vtkUnstructuredGrid> const trackingResult{};
