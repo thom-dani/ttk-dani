@@ -26,6 +26,8 @@ namespace ttk {
           
     public:
       CriticalPointTracking(){
+        meshDiameter=0;
+        epsilon=0;
       }
 
       void setMeshDiamater(double r){
@@ -37,7 +39,8 @@ namespace ttk {
       }
 
       double computeBoundingBoxRadius(const DiagramType &d1, const DiagramType &d2){
-        double maxScalar, minScalar;
+        double maxScalar = d1[0].birth.sfValue;
+        double minScalar = d1[0].birth.sfValue;
 
         for (unsigned int i = 0 ; i < d1.size(); i++){
           maxScalar = std::max(maxScalar, d1[i].birth.sfValue);
@@ -55,6 +58,11 @@ namespace ttk {
 
         return std::sqrt(std::pow(meshDiameter, 2)+ std::pow(maxScalar - minScalar, 2));
       }
+      
+      void performMatchings(
+          const std::vector<DiagramType> persistenceDiagrams, 
+          std::vector<std::vector<MatchingType>> &outputMatchings,
+          int fieldNumber);
     protected:
 
       //Compute L_p distance betweem (p,f(p)) and (q,f(q)) where p and q are critical points
@@ -92,17 +100,7 @@ namespace ttk {
           std::vector<std::vector<double>> &matrix,
           float costDeathBirth);
 
-      void performMatchings(
-          std::vector<DiagramType> persistenceDiagrams, 
-          std::vector<std::vector<MatchingType>> &maximaMatchings,
-          std::vector<std::vector<MatchingType>> &sad_1_Matchings,
-          std::vector<std::vector<MatchingType>> &sad_2_Matchings,
-          std::vector<std::vector<MatchingType>> &minimaMatchings, 
-          std::vector<std::vector<SimplexId>> &mapMax,
-          std::vector<std::vector<SimplexId>> &mapSad_1,
-          std::vector<std::vector<SimplexId>> &mapSad_2,
-          std::vector<std::vector<SimplexId>> &mapMin,
-          int fieldNumber);
+ 
 
 
       void localToGlobalMatching(std::vector<std::vector<MatchingType>> &matchings, 

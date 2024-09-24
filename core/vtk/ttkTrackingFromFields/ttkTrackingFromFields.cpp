@@ -108,19 +108,21 @@ int ttkTrackingFromFields::trackWithPersistenceMatching(
   return 1;
 }
 
-
-
 template <class dataType, class triangulationType>
   int ttkTrackingFromFields::trackWithCriticalPointMatching(vtkUnstructuredGrid *output,
                                    unsigned long fieldNumber,
                                    const triangulationType *triangulation){
 
     ttk::CriticalPointTracking tracker;
-
+    std::cout<<"balise 1"<<std::endl;
+    float x, y, z;
     float maxX, minX, maxY, minY, maxZ, minZ;
+    triangulation->getVertexPoint(0, minX, minY, minZ );
+    triangulation->getVertexPoint(0, maxX, maxY, maxZ );
+    std::cout<<"balise 2"<<std::endl;
+
     for (int i = 0 ; i < triangulation->getNumberOfVertices(); i++){
-      float x, y, z;
-      triangulation->getVertexPoint(i,x, y, z);
+      triangulation->getVertexPoint(i, x, y, z);
       maxX = std::max(x, maxX);
       maxX = std::min(x, minX);
       maxY = std::max(y, maxX);
@@ -129,41 +131,31 @@ template <class dataType, class triangulationType>
       minZ = std::min(z, minZ);
     }
 
+    std::cout<<"balise 3"<<std::endl;
+
     float meshDiameter = std::sqrt(std::pow(maxX-minX, 2)  + std::pow(maxY - minY, 2) + std::pow(maxZ - minZ, 2));
     tracker.setMeshDiamater(meshDiameter);
+    tracker.setEpsilon(10e-1);
 
-    std::vector<ttk::DiagramType> persistenceDiagrams;
+    std::vector<ttk::DiagramType> persistenceDiagrams(fieldNumber);
     this->performDiagramComputation<dataType, triangulationType>(
     (int)fieldNumber, persistenceDiagrams, triangulation);
 
-    std::vector<std::vector<ttk::MatchingType>> maximaMatchings;
-    std::vector<std::vector<ttk::MatchingType>> sad_1Matchings;
-    std::vector<std::vector<ttk::MatchingType>> sad_2Matchings;
-    std::vector<std::vector<ttk::MatchingType>> minimaMatchings; 
-    std::vector<std::vector<SimplexId>> mapMax;
-    std::vector<std::vector<SimplexId>> mapSad_1;
-    std::vector<std::vector<SimplexId>> mapSad_2;
-    std::vector<std::vector<SimplexId>> mapMin;
+    std::vector<std::vector<ttk::MatchingType>> outputMatchings;
+    std::cout<<"balise 4"<<std::endl;
 
     tracker.performMatchings(persistenceDiagrams, 
-                              maximaMatchings, sad_1Matchings, sad_2Matchings, minimaMatchings, 
-                              mapMax, mapSad_1, mapSad_2, mapMin, fieldNumber);
+                              outputMatchings, 
+                              fieldNumber);
+                              
+    std::cout<<"balise 5"<<std::endl;
                   
+    std::vector<ttk::trackingTuple> trackingsBase;
+
+    tracker.performTracking(persistenceDiagrams, outputMatchings, trackingsBase);
+
+    std::cout<<"balise 6"<<std::endl;
    
-    std::vector<ttk::trackingTuple> allTracking;
-    std::vector<ttk::trackingTuple> trackingSad_1;
-    std::vector<ttk::trackingTuple> trackingSad_2;
-    std::vector<ttk::trackingTuple> trackingMin;
-
-    tracker.performTracking(persistenceDiagrams, maximaMatchings, allTracking);
-    tracker.performTracking(persistenceDiagrams, sad_1Matchings, trackingSad_1);
-    tracker.performTracking(persistenceDiagrams, sad_2Matchings, trackingSad_2);
-    tracker.performTracking(persistenceDiagrams, minimaMatchings, trackingMin);
-
-    allTracking.insert(allTracking.end(), trackingSad_1.begin(), trackingSad_1.end());
-    allTracking.insert(allTracking.end(), trackingSad_2.begin(), trackingSad_2.end());
-    allTracking.insert(allTracking.end(), trackingMin.begin(), trackingMin.end());
-
     vtkNew<vtkPoints> const points{};
     vtkNew<vtkUnstructuredGrid> const trackingResult{};
 
@@ -183,20 +175,32 @@ template <class dataType, class triangulationType>
     componentIds->SetName("ConnectedComponentId");
     pointTypeScalars->SetName("CriticalType");
 
-    bool const useGeometricSpacing = UseGeometricSpacing;
+    std::cout<<"balise 7"<<std::endl;
 
+    std::vector<std::set<int>> trackingTupleToMerged(trackingsBase.size());
+
+    if(DoPostProc) {
+      tracker.performPostProcess(persistenceDiagrams, trackingsBase,
+                             trackingTupleToMerged, PostProcThresh);
+    }
+
+    double const spacing = Spacing;
+    bool const useGeometricSpacing = UseGeometricSpacing;
+    std::cout<<"balise 8"<<std::endl;
 
     // Build mesh.
-  ttkTrackingFromPersistenceDiagrams::buildMesh(
-    allTracking, outputMatchings, persistenceDiagrams, useGeometricSpacing,
-    spacing, DoPostProc, trackingTupleToMerged, points, persistenceDiagram,
-    persistenceScalars, valueScalars, matchingIdScalars, lengthScalars,
-    timeScalars, componentIds, pointTypeScalars, *this);
+    ttkTrackingFromPersistenceDiagrams::buildMesh(
+      trackingsBase, outputMatchings, persistenceDiagrams, useGeometricSpacing,
+      spacing, DoPostProc, trackingTupleToMerged, points, trackingResult,
+      persistenceScalars, valueScalars, matchingIdScalars, lengthScalars,
+      timeScalars, componentIds, pointTypeScalars, *this);
 
-  output->ShallowCopy(persistenceDiagram);
+    std::cout<<"balise 9"<<std::endl;
 
-  return 1;
-  }
+    output->ShallowCopy(trackingResult);
+
+    return 1;
+}
 
 int ttkTrackingFromFields::RequestData(vtkInformation *ttkNotUsed(request),
                                        vtkInformationVector **inputVector,
@@ -333,6 +337,7 @@ int ttkTrackingFromFields::RequestData(vtkInformation *ttkNotUsed(request),
          output, fieldNumber, (TTK_TT *)triangulation->getData())));
   } 
   else if(useTTKMethod && criticalPointTracking){
+    std::cout<<"enter execute"<<std::endl;
     ttkVtkTemplateMacro(
       inputScalarFields[0]->GetDataType(), triangulation->getType(),
       (status = this->trackWithCriticalPointMatching<VTK_TT, TTK_TT>(
