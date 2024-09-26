@@ -17,7 +17,7 @@
 
 namespace ttk {
 
-  class CriticalPointTracking : public TrackingFromPersistenceDiagrams, virtual public Debug {
+  class CriticalPointTracking : virtual public Debug, public TrackingFromPersistenceDiagrams {
 
 
     private:

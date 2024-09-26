@@ -8,6 +8,7 @@
 #include <ttkUtils.h>
 
 
+
 vtkStandardNewMacro(ttkTrackingFromFields);
 
 ttkTrackingFromFields::ttkTrackingFromFields() {
@@ -64,6 +65,18 @@ int ttkTrackingFromFields::trackWithPersistenceMatching(
     wasserstein, tolerance, PX, PY, PZ, PS, PE // Coefficients
   );
 
+  //for (unsigned int i = 0  ; i < fieldNumber -1 ; i++){
+  //  std::cout<<"matchings found at step "<<i<<" are : "<<std::endl;
+  //  for (unsigned int j = 0 ; outputMatchings[i].size() ; j++ ){
+  //    std::cout <<std::get<0>(outputMatchings[i][j])<<" with "<<std::get<1>(outputMatchings[i][j])<<" with cost = "<<std::get<2>(outputMatchings[i][j])<<std::endl;
+  //  }
+  //}
+
+                                
+    for (unsigned int i = 0  ; i < outputMatchings.size() ; i++){
+      std::cout<<"number of matchings at step i = "<<i<<" is "<<outputMatchings[i].size();
+    }
+
   vtkNew<vtkPoints> const points{};
   vtkNew<vtkUnstructuredGrid> const persistenceDiagram{};
 
@@ -108,6 +121,39 @@ int ttkTrackingFromFields::trackWithPersistenceMatching(
   return 1;
 }
 
+template<class triangulationType>
+  void buildMeshFromTracking(
+  const triangulationType *triangulation,
+  const std::vector<ttk::trackingTuple> &trackings,
+  const bool useGeometricSpacing,
+  const double spacing,
+  vtkPoints *points,
+  vtkUnstructuredGrid *tracks){
+
+    int pointCpt = 0;
+    for (unsigned int i = 0 ;i <  trackings.size() ; i++){
+      int startTime = std::get<0>(trackings[i]);
+      std::vector<ttk::SimplexId> chain = std::get<2>(trackings[i]);
+      float x;
+      float y;
+      float z;
+      triangulation->getVertexPoint(0, x, y, z);
+      if(useGeometricSpacing)z+=startTime *spacing;
+      points->InsertNextPoint(x,y,z);
+      for (unsigned int j = 1 ; j < chain.size() ; j++){
+        std::cout<<"coucou"<<std::endl;
+        triangulation->getVertexPoint(j, x, y, z);
+        if(useGeometricSpacing)z+=(startTime + j)*spacing;
+        points->InsertNextPoint(x, y, z);
+        vtkIdType edge[2];
+        edge[0]=pointCpt;
+        edge[1]=++pointCpt;
+        tracks->InsertNextCell(VTK_LINE, 2, edge);
+      }
+    }
+    tracks->SetPoints(points);
+  }
+
 template <class dataType, class triangulationType>
   int ttkTrackingFromFields::trackWithCriticalPointMatching(vtkUnstructuredGrid *output,
                                    unsigned long fieldNumber,
@@ -132,22 +178,21 @@ template <class dataType, class triangulationType>
 
     float meshDiameter = std::sqrt(std::pow(maxX-minX, 2)  + std::pow(maxY - minY, 2) + std::pow(maxZ - minZ, 2));
     tracker.setMeshDiamater(meshDiameter);
+
+    this->printErr("field number = " + std::to_string(fieldNumber));
+    this->printErr("Mesh diameter = " + std::to_string(meshDiameter));
+
     tracker.setEpsilon(10e-1);
 
     std::vector<ttk::DiagramType> persistenceDiagrams(fieldNumber);
-    this->performDiagramComputation<dataType, triangulationType>(
-    (int)fieldNumber, persistenceDiagrams, triangulation);
+    this->performDiagramComputation<dataType, triangulationType>((int)fieldNumber, persistenceDiagrams, triangulation);
 
     std::vector<std::vector<ttk::MatchingType>> outputMatchings;
 
     tracker.performMatchings(persistenceDiagrams, 
                               outputMatchings, 
                               fieldNumber);
-                              
-                  
-    std::vector<ttk::trackingTuple> trackingsBase;
 
-    tracker.performTracking(persistenceDiagrams, outputMatchings, trackingsBase);
 
    
     vtkNew<vtkPoints> const points{};
@@ -169,6 +214,12 @@ template <class dataType, class triangulationType>
     componentIds->SetName("ConnectedComponentId");
     pointTypeScalars->SetName("CriticalType");
 
+     std::cout<<"balise 1"<<std::endl;
+
+    std::vector<ttk::trackingTuple> trackingsBase;
+    tracker.performTracking(persistenceDiagrams, outputMatchings, trackingsBase);
+
+    std::cout<<"out of tracking"<<std::endl;
 
     std::vector<std::set<int>> trackingTupleToMerged(trackingsBase.size());
 
@@ -177,18 +228,20 @@ template <class dataType, class triangulationType>
                              trackingTupleToMerged, PostProcThresh);
     }
 
+    std::cout<<"out of postproc"<<std::endl;
+
     double const spacing = Spacing;
-    bool const useGeometricSpacing = true;
+    bool const useGeometricSpacing = UseGeometricSpacing;
 
     // Build mesh.
-    ttkTrackingFromPersistenceDiagrams::buildMesh(
-      trackingsBase, outputMatchings, persistenceDiagrams, useGeometricSpacing,
-      spacing, DoPostProc, trackingTupleToMerged, points, trackingResult,
-      persistenceScalars, valueScalars, matchingIdScalars, lengthScalars,
-      timeScalars, componentIds, pointTypeScalars, *this);
+    buildMeshFromTracking(
+      triangulation,
+      trackingsBase,
+      useGeometricSpacing, spacing, points, trackingResult);
 
-
+    std::cout<<"out of mesh"<<std::endl;
     output->ShallowCopy(trackingResult);
+    std::cout<<"out of function"<<std::endl;
 
     return 1;
 }
