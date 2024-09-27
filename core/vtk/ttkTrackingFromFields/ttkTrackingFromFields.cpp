@@ -65,18 +65,6 @@ int ttkTrackingFromFields::trackWithPersistenceMatching(
     wasserstein, tolerance, PX, PY, PZ, PS, PE // Coefficients
   );
 
-  //for (unsigned int i = 0  ; i < fieldNumber -1 ; i++){
-  //  std::cout<<"matchings found at step "<<i<<" are : "<<std::endl;
-  //  for (unsigned int j = 0 ; outputMatchings[i].size() ; j++ ){
-  //    std::cout <<std::get<0>(outputMatchings[i][j])<<" with "<<std::get<1>(outputMatchings[i][j])<<" with cost = "<<std::get<2>(outputMatchings[i][j])<<std::endl;
-  //  }
-  //}
-
-                                
-    for (unsigned int i = 0  ; i < outputMatchings.size() ; i++){
-      std::cout<<"number of matchings at step i = "<<i<<" is "<<outputMatchings[i].size();
-    }
-
   vtkNew<vtkPoints> const points{};
   vtkNew<vtkUnstructuredGrid> const persistenceDiagram{};
 
@@ -141,7 +129,6 @@ template<class triangulationType>
       if(useGeometricSpacing)z+=startTime *spacing;
       points->InsertNextPoint(x,y,z);
       for (unsigned int j = 1 ; j < chain.size() ; j++){
-        std::cout<<"coucou"<<std::endl;
         triangulation->getVertexPoint(chain[j], x, y, z);
         if(useGeometricSpacing)z+=(startTime + j)*spacing;
         points->InsertNextPoint(x, y, z);
@@ -180,11 +167,6 @@ template <class dataType, class triangulationType>
 
     float meshDiameter = std::sqrt(std::pow(maxX-minX, 2)  + std::pow(maxY - minY, 2) + std::pow(maxZ - minZ, 2));
     tracker.setMeshDiamater(meshDiameter);
-
-
-    this->printErr("field number = " + std::to_string(fieldNumber));
-    this->printErr("Mesh diameter = " + std::to_string(meshDiameter));
-
     tracker.setEpsilon(10e-1);
 
     std::vector<ttk::DiagramType> persistenceDiagrams(fieldNumber);
@@ -216,22 +198,8 @@ template <class dataType, class triangulationType>
     timeScalars->SetName("TimeStep");
     componentIds->SetName("ConnectedComponentId");
     pointTypeScalars->SetName("CriticalType");
-
-     std::cout<<"balise 1"<<std::endl;
-
     std::vector<ttk::trackingTuple> trackingsBase;
     tracker.performTracking(persistenceDiagrams, outputMatchings, trackingsBase);
-
-    std::cout<<"out of tracking"<<std::endl;
-    std::cout<<"tracking face : "<<std::endl;
-    for (unsigned int i = 0 ; i < trackingsBase.size() ; i++){
-      std::cout<<"from timestep "<<std::get<0>(trackingsBase[i])<<" to "<<std::get<1>(trackingsBase[i])<<std::endl;
-      std::cout<<"going through vertices : "<<std::endl;
-      for (unsigned int j = 0 ; j < std::get<2>(trackingsBase[i]).size(); j++){
-        std::cout<<std::get<2>(trackingsBase[i])[j]<<",  ";
-      }
-      std::cout<<std::endl;
-    }
     
     std::vector<std::set<int>> trackingTupleToMerged(trackingsBase.size());
 
@@ -239,8 +207,6 @@ template <class dataType, class triangulationType>
       tracker.performPostProcess(persistenceDiagrams, trackingsBase,
                              trackingTupleToMerged, PostProcThresh);
     }
-
-    std::cout<<"out of postproc"<<std::endl;
 
     double const spacing = Spacing;
     bool const useGeometricSpacing = UseGeometricSpacing;
@@ -250,23 +216,7 @@ template <class dataType, class triangulationType>
       triangulation,
       trackingsBase,
       useGeometricSpacing, spacing, points, trackingResult);
-
-    std::cout<<"out of mesh"<<std::endl;
     output->ShallowCopy(trackingResult);
-    std::cout<<"out of function"<<std::endl;
-    for (unsigned int i = 0 ; i < output->GetNumberOfCells() ; i++){
-      vtkCell *currentEdge = output->GetCell(i);
-      vtkIdType v1 = (currentEdge->GetPointId(0));
-      vtkIdType v2 = (currentEdge->GetPointId(1));
-      std::cout<<"edge number i = "<<i<<std::endl;
-      double coords_1[3];
-      double coords_2[3];
-      output->GetPoint(v1, coords_1);
-      output->GetPoint(v2, coords_2);
-      std::cout<<"point 1 = "<<coords_1[0]<<" , "<<coords_1[1]<<" ,  "<<coords_1[2]<<std::endl;
-      std::cout<<"point 2 = "<<coords_2[0]<<" , "<<coords_2[1]<<" ,  "<<coords_2[2]<<std::endl;
-    }
-
     return 1;
 }
 

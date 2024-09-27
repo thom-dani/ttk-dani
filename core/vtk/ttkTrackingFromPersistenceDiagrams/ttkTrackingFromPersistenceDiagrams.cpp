@@ -55,7 +55,6 @@ int ttkTrackingFromPersistenceDiagrams::buildMesh(
   vtkIntArray *componentIds,
   vtkIntArray *pointTypeScalars,
   const ttk::Debug &dbg) {
-    std::cout<<"mesh 1"<<std::endl;
   using ttk::CriticalType;
   int currentVertex = 0;
   for(size_t k = 0; k < trackings.size(); ++k) {
@@ -71,7 +70,6 @@ int ttkTrackingFromPersistenceDiagrams::buildMesh(
       return 0;
     }
 
-    std::cout<<"mesh 1.1"<<std::endl;
 
 
     for(int c = 0; c < chainLength - 1; ++c) {
@@ -95,7 +93,6 @@ int ttkTrackingFromPersistenceDiagrams::buildMesh(
           break;
         }
       }
-  std::cout<<"mesh 1.2"<<std::endl;
 
       const auto &pair0 = diagram1[n1];
       const auto &pair1 = diagram2[n2];
@@ -139,7 +136,6 @@ int ttkTrackingFromPersistenceDiagrams::buildMesh(
           z1 += spacing * (numStart + c);
       }
 
-  std::cout<<"mesh 1.3"<<std::endl;
 
       // Postproc component ids.
       int cid = k;
@@ -214,7 +210,6 @@ int ttkTrackingFromPersistenceDiagrams::buildMesh(
           }
         }
       }
-      std::cout<<"mesh 1.4"<<std::endl;
 
       points->InsertNextPoint(x1, y1, z1);
       ids[0] = 2 * currentVertex;
@@ -278,11 +273,9 @@ int ttkTrackingFromPersistenceDiagrams::buildMesh(
       lengthScalars->InsertTuple1(currentVertex, chainLength);
 
       currentVertex++;
-  std::cout<<"mesh 2"<<std::endl;
 
     }
   }
-  std::cout<<"mesh 2"<<std::endl;
 
   persistenceDiagram->SetPoints(points);
   persistenceDiagram->GetCellData()->AddArray(persistenceScalars);

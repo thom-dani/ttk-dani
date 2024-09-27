@@ -89,18 +89,12 @@ int ttk::TrackingFromPersistenceDiagrams::performTracking(
   std::vector<std::vector<MatchingType>> &allMatchings,
   std::vector<trackingTuple> &trackings) {
   
-
-  std::cout<<"balise 0"<<std::endl;
   auto numPersistenceDiagramsInput = (int)allDiagrams.size();
-
-
   for(int in = 1; in < numPersistenceDiagramsInput - 1; ++in) {
 
 
     std::vector<MatchingType> matchings1 = allMatchings[in - 1];
     std::vector<MatchingType> matchings2 = allMatchings[in];
-
-    this->printMsg("matching size at timestep "+std::to_string(in)+ "= " + std::to_string(matchings1.size()));
 
     auto matchingsSize1 = (int)matchings1.size();
     auto matchingsSize2 = (int)matchings2.size();
@@ -108,14 +102,9 @@ int ttk::TrackingFromPersistenceDiagrams::performTracking(
     int const endIndex = numPersistenceDiagramsInput - 2;
 
     for(int i = 0; i < matchingsSize1; ++i) {
-
-      std::cout<<"balise 0.1, i = "<<i<<std::endl;
-
       const auto m1ai0 = std::get<0>(matchings1[i]);
       const auto m1ai1 = std::get<1>(matchings1[i]);
-
       for(int j = 0; j < matchingsSize2; ++j) {
-      std::cout<<"balise 0.1.1, j = "<<j<<std::endl;
 
         const auto m2aj0 = std::get<0>(matchings2[j]);
         const auto m2aj1 = std::get<1>(matchings2[j]);
@@ -177,8 +166,6 @@ int ttk::TrackingFromPersistenceDiagrams::performTracking(
       }
     }
   }
-  std::cout<<"balise 1"<<std::endl;
-
 
   // Post-processing
   std::sort(trackings.begin(), trackings.end(),
