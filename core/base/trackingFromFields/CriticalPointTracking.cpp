@@ -197,7 +197,7 @@ void ttk::CriticalPointTracking::performMatchings(
 
 
         
-        float costDeathBirth = computeBoundingBoxRadius(persistenceDiagrams[i], persistenceDiagrams[i+1]);                
+        float costDeathBirth = epsilon*computeBoundingBoxRadius(persistenceDiagrams[i], persistenceDiagrams[i+1]);                
         int maxSize = maxCoords_1.size()+maxCoords_2.size();
         int sad_1Size = sad_1Coords_1.size()+sad_1Coords_2.size();
         int sad_2Size = sad_2Coords_1.size()+sad_2Coords_2.size();
