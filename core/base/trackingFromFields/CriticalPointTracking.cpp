@@ -228,15 +228,15 @@ void ttk::CriticalPointTracking::performMatchings(
         sad_2_Matchings.push_back(sad_2_Matching);
         minimaMatchings.push_back(minMatching);
         
-        maxCoords_1 = maxCoords_2;
-        sad_1Coords_1 = sad_1Coords_2;
-        sad_2Coords_1 = sad_2Coords_2;
-        minCoords_1 =minCoords_2;
+        std::swap(maxCoords_1, maxCoords_2);
+        std::swap(sad_1Coords_1, sad_1Coords_2);
+        std::swap(sad_2Coords_1, sad_2Coords_2);
+        std::swap(minCoords_1, minCoords_2);
 
-        maxScalar_1 = maxScalar_2;
-        sad_1Scalar_1 = sad_1Scalar_2;
-        sad_2Scalar_1 = sad_2Scalar_2;
-        minScalar_1 = minScalar_2;
+        std::swap(maxScalar_1, maxScalar_2);
+        std::swap(sad_1Scalar_1, sad_1Scalar_2);
+        std::swap(sad_2Scalar_1, sad_2Scalar_2);
+        std::swap(minScalar_1, minScalar_2);
     }
 
     localToGlobalMatching(maximaMatchings, mapMax);
@@ -282,9 +282,8 @@ void ttk::CriticalPointTracking::performMatchings(
     {
         ttk::AssignmentAuction<double> solver;
         solver.setInput(costMatrix);
-        solver.setNumberOfRounds(100);
+        solver.setNumberOfRounds(costMatrix.size()*10);
         solver.setEpsilon(10e-1);
-        solver.setEpsilonDiviserMultiplier(1);
         solver.run(matching);
         solver.clearMatrix();
     }

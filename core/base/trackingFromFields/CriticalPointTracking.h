@@ -43,6 +43,7 @@ namespace ttk {
         tolerance = t;
       }
 
+
       double computeBoundingBoxRadius(const DiagramType &d1, const DiagramType &d2){
         double maxScalar = d1[0].birth.sfValue;
         double minScalar = d1[0].birth.sfValue;

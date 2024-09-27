@@ -116,7 +116,7 @@ template<class triangulationType>
   const bool useGeometricSpacing,
   const double spacing,
   vtkPoints *points,
-  vtkUnstructuredGrid *tracks){
+  vtkUnstructuredGrid *criticalPointTracking){
 
     int pointCpt = 0;
     for (unsigned int i = 0 ;i <  trackings.size() ; i++){
@@ -136,11 +136,11 @@ template<class triangulationType>
         edge[0]=pointCpt;
         pointCpt++;
         edge[1]=pointCpt;
-        tracks->InsertNextCell(VTK_LINE, 2, edge);
+        criticalPointTracking->InsertNextCell(VTK_LINE, 2, edge);
       }
       pointCpt++;
     }
-    tracks->SetPoints(points);
+    criticalPointTracking->SetPoints(points);
   }
 
 template <class dataType, class triangulationType>
@@ -173,15 +173,14 @@ template <class dataType, class triangulationType>
     this->performDiagramComputation<dataType, triangulationType>((int)fieldNumber, persistenceDiagrams, triangulation);
 
     std::vector<std::vector<ttk::MatchingType>> outputMatchings;
+    std::vector<std::vector<ttk::CriticalType>> criticalTypes;
 
     tracker.performMatchings(persistenceDiagrams, 
                               outputMatchings, 
                               fieldNumber);
 
-
-   
     vtkNew<vtkPoints> const points{};
-    vtkNew<vtkUnstructuredGrid> const trackingResult{};
+    vtkNew<vtkUnstructuredGrid> const criticalPointTracking{};
 
     vtkNew<vtkDoubleArray> persistenceScalars{};
     vtkNew<vtkDoubleArray> valueScalars{};
@@ -189,7 +188,7 @@ template <class dataType, class triangulationType>
     vtkNew<vtkIntArray> lengthScalars{};
     vtkNew<vtkIntArray> timeScalars{};
     vtkNew<vtkIntArray> componentIds{};
-    vtkNew<vtkIntArray> pointTypeScalars{};
+    vtkNew<vtkIntArray> pointsCriticalType{};
 
     persistenceScalars->SetName("Cost");
     valueScalars->SetName("Scalar");
@@ -197,7 +196,7 @@ template <class dataType, class triangulationType>
     lengthScalars->SetName("ComponentLength");
     timeScalars->SetName("TimeStep");
     componentIds->SetName("ConnectedComponentId");
-    pointTypeScalars->SetName("CriticalType");
+    pointsCriticalType->SetName("CriticalType");
     std::vector<ttk::trackingTuple> trackingsBase;
     tracker.performTracking(persistenceDiagrams, outputMatchings, trackingsBase);
     
@@ -215,8 +214,11 @@ template <class dataType, class triangulationType>
     buildMeshFromTracking(
       triangulation,
       trackingsBase,
-      useGeometricSpacing, spacing, points, trackingResult);
-    output->ShallowCopy(trackingResult);
+      useGeometricSpacing, spacing, 
+      points, 
+      criticalPointTracking);
+
+    output->ShallowCopy(criticalPointTracking);
     return 1;
 }
 
