@@ -67,7 +67,10 @@ namespace ttk {
       
       void performMatchings(
           const std::vector<DiagramType> persistenceDiagrams, 
-          std::vector<std::vector<MatchingType>> &outputMatchings,
+          std::vector<std::vector<MatchingType>> &maximaMatchings,
+          std::vector<std::vector<MatchingType>> &sad_1_Matchings,
+          std::vector<std::vector<MatchingType>> &sad_2_Matchings,
+          std::vector<std::vector<MatchingType>> &minimaMatchings,
           int fieldNumber);
     protected:
 

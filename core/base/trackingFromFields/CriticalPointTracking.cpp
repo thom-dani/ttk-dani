@@ -130,30 +130,26 @@ void ttk::CriticalPointTracking::buildCostMatrix(
             }
         }
         for (int i = size_1 ; i < matrix_size ; i++){
-            matrix[i][i-size_1] = costDeathBirth;
-        }
-        for (int i = size_1 ; i < matrix_size ; i++){
             for (int j = 0 ; j < size_2 ; j++){
-                matrix[i][j] = costDeathBirth;
+                matrix[i][j] = sfValues_2[j];
             }
         }
-
         for (int i = 0 ; i < size_1 ; i++){
             for (int j = size_2 ; j < matrix_size ; j++){
-                matrix[i][j] = costDeathBirth;
+                matrix[i][j] = sfValues_1[i];
             }
         }
     } 
 
 void ttk::CriticalPointTracking::performMatchings(
     const std::vector<DiagramType> persistenceDiagrams,
-    std::vector<std::vector<MatchingType>> &outputMatchings,
+    std::vector<std::vector<MatchingType>> &maximaMatchings,
+    std::vector<std::vector<MatchingType>> &sad_1_Matchings,
+    std::vector<std::vector<MatchingType>> &sad_2_Matchings,
+    std::vector<std::vector<MatchingType>> &minimaMatchings, 
     int fieldNumber)
     {
-    std::vector<std::vector<MatchingType>> maximaMatchings;
-    std::vector<std::vector<MatchingType>> sad_1_Matchings;
-    std::vector<std::vector<MatchingType>> sad_2_Matchings;
-    std::vector<std::vector<MatchingType>> minimaMatchings; 
+   
     std::vector<std::vector<SimplexId>> mapMax(fieldNumber, std::vector<SimplexId>(0));
     std::vector<std::vector<SimplexId>> mapSad_1(fieldNumber, std::vector<SimplexId>(0));
     std::vector<std::vector<SimplexId>> mapSad_2(fieldNumber, std::vector<SimplexId>(0));
@@ -243,15 +239,6 @@ void ttk::CriticalPointTracking::performMatchings(
     localToGlobalMatching(sad_1_Matchings, mapSad_1);
     localToGlobalMatching(sad_2_Matchings, mapSad_2);
     localToGlobalMatching(minimaMatchings, mapMin);
-    
-    for (int i = 0 ; i < fieldNumber - 1 ; i++){
-        std::vector<MatchingType> matching_i;
-        if (!maximaMatchings[i].empty())matching_i.insert(matching_i.end(), maximaMatchings[i].begin() , maximaMatchings[i].end());
-        if (!sad_1_Matchings[i].empty())matching_i.insert(matching_i.end(), sad_1_Matchings[i].begin() , sad_1_Matchings[i].end());
-        if (!sad_2_Matchings[i].empty())matching_i.insert(matching_i.end(), sad_2_Matchings[i].begin() , sad_2_Matchings[i].end());
-        if (!minimaMatchings[i].empty())matching_i.insert(matching_i.end(), minimaMatchings[i].begin() , minimaMatchings[i].end());
-        outputMatchings.push_back(matching_i);
-    }
     }
     void ttk::CriticalPointTracking::localToGlobalMatching(std::vector<std::vector<MatchingType>> &matchings, 
                                                             const std::vector<std::vector<int>> &map){

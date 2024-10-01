@@ -124,6 +124,16 @@ by a list of scalar fields) and which computes a tracking mesh."
         </Documentation>
       </StringVectorProperty>
 
+      <DoubleVectorProperty
+        name="epsilon"
+        label="relative cost of death and birth"
+        command="SetCostDeathBirth"
+        number_of_elements="1"
+        default_values="0.1">
+        <Documentation>
+        </Documentation>
+      </DoubleVectorProperty>
+
 
       <DoubleVectorProperty
         name="spe"

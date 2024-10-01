@@ -32,6 +32,7 @@
 
 #include <vtkDataSet.h>
 #include <vtkUnstructuredGrid.h>
+#include<vtkCellData.h>
 
 // VTK Module
 #include <TrackingFromFields.h>
@@ -74,6 +75,9 @@ public:
   /// @{
   vtkSetMacro(Tolerance, double);
   vtkGetMacro(Tolerance, double);
+
+  vtkSetMacro(CostDeathBirth, double);
+  vtkGetMacro(CostDeathBirth, double);
   /// @}
 
   /// @brief Importance weight for the X component of the extremum.
@@ -174,6 +178,8 @@ private:
   double PZ{0};
   double PE{0};
   double PS{0};
+
+  double CostDeathBirth{0.1};
 
   // Bottleneck config.
   bool UseGeometricSpacing{false};
