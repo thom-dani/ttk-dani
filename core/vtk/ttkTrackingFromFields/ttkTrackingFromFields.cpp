@@ -132,9 +132,9 @@ template<class triangulationType>
       else currentType = ttk::CriticalType::Local_maximum;
       int startTime = std::get<0>(trackings[i]);
       std::vector<ttk::SimplexId> chain = std::get<2>(trackings[i]);
-      float x{};
-      float y{};
-      float z{};
+      float x=0;
+      float y=0;
+      float z=0;
       triangulation->getVertexPoint(chain[0], x, y, z);
       if(useGeometricSpacing)z+=startTime *spacing;
       points->InsertNextPoint(x,y,z);
@@ -196,11 +196,10 @@ template <class dataType, class triangulationType>
     std::vector<ttk::DiagramType> persistenceDiagrams(fieldNumber);
     this->performDiagramComputation<dataType, triangulationType>((int)fieldNumber, persistenceDiagrams, triangulation);
 
-    std::vector<std::vector<ttk::MatchingType>> maximaMatchings;
-    std::vector<std::vector<ttk::MatchingType>> sad_1_Matchings;
-    std::vector<std::vector<ttk::MatchingType>> sad_2_Matchings;
-    std::vector<std::vector<ttk::MatchingType>> minimaMatchings;    
-    std::vector<std::vector<ttk::CriticalType>> criticalTypes;
+    std::vector<std::vector<ttk::MatchingType>> maximaMatchings(fieldNumber-1);
+    std::vector<std::vector<ttk::MatchingType>> sad_1_Matchings(fieldNumber-1);
+    std::vector<std::vector<ttk::MatchingType>> sad_2_Matchings(fieldNumber-1);
+    std::vector<std::vector<ttk::MatchingType>> minimaMatchings(fieldNumber-1);    
 
     tracker.performMatchings(persistenceDiagrams, 
                               maximaMatchings,

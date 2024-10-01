@@ -131,12 +131,12 @@ void ttk::CriticalPointTracking::buildCostMatrix(
         }
         for (int i = size_1 ; i < matrix_size ; i++){
             for (int j = 0 ; j < size_2 ; j++){
-                matrix[i][j] = sfValues_2[j];
+                matrix[i][j] = costDeathBirth;
             }
         }
         for (int i = 0 ; i < size_1 ; i++){
             for (int j = size_2 ; j < matrix_size ; j++){
-                matrix[i][j] = sfValues_1[i];
+                matrix[i][j] = costDeathBirth;
             }
         }
     } 
@@ -219,10 +219,10 @@ void ttk::CriticalPointTracking::performMatchings(
         if(sad_2Size > 0)auctionAssignement(sad_2Matrix, sad_2_Matching);
         if(minSize > 0)auctionAssignement(minMatrix, minMatching);
 
-        maximaMatchings.push_back(maxMatching);
-        sad_1_Matchings.push_back(sad_1_Matching);
-        sad_2_Matchings.push_back(sad_2_Matching);
-        minimaMatchings.push_back(minMatching);
+        maximaMatchings[i]=maxMatching;
+        sad_1_Matchings[i]=sad_1_Matching;
+        sad_2_Matchings[i]=sad_2_Matching;
+        minimaMatchings[i]=minMatching;
         
         std::swap(maxCoords_1, maxCoords_2);
         std::swap(sad_1Coords_1, sad_1Coords_2);
