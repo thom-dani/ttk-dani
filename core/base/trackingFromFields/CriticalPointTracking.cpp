@@ -191,8 +191,7 @@ void ttk::CriticalPointTracking::performMatchings(
                             maxScalar_2, sad_1Scalar_2, sad_2Scalar_2, minScalar_2,
                             mapMax, mapSad_1, mapSad_2, mapMin);
 
-
-        
+                
         float costDeathBirth = epsilon*computeBoundingBoxRadius(persistenceDiagrams[i], persistenceDiagrams[i+1]);                
         int maxSize = maxCoords_1.size()+maxCoords_2.size();
         int sad_1Size = sad_1Coords_1.size()+sad_1Coords_2.size();
@@ -267,10 +266,10 @@ void ttk::CriticalPointTracking::performMatchings(
       std::vector<std::vector<double>> &costMatrix,
       std::vector<ttk::MatchingType> &matching)
     {
-        ttk::AssignmentAuction<double> solver;
+        ttk::AssignmentMunkres<double> solver;
         solver.setInput(costMatrix);
-        solver.setNumberOfRounds(costMatrix.size()*10);
-        solver.setEpsilon(10e-1);
+        //solver.setNumberOfRounds(100);
+        //solver.setEpsilon(0);
         solver.run(matching);
         solver.clearMatrix();
     }

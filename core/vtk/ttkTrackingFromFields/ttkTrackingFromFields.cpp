@@ -132,6 +132,7 @@ template<class triangulationType>
       else currentType = ttk::CriticalType::Local_maximum;
       int startTime = std::get<0>(trackings[i]);
       std::vector<ttk::SimplexId> chain = std::get<2>(trackings[i]);
+
       float x=0;
       float y=0;
       float z=0;
@@ -277,7 +278,8 @@ int ttkTrackingFromFields::RequestData(vtkInformation *ttkNotUsed(request),
                                        vtkInformationVector *outputVector) {
 
   auto input = vtkDataSet::GetData(inputVector[0]);
-  auto output = vtkUnstructuredGrid::GetData(outputVector);
+  vtkUnstructuredGrid* outputTmp = vtkUnstructuredGrid::GetData(outputVector, 0);
+    vtkUnstructuredGrid *output = vtkUnstructuredGrid::SafeDownCast(outputTmp);
 
   ttk::Triangulation *triangulation = ttkAlgorithm::GetTriangulation(input);
   if(!triangulation)
