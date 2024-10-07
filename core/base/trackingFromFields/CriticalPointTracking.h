@@ -72,20 +72,41 @@ namespace ttk {
           std::vector<std::vector<MatchingType>> &sad_2_Matchings,
           std::vector<std::vector<MatchingType>> &minimaMatchings,
           int fieldNumber);
+          
+      void performTracking(
+          int fieldNumber, 
+          std::vector<std::vector<MatchingType>> &matching, 
+          std::vector<trackingTuple> &tracking);
+
     protected:
 
       double computeRelevantPersistence(const DiagramType &d1, const DiagramType &d2){
-        double persistMax = std::abs(d1[0].persistence()); 
-        double persistMin = std::abs(d1[0].persistence()); 
-        for (unsigned int i = 1 ; i < d1.size() ; i++){
-          persistMax = std::max(persistMax, std::abs(d2[i].persistence()));
-          persistMin = std::min(persistMin, std::abs(d2[i].persistence()));
+        //double persistMax = std::abs(d1[0].persistence()); 
+        //double persistMin = std::abs(d1[0].persistence()); 
+        //for (unsigned int i = 1 ; i < d1.size() ; i++){
+        //  persistMax = std::max(persistMax, std::abs(d2[i].persistence()));
+        //  persistMin = std::min(persistMin, std::abs(d2[i].persistence()));
+        //}
+        //for (unsigned int i = 0 ; i < d2.size() ; i++ ){
+        //  persistMax = std::max(persistMax, std::abs(d1[i].persistence()));
+        //  persistMin = std::min(persistMin, std::abs(d1[i].persistence()));
+        //}
+        const auto sp = this->tolerance;
+        const double s = sp > 0.0 && sp < 100.0 ? sp / 100.0 : 0;
+
+        std::vector<double> toSort(d1.size() + d2.size());
+        for(size_t i = 0; i < d1.size(); ++i) {
+          const auto &t = d1[i];
+          toSort[i] = std::abs(t.persistence());
         }
-        for (unsigned int i = 0 ; i < d2.size() ; i++ ){
-          persistMax = std::max(persistMax, std::abs(d1[i].persistence()));
-          persistMin = std::min(persistMin, std::abs(d1[i].persistence()));
+        for(size_t i = 0; i < d2.size(); ++i) {
+          const auto &t = d2[i];
+          toSort[d1.size() + i] = std::abs(t.persistence());
         }
-        return (this->tolerance*(persistMax - persistMin));
+
+        const auto minVal = *std::min_element(toSort.begin(), toSort.end());
+        const auto maxVal = *std::max_element(toSort.begin(), toSort.end());
+        return s * (maxVal - minVal);
       }
 
       //Compute L_p distance betweem (p,f(p)) and (q,f(q)) where p and q are critical points
