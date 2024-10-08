@@ -174,35 +174,10 @@ void ttk::CriticalPointTracking::performMatchings(
                            maxScalar_1, sad_1Scalar_1, sad_2Scalar_1, minScalar_1,
                            mapMax, mapSad_1, mapSad_2, mapMin);
 
-        std::cout<<"maxima à l'étape : 0 "<<std::endl; 
-        for (unsigned int j = 0 ; j < mapMax[0].size() ; j++){
-            std::cout<<mapMax[0][j]<<",  coords = "<<maxCoords_1[j][0]<<", "<<maxCoords_1[j][1]<<", "<<maxCoords_1[j][2]<<", value = "<<maxScalar_1[j]<<std::endl;
-        }
-        std::cout<<std::endl;
-        std::cout<<"nombre de maxima : "<<mapMax[0].size()<<std::endl;
 
     for (int i = 0 ; i < fieldNumber-1 ; i++){
 
-       
-//        std::cout<<"sad_1 à l'étape : "<<i<<std::endl; 
-//        for (unsigned int j = 0 ; j < mapSad_1[i].size() ; j++){
-//            std::cout<<mapSad_1[i][j]<<",  ";
-//        }
-//        std::cout<<std::endl;
-//        std::cout<<"sad_2 à l'étape : "<<i<<std::endl; 
-//        for (unsigned int j = 0 ; j < mapSad_2[i].size() ; j++){
-//            std::cout<<mapSad_2[i][j]<<",  ";
-//        }
-//        std::cout<<std::endl;
-//        std::cout<<"minima à l'étape : "<<i<<std::endl; 
-//        for (unsigned int j = 0 ; j < mapMin[i].size() ; j++){
-//            std::cout<<mapMin[i][j]<<",  ";
-//        }
-        std::cout<<std::endl;
-
         minimumRelevantPersistence = ttk::CriticalPointTracking::computeRelevantPersistence(persistenceDiagrams[i], persistenceDiagrams[i+1]);
-        std::cout<<"minimum relevant persstence at step "<<i<<"  = "<<minimumRelevantPersistence<<std::endl;
-
         std::vector<std::array<float, 3>> maxCoords_2;
         std::vector<std::array<float, 3>> sad_1Coords_2;
         std::vector<std::array<float, 3>> sad_2Coords_2;
@@ -216,13 +191,6 @@ void ttk::CriticalPointTracking::performMatchings(
                             maxScalar_2, sad_1Scalar_2, sad_2Scalar_2, minScalar_2,
                             mapMax, mapSad_1, mapSad_2, mapMin);
 
-        std::cout<<"maxima à l'étape : "<<i+1<<std::endl; 
-        for (unsigned int j = 0 ; j < mapMax[i+1].size() ; j++){
-            std::cout<<mapMax[i+1][j]<<",  coords = "<<maxCoords_2[j][0]<<", "<<maxCoords_2[j][1]<<", "<<maxCoords_2[j][2]<<", value = "<<maxScalar_2[j]<<std::endl;
-        }
-        std::cout<<std::endl;
-        std::cout<<"nombre de maxima : "<<mapMax[i+1].size()<<std::endl;
-     
         float costDeathBirth = epsilon*computeBoundingBoxRadius(persistenceDiagrams[i], persistenceDiagrams[i+1]);                
         int maxSize = (maxCoords_1.size() > 0 && maxCoords_2.size() > 0) ? maxCoords_1.size()+maxCoords_2.size() : 0;
         int sad_1Size = (sad_1Coords_1.size() > 0 && sad_1Coords_2.size() > 0) ? sad_1Coords_1.size()+sad_1Coords_2.size() : 0;
@@ -240,69 +208,41 @@ void ttk::CriticalPointTracking::performMatchings(
         std::vector<MatchingType> minMatching;
         if(maxSize > 0){
             buildCostMatrix(maxCoords_1, maxScalar_1, maxCoords_2, maxScalar_2, maxMatrix, costDeathBirth);
-            auctionAssignement(maxMatrix, maxMatching);
+            assignmentSolver(maxMatrix, maxMatching);
         }
-        std::cout<<std::endl;
-        for ( int j = 0 ; j < maxSize ; j++ ){
-            for (int k = 0 ; k < maxSize ; k++){
-                std::cout<<maxMatrix[j][k]<<"  ";
-            }
-            std::cout<<std::endl;
-        }
-        std::cout<<std::endl;
         if(sad_1Size > 0){
             buildCostMatrix(sad_1Coords_1, sad_1Scalar_1, sad_1Coords_2, sad_1Scalar_2, sad_1Matrix, costDeathBirth);
-            auctionAssignement(sad_1Matrix, sad_1_Matching);
+            assignmentSolver(sad_1Matrix, sad_1_Matching);
         }
         if(sad_2Size > 0){
             buildCostMatrix(sad_2Coords_1, sad_2Scalar_1, sad_2Coords_2, sad_2Scalar_2, sad_2Matrix, costDeathBirth);
-            auctionAssignement(sad_2Matrix, sad_2_Matching);
+            assignmentSolver(sad_2Matrix, sad_2_Matching);
         }
         if(minSize > 0){
             buildCostMatrix(minCoords_1, minScalar_1, minCoords_2, minScalar_2, minMatrix, costDeathBirth);
-            auctionAssignement(minMatrix, minMatching);
+            assignmentSolver(minMatrix, minMatching);
         }
-
-        
-        
-        
-        
-
-        if(maxSize > 0)
-        for (unsigned int j = 0 ; j < maxMatching.size(); j++ ){
-            std::cout<<std::get<0>(maxMatching[j])<<" matched with "<<std::get<1>(maxMatching[j])<<" for "<<std::get<2>(maxMatching[j])<<std::endl;
-        }
-        
 
         maximaMatchings[i]=maxMatching;
         sad_1_Matchings[i]=sad_1_Matching;
         sad_2_Matchings[i]=sad_2_Matching;
         minimaMatchings[i]=minMatching;
         
-        maxCoords_1 = maxCoords_2;
-        sad_1Coords_1 = sad_1Coords_2;
-        sad_2Coords_1 = sad_2Coords_2;
-        minCoords_1 = minCoords_2;
+        std::swap(maxCoords_1, maxCoords_2);
+        std::swap(sad_1Coords_1, sad_1Coords_2);
+        std::swap(sad_2Coords_1, sad_2Coords_2);
+        std::swap(minCoords_1, minCoords_2);
 
-        maxScalar_1 = maxScalar_2;
-        sad_1Scalar_1 = sad_1Scalar_2;
-        sad_2Scalar_1 = sad_2Scalar_2;
-        minScalar_1 = minScalar_2;
+        std::swap(maxScalar_1, maxScalar_2);
+        std::swap(sad_1Scalar_1, sad_1Scalar_2);
+        std::swap(sad_2Scalar_1, sad_2Scalar_2);
+        std::swap(minScalar_1, minScalar_2);
     }
-
-
     localToGlobalMatching(maximaMatchings, mapMax);
-    for(int i = 0 ; i < fieldNumber -1 ; i++){
-        std::cout<<"matchings finaux à l'étape "<<i<<": "<<std::endl;
-        for (unsigned int j = 0 ; j < maximaMatchings[i].size() ; j++ ){
-            std::cout<<std::get<0>(maximaMatchings[i][j])<<" matched with "<<std::get<1>(maximaMatchings[i][j])<<" for "<<std::get<2>(maximaMatchings[i][j])<<std::endl;
-        } 
-    }
     localToGlobalMatching(sad_1_Matchings, mapSad_1);
     localToGlobalMatching(sad_2_Matchings, mapSad_2);
     localToGlobalMatching(minimaMatchings, mapMin);
     }
-
 
     void ttk::CriticalPointTracking::localToGlobalMatching(std::vector<std::vector<MatchingType>> &matchings, 
                                                             const std::vector<std::vector<int>> &map){
@@ -330,7 +270,6 @@ void ttk::CriticalPointTracking::performMatchings(
           int fieldNumber, 
           std::vector<std::vector<MatchingType>> &matchings, 
           std::vector<trackingTuple> &trackings){
-
             std::unordered_map<int, int> previousTrackingsEndsIds;
             std::unordered_map<int, int> sw;
             for (unsigned int i = 0 ; i< matchings[0].size() ; i++){
@@ -359,17 +298,25 @@ void ttk::CriticalPointTracking::performMatchings(
                 previousTrackingsEndsIds=sw;
                 sw.clear();
             }
-          }
+        }
 
-  void ttk::CriticalPointTracking::auctionAssignement(
+    void ttk::CriticalPointTracking::assignmentSolver(
       std::vector<std::vector<double>> &costMatrix,
-      std::vector<ttk::MatchingType> &matching)
-    {
-        ttk::AssignmentMunkres<double> solver;
-        solver.setInput(costMatrix);
-        //solver.setNumberOfRounds(100);
-        //solver.setEpsilon(0);
-        solver.run(matching);
-        solver.clearMatrix();
+      std::vector<ttk::MatchingType> &matching){
+        if(assignmentMethod == 0){
+            ttk::AssignmentAuction<double> solver;
+            solver.setInput(costMatrix);
+            solver.setNumberOfRounds(100);
+            solver.setEpsilon(10e-1);
+            solver.run(matching);
+            solver.clearMatrix();
+        }
+        else if(assignmentMethod == 1){
+            ttk::AssignmentMunkres<double> solver;
+            solver.setInput(costMatrix);
+            solver.run(matching);
+            solver.clearMatrix();
+        }
     }
+
 

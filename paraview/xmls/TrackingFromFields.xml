@@ -95,8 +95,8 @@ by a list of scalar fields) and which computes a tracking mesh."
       </DoubleVectorProperty>
 
       <IntVectorProperty
-        name="Assignment method"
-      label="Assignment method"
+      name="Backend"
+      label="Backend"
       command="SetPVAlgorithm"
         number_of_elements="1"
         default_values="0"
@@ -108,6 +108,28 @@ by a list of scalar fields) and which computes a tracking mesh."
         </EnumerationDomain>                      
         <Documentation>
           Method for computing matchings.
+        </Documentation>
+      </IntVectorProperty>
+
+      <IntVectorProperty
+        name="AssignmentMethod"
+        label="Assignment Method"
+        command="SetAssignmentMethod"
+        number_of_elements="1"
+        default_values="0"
+        panel_visibility="advanced" >
+        <EnumerationDomain name="enum">
+          <Entry value="0" text="Auction solver"/>
+          <Entry value="1" text="Munkres solver"/>
+        </EnumerationDomain>
+        <Hints>
+          <PropertyWidgetDecorator type="GenericDecorator"
+                                   mode="visibility"
+                                   property="Backend"
+                                   value="2" />
+        </Hints>
+        <Documentation>
+          Assignment algorithm used betweem each time step.
         </Documentation>
       </IntVectorProperty>
 

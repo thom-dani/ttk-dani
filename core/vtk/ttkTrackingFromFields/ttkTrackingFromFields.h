@@ -126,6 +126,9 @@ public:
   /// @{
   vtkSetMacro(PVAlgorithm, int);
   vtkGetMacro(PVAlgorithm, int);
+
+  vtkSetMacro(AssignmentMethod, int);
+  vtkGetMacro(AssignmentMethod, int);
   /// @}
 
   /// @brief For the translation of the second set of critical points even the
@@ -180,6 +183,7 @@ private:
   double PS{0};
 
   double CostDeathBirth{0.1};
+  int AssignmentMethod{0};
 
   // Bottleneck config.
   bool UseGeometricSpacing{false};

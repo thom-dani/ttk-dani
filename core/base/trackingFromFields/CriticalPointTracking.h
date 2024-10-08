@@ -24,6 +24,7 @@ namespace ttk {
       double epsilon{10e-1};
       double meshDiameter{1};
       double tolerance{10e-3};
+      int assignmentMethod{0};
 
           
     public:
@@ -43,6 +44,11 @@ namespace ttk {
         tolerance = t;
       }
 
+      void setAssignmentMethod(int a){
+        if(a == 0 || a ==1){
+          assignmentMethod = a;
+        }
+      }
 
       double computeBoundingBoxRadius(const DiagramType &d1, const DiagramType &d2){
         double maxScalar = d1[0].birth.sfValue;
@@ -81,16 +87,6 @@ namespace ttk {
     protected:
 
       double computeRelevantPersistence(const DiagramType &d1, const DiagramType &d2){
-        //double persistMax = std::abs(d1[0].persistence()); 
-        //double persistMin = std::abs(d1[0].persistence()); 
-        //for (unsigned int i = 1 ; i < d1.size() ; i++){
-        //  persistMax = std::max(persistMax, std::abs(d2[i].persistence()));
-        //  persistMin = std::min(persistMin, std::abs(d2[i].persistence()));
-        //}
-        //for (unsigned int i = 0 ; i < d2.size() ; i++ ){
-        //  persistMax = std::max(persistMax, std::abs(d1[i].persistence()));
-        //  persistMin = std::min(persistMin, std::abs(d1[i].persistence()));
-        //}
         const auto sp = this->tolerance;
         const double s = sp > 0.0 && sp < 100.0 ? sp / 100.0 : 0;
 
@@ -117,7 +113,6 @@ namespace ttk {
           const std::array<float, 3> coords_p2,
           const double sfValue_p2,
           int p);
-
 
       //Sort the critical points by types
 
@@ -146,15 +141,11 @@ namespace ttk {
           std::vector<std::vector<double>> &matrix,
           float costDeathBirth);
 
- 
-
-
       void localToGlobalMatching(std::vector<std::vector<MatchingType>> &matchings, 
                                   const std::vector<std::vector<int>> &map);
 
-      void auctionAssignement(
+      void assignmentSolver(
           std::vector<std::vector<double>> &costMatrix,
           std::vector<ttk::MatchingType> &matching);
-        
-      };
+  };
 }

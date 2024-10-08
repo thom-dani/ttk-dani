@@ -192,10 +192,11 @@ template <class dataType, class triangulationType>
     double const costDeathBirth = CostDeathBirth;
     double const tolerance = Tolerance;
     float meshDiameter = std::sqrt(std::pow(maxX-minX, 2)  + std::pow(maxY - minY, 2) + std::pow(maxZ - minZ, 2));
-    std::cout<<"MESH DIAMETER = "<<meshDiameter<<std::endl;
+    int assignmentMethod = AssignmentMethod;
     tracker.setMeshDiamater(meshDiameter);
     tracker.setTolerance(tolerance);
     tracker.setEpsilon(costDeathBirth);
+    tracker.setAssignmentMethod(assignmentMethod);
 
     std::vector<ttk::DiagramType> persistenceDiagrams(fieldNumber);
     this->performDiagramComputation<dataType, triangulationType>((int)fieldNumber, persistenceDiagrams, triangulation);
@@ -257,7 +258,7 @@ template <class dataType, class triangulationType>
       tracker.performTracking(fieldNumber, minimaMatchings, trackingsBaseMin);
       trackingsBase.insert(trackingsBase.end(), trackingsBaseMin.begin(), trackingsBaseMin.end());  
     }   
-    }
+    
 
     std::vector<std::set<int>> trackingTupleToMerged(trackingsBase.size());
     //if(DoPostProc) {
@@ -287,8 +288,6 @@ int ttkTrackingFromFields::RequestData(vtkInformation *ttkNotUsed(request),
                                        vtkInformationVector **inputVector,
                                        vtkInformationVector *outputVector) {
 	
-
-std::cout<<"I PASS HERE ONLY ONCE"<<std::endl;
   auto input = vtkDataSet::GetData(inputVector[0]);
   auto output = vtkUnstructuredGrid::GetData(outputVector);
    
@@ -357,6 +356,7 @@ std::cout<<"I PASS HERE ONLY ONCE"<<std::endl;
   bool useTTKMethod = false;
   bool criticalPointTracking = (pvalg == 2);
 
+
   if(pvalg >= 0) {
     switch(pvalg) {
       case 0:
@@ -420,9 +420,6 @@ std::cout<<"I PASS HERE ONLY ONCE"<<std::endl;
          output, fieldNumber, (TTK_TT *)triangulation->getData())));
   } 
   else if(useTTKMethod && criticalPointTracking){
-	std::cout<<"cost death birth: "<<CostDeathBirth<<std::endl;
-	std::cout<<"Tolerance: "<<Tolerance<<std::endl;
-	
     ttkVtkTemplateMacro(
       inputScalarFields[0]->GetDataType(), triangulation->getType(),
       (status = this->trackWithCriticalPointMatching<VTK_TT, TTK_TT>(
