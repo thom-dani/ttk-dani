@@ -238,7 +238,6 @@ template <class dataType, class triangulationType>
 
     std::vector<ttk::trackingTuple> trackingsBase;
     unsigned int sizes[3]={};
-//
     if(maximaMatchings.size()>0){
       tracker.performTracking(fieldNumber, maximaMatchings, trackingsBaseMax);
       trackingsBase.insert(trackingsBase.end(), trackingsBaseMax.begin(), trackingsBaseMax.end());   
@@ -247,48 +246,19 @@ template <class dataType, class triangulationType>
     if(sad_1_Matchings.size()>0){
       tracker.performTracking(fieldNumber, sad_1_Matchings, trackingsBaseSad_1);
       trackingsBase.insert(trackingsBase.end(), trackingsBaseSad_1.begin(), trackingsBaseSad_1.end());
-
     }         
     sizes[1]=trackingsBase.size();
-
     if(sad_2_Matchings.size()>0){
       tracker.performTracking(fieldNumber, sad_2_Matchings, trackingsBaseSad_2);
-      trackingsBase.insert(trackingsBase.end(), trackingsBaseSad_2.begin(), trackingsBaseSad_2.end());    
-
+      trackingsBase.insert(trackingsBase.end(), trackingsBaseSad_2.begin(), trackingsBaseSad_2.end());   
     }
-    
     sizes[2]=trackingsBase.size();
-
     if(minimaMatchings.size()>0){
       tracker.performTracking(fieldNumber, minimaMatchings, trackingsBaseMin);
       trackingsBase.insert(trackingsBase.end(), trackingsBaseMin.begin(), trackingsBaseMin.end());  
+    }   
     }
 
-
-    for (unsigned int i = 0 ; i < trackingsBaseMax.size() ; i++){
-      std::cout<<"time step debut : "<<std::get<0>(trackingsBaseMax[i])<<" time step fin : "<<std::get<1>(trackingsBaseMax[i])<<std::endl;
-      for (unsigned int j = 0 ; j < std::get<2>(trackingsBaseMax[i]).size() ; j++){
-                        std::cout<<std::get<2>(trackingsBaseMax[i])[j]<<"  "<<std::endl;
-    }
-
-    
-    }
-
-
-    std::cout<<"sizes = "<<sizes[0]<<"  "<<sizes[1]<<"  "<<sizes[2]<<std::endl;
-//for (unsigned int i = 0 ; i < trackingsBase.size() ; i++){
-//                ttk::CriticalType currentType;
-//                if(i >= sizes[2])currentType = ttk::CriticalType::Local_minimum;
-//                else if(i >= sizes[1])currentType = ttk::CriticalType::Saddle2;
-//                else if(i >= sizes[0])currentType = ttk::CriticalType::Saddle1;
-//                else currentType = ttk::CriticalType::Local_maximum;
-//                std::cout<<"time step debut : "<<std::get<0>(trackingsBase[i])<<" time step fin : "<<std::get<1>(trackingsBase[i])<<std::endl;
-//                std::cout<<"chaine de type : "<<(int)currentType<<std::endl;
-//                for (unsigned int j = 0 ; j < std::get<2>(trackingsBase[i]).size() ; j++){
-//                        std::cout<<std::get<2>(trackingsBase[i])[j]<<"  "<<std::endl;
-//
-//		}
-//}
     std::vector<std::set<int>> trackingTupleToMerged(trackingsBase.size());
     //if(DoPostProc) {
     //  tracker.performPostProcess(persistenceDiagrams, trackingsBase,
