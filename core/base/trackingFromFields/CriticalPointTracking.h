@@ -78,11 +78,18 @@ namespace ttk {
           std::vector<std::vector<MatchingType>> &sad_2_Matchings,
           std::vector<std::vector<MatchingType>> &minimaMatchings,
           int fieldNumber);
+      
+      void performTrackings(
+        const std::vector<DiagramType> persistenceDiagrams,
+        std::vector<std::vector<MatchingType>> &maximaMatchings,
+        std::vector<std::vector<MatchingType>> &sad_1_Matchings,
+        std::vector<std::vector<MatchingType>> &sad_2_Matchings,
+        std::vector<std::vector<MatchingType>> &minimaMatchings,
+        std::vector<trackingTuple>  &allTrackings,
+        unsigned int  (&sizes)[]
+      );
           
-      void performTracking(
-          int fieldNumber, 
-          std::vector<std::vector<MatchingType>> &matching, 
-          std::vector<trackingTuple> &tracking);
+      
 
     protected:
 
@@ -147,5 +154,10 @@ namespace ttk {
       void assignmentSolver(
           std::vector<std::vector<double>> &costMatrix,
           std::vector<ttk::MatchingType> &matching);
+
+      void performTrackingForOneType(
+        int fieldNumber, 
+        std::vector<std::vector<MatchingType>> &matching, 
+        std::vector<trackingTuple> &tracking);
   };
 }

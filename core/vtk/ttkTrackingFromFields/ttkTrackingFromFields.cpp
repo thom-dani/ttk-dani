@@ -121,6 +121,8 @@ template<class triangulationType>
   vtkIntArray *pointsCriticalType,
   vtkIntArray * timeScalars,
   vtkIntArray *lengthScalars,
+  vtkIntArray *globalVertexIds,
+  vtkIntArray *connectedComponentIds,
   unsigned int *sizes){
 
     int pointCpt = 0;
@@ -140,6 +142,7 @@ template<class triangulationType>
       triangulation->getVertexPoint(chain[0], x, y, z);
       if(useGeometricSpacing)z+=startTime *spacing;
       points->InsertNextPoint(x,y,z);
+      globalVertexIds->InsertTuple1(pointCpt, (int)chain[0]);
       pointsCriticalType->InsertTuple1(pointCpt, (int)currentType);
       timeScalars->InsertTuple1(pointCpt, startTime);
       vtkIdType edge[2];
@@ -150,10 +153,12 @@ template<class triangulationType>
         pointCpt++;
         edge[1]=pointCpt;
         points->InsertNextPoint(x, y, z);
+        globalVertexIds->InsertTuple1(pointCpt, (int)chain[j]);
         criticalPointTracking->InsertNextCell(VTK_LINE, 2, edge);
         pointsCriticalType->InsertTuple1(pointCpt, (int)currentType);
         timeScalars->InsertTuple1(pointCpt, startTime+j);
-        lengthScalars->InsertTuple1(edgeCpt, chain.size());
+        lengthScalars->InsertTuple1(edgeCpt, chain.size()-1);
+        connectedComponentIds->InsertTuple1(edgeCpt, i);
         edgeCpt++;
       }
       pointCpt++;
@@ -161,8 +166,11 @@ template<class triangulationType>
 
     criticalPointTracking->SetPoints(points);
     criticalPointTracking->GetCellData()->AddArray(lengthScalars);
+    criticalPointTracking->GetCellData()->AddArray(connectedComponentIds);
     criticalPointTracking->GetPointData()->AddArray(pointsCriticalType);
     criticalPointTracking->GetPointData()->AddArray(timeScalars);
+    criticalPointTracking->GetPointData()->AddArray(globalVertexIds);
+
 
   }
 
@@ -199,6 +207,7 @@ template <class dataType, class triangulationType>
     tracker.setAssignmentMethod(assignmentMethod);
 
     std::vector<ttk::DiagramType> persistenceDiagrams(fieldNumber);
+    this->setDebugLevel(10);
     this->performDiagramComputation<dataType, triangulationType>((int)fieldNumber, persistenceDiagrams, triangulation);
 
     std::vector<std::vector<ttk::MatchingType>> maximaMatchings(fieldNumber-1);
@@ -212,73 +221,52 @@ template <class dataType, class triangulationType>
                               sad_2_Matchings,
                               minimaMatchings, 
                               fieldNumber);
-    
+  
     vtkNew<vtkPoints> const points{};
     vtkNew<vtkUnstructuredGrid> const criticalPointTracking{};
 
-    vtkNew<vtkDoubleArray> persistenceScalars{};
+    vtkNew<vtkDoubleArray> costs{};
     vtkNew<vtkDoubleArray> valueScalars{};
-    vtkNew<vtkIntArray> matchingIdScalars{};
+    vtkNew<vtkIntArray> globalVertexIds{};
     vtkNew<vtkIntArray> lengthScalars{};
     vtkNew<vtkIntArray> timeScalars{};
-    vtkNew<vtkIntArray> componentIds{};
+    vtkNew<vtkIntArray> connectedComponentIds{};
     vtkNew<vtkIntArray> pointsCriticalType{};
 
-    persistenceScalars->SetName("Cost");
+    costs->SetName("Cost");
     valueScalars->SetName("Scalar");
-    matchingIdScalars->SetName("MatchingIdentifier");
+    globalVertexIds->SetName("VertexGlobalId");
     lengthScalars->SetName("ComponentLength");
     timeScalars->SetName("TimeStep");
-    componentIds->SetName("ConnectedComponentId");
+    connectedComponentIds->SetName("ConnectedComponentId");
     pointsCriticalType->SetName("CriticalType");
 
-    std::vector<ttk::trackingTuple> trackingsBaseMax;
-    std::vector<ttk::trackingTuple> trackingsBaseSad_1;
-    std::vector<ttk::trackingTuple> trackingsBaseSad_2;
-    std::vector<ttk::trackingTuple> trackingsBaseMin;
-
-    std::vector<ttk::trackingTuple> trackingsBase;
-    unsigned int sizes[3]={};
-    if(maximaMatchings.size()>0){
-      tracker.performTracking(fieldNumber, maximaMatchings, trackingsBaseMax);
-      trackingsBase.insert(trackingsBase.end(), trackingsBaseMax.begin(), trackingsBaseMax.end());   
-    }
-    sizes[0]=trackingsBase.size();
-    if(sad_1_Matchings.size()>0){
-      tracker.performTracking(fieldNumber, sad_1_Matchings, trackingsBaseSad_1);
-      trackingsBase.insert(trackingsBase.end(), trackingsBaseSad_1.begin(), trackingsBaseSad_1.end());
-    }         
-    sizes[1]=trackingsBase.size();
-    if(sad_2_Matchings.size()>0){
-      tracker.performTracking(fieldNumber, sad_2_Matchings, trackingsBaseSad_2);
-      trackingsBase.insert(trackingsBase.end(), trackingsBaseSad_2.begin(), trackingsBaseSad_2.end());   
-    }
-    sizes[2]=trackingsBase.size();
-    if(minimaMatchings.size()>0){
-      tracker.performTracking(fieldNumber, minimaMatchings, trackingsBaseMin);
-      trackingsBase.insert(trackingsBase.end(), trackingsBaseMin.begin(), trackingsBaseMin.end());  
-    }   
-    
-
-    std::vector<std::set<int>> trackingTupleToMerged(trackingsBase.size());
-    //if(DoPostProc) {
-    //  tracker.performPostProcess(persistenceDiagrams, trackingsBase,
-    //                         trackingTupleToMerged, PostProcThresh);
-    //}
+    std::vector<ttk::trackingTuple> allTrackings;
+    unsigned int typesArrayLimits [3]={};
+    tracker.performTrackings(
+        persistenceDiagrams,
+        maximaMatchings,
+        sad_1_Matchings,
+        sad_2_Matchings,
+        minimaMatchings,
+        allTrackings,
+        typesArrayLimits);
 
     double const spacing = Spacing;
     bool const useGeometricSpacing = UseGeometricSpacing;
 
     buildMeshFromTracking(
       triangulation,
-      trackingsBase,
+      allTrackings,
       useGeometricSpacing, spacing, 
       points, 
       criticalPointTracking,
       pointsCriticalType,
       timeScalars,
       lengthScalars,
-      sizes);
+      globalVertexIds,
+      connectedComponentIds,
+      typesArrayLimits);
 
     output->ShallowCopy(criticalPointTracking);
     return 1;
@@ -290,12 +278,13 @@ int ttkTrackingFromFields::RequestData(vtkInformation *ttkNotUsed(request),
 	
   auto input = vtkDataSet::GetData(inputVector[0]);
   auto output = vtkUnstructuredGrid::GetData(outputVector);
-   
+
   ttk::Triangulation *triangulation = ttkAlgorithm::GetTriangulation(input);
   if(!triangulation)
     return 0;
 
   this->preconditionTriangulation(triangulation);
+
 
   // Test validity of datasets
   if(input == nullptr || output == nullptr) {

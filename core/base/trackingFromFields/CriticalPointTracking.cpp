@@ -174,7 +174,9 @@ void ttk::CriticalPointTracking::performMatchings(
                            maxScalar_1, sad_1Scalar_1, sad_2Scalar_1, minScalar_1,
                            mapMax, mapSad_1, mapSad_2, mapMin);
 
-
+//    #ifdef TTK_ENABLE_OPENMP
+//    #pragma omp parallel for num_threads(threadNumber_)
+//    #endif // TTK_ENABLE_OPENMP
     for (int i = 0 ; i < fieldNumber-1 ; i++){
 
         minimumRelevantPersistence = ttk::CriticalPointTracking::computeRelevantPersistence(persistenceDiagrams[i], persistenceDiagrams[i+1]);
@@ -266,7 +268,7 @@ void ttk::CriticalPointTracking::performMatchings(
         }
     }
 
-     void ttk::CriticalPointTracking::performTracking(
+     void ttk::CriticalPointTracking::performTrackingForOneType(
           int fieldNumber, 
           std::vector<std::vector<MatchingType>> &matchings, 
           std::vector<trackingTuple> &trackings){
@@ -299,6 +301,38 @@ void ttk::CriticalPointTracking::performMatchings(
                 sw.clear();
             }
         }
+
+    void ttk::CriticalPointTracking::performTrackings(
+        const std::vector<DiagramType> persistenceDiagrams,
+        std::vector<std::vector<MatchingType>> &maximaMatchings,
+        std::vector<std::vector<MatchingType>> &sad_1_Matchings,
+        std::vector<std::vector<MatchingType>> &sad_2_Matchings,
+        std::vector<std::vector<MatchingType>> &minimaMatchings,
+        std::vector<trackingTuple> &allTrackings,
+        unsigned int  (&typesArrayLimits)[]
+      ){
+
+        int fieldNumber = persistenceDiagrams.size();
+        std::vector<ttk::trackingTuple> trackingsBaseMax;
+        std::vector<ttk::trackingTuple> trackingsBaseSad_1;
+        std::vector<ttk::trackingTuple> trackingsBaseSad_2;
+        std::vector<ttk::trackingTuple> trackingsBaseMin;
+
+        performTrackingForOneType(fieldNumber, maximaMatchings, trackingsBaseMax);
+        allTrackings.insert(allTrackings.end(), trackingsBaseMax.begin(), trackingsBaseMax.end());   
+        typesArrayLimits[0]=allTrackings.size();
+
+        performTrackingForOneType(fieldNumber, sad_1_Matchings, trackingsBaseSad_1);
+        allTrackings.insert(allTrackings.end(), trackingsBaseSad_1.begin(), trackingsBaseSad_1.end());
+        typesArrayLimits[1]=allTrackings.size();
+
+        performTrackingForOneType(fieldNumber, sad_2_Matchings, trackingsBaseSad_2);
+        allTrackings.insert(allTrackings.end(), trackingsBaseSad_2.begin(), trackingsBaseSad_2.end());   
+        typesArrayLimits[2]=allTrackings.size();
+
+        performTrackingForOneType(fieldNumber, minimaMatchings, trackingsBaseMin);
+        allTrackings.insert(allTrackings.end(), trackingsBaseMin.begin(), trackingsBaseMin.end());  
+      }
 
     void ttk::CriticalPointTracking::assignmentSolver(
       std::vector<std::vector<double>> &costMatrix,

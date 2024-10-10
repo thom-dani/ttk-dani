@@ -117,7 +117,7 @@ by a list of scalar fields) and which computes a tracking mesh."
         command="SetAssignmentMethod"
         number_of_elements="1"
         default_values="0"
-        panel_visibility="advanced" >
+        panel_visibility="advanced">
         <EnumerationDomain name="enum">
           <Entry value="0" text="Auction solver"/>
           <Entry value="1" text="Munkres solver"/>

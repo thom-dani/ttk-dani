@@ -521,7 +521,6 @@ int ttk::PersistenceDiagram::executeDiscreteMorseSandwich(
 
   Timer const tm{};
   const auto dim = triangulation->getDimensionality();
-
   dms_.buildGradient(
     inputScalars, scalarsMTime, inputOffsets, *triangulation, updateMask);
   std::vector<DiscreteMorseSandwich::PersistencePair> dms_pairs{};
