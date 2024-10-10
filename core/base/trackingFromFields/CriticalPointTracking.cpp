@@ -170,22 +170,16 @@ void ttk::CriticalPointTracking::performMatchings(
         std::vector<MatchingType> sad_1_Matching;
         std::vector<MatchingType> sad_2_Matching;
         std::vector<MatchingType> minMatching;
-        if(maxSize > 0){
-            buildCostMatrix(maxCoords_1, maxScalar_1, maxCoords_2, maxScalar_2, maxMatrix, costDeathBirth);
-            assignmentSolver(maxMatrix, maxMatching);
-        }
-        if(sad_1Size > 0){
-            buildCostMatrix(sad_1Coords_1, sad_1Scalar_1, sad_1Coords_2, sad_1Scalar_2, sad_1Matrix, costDeathBirth);
-            assignmentSolver(sad_1Matrix, sad_1_Matching);
-        }
-        if(sad_2Size > 0){
-            buildCostMatrix(sad_2Coords_1, sad_2Scalar_1, sad_2Coords_2, sad_2Scalar_2, sad_2Matrix, costDeathBirth);
-            assignmentSolver(sad_2Matrix, sad_2_Matching);
-        }
-        if(minSize > 0){
-            buildCostMatrix(minCoords_1, minScalar_1, minCoords_2, minScalar_2, minMatrix, costDeathBirth);
-            assignmentSolver(minMatrix, minMatching);
-        }
+
+        buildCostMatrix(maxCoords_1, maxScalar_1, maxCoords_2, maxScalar_2, maxMatrix, costDeathBirth);
+        buildCostMatrix(sad_1Coords_1, sad_1Scalar_1, sad_1Coords_2, sad_1Scalar_2, sad_1Matrix, costDeathBirth);
+        buildCostMatrix(sad_2Coords_1, sad_2Scalar_1, sad_2Coords_2, sad_2Scalar_2, sad_2Matrix, costDeathBirth);
+        buildCostMatrix(minCoords_1, minScalar_1, minCoords_2, minScalar_2, minMatrix, costDeathBirth);
+        
+        assignmentSolver(maxMatrix, maxMatching);
+        assignmentSolver(sad_1Matrix, sad_1_Matching);
+        assignmentSolver(sad_2Matrix, sad_2_Matching);
+        assignmentSolver(minMatrix, minMatching);
 
         maximaMatchings[i]=maxMatching;
         sad_1_Matchings[i]=sad_1_Matching;
