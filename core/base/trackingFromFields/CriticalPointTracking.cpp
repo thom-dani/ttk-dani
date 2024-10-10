@@ -42,76 +42,38 @@ void ttk::CriticalPointTracking::sortCriticalPoint(
             SimplexId birthId = d[i].birth.id;
             SimplexId deathId = d[i].death.id;
             if(std::abs(d[i].persistence()) > minimumRelevantPersistence){
-                switch(d[i].birth.type){
-                    case CriticalType::Local_maximum:
-                    if(std::find(mapMax[t].begin(), mapMax[t].end(), birthId) == mapMax[t].end()){
-                        maxCoords.push_back(birthCoords);
-                        maxScalar.push_back(d[i].birth.sfValue);
-                        mapMax[t].push_back(birthId);
-                    }
-                        break;
-                    case CriticalType::Saddle1:
-                    if(std::find(mapSad_1[t].begin(), mapSad_1[t].end(), birthId) == mapSad_1[t].end()){
-
-                        sad_1Coords.push_back(birthCoords);
-                        sad_1Scalar.push_back(d[i].birth.sfValue);
-                        mapSad_1[t].push_back(birthId);
-                    }
-                        break;                    
-                    
-                    case CriticalType::Saddle2:
-                    if(std::find(mapSad_2[t].begin(), mapSad_2[t].end(), birthId) == mapSad_2[t].end()){
-                        sad_2Coords.push_back(birthCoords);
-                        sad_2Scalar.push_back(d[i].birth.sfValue);
-                        mapSad_2[t].push_back(birthId);
-                    }
-                        break;
-                    case CriticalType::Local_minimum:
-                    if(std::find(mapMin[t].begin(), mapMin[t].end(), birthId) == mapMin[t].end()){
+                int persistencePairType = 0;
+                if (d[i].birth.type == CriticalType::Saddle1 && d[i].death.type == CriticalType::Saddle2)persistencePairType=1;
+                if (d[i].birth.type == CriticalType::Saddle2 && d[i].death.type == CriticalType::Local_maximum)persistencePairType=2;
+                switch(persistencePairType){
+                    case 0:
                         minCoords.push_back(birthCoords);
                         minScalar.push_back(d[i].birth.sfValue);
                         mapMin[t].push_back(birthId);
-                    }
-                        break;
-                    default : 
-                        break;
-                }
-                switch(d[i].death.type){
-                    case CriticalType::Local_maximum:
-                    if(std::find(mapMax[t].begin(), mapMax[t].end(), deathId) == mapMax[t].end()){
-                        maxCoords.push_back(deathCoords);
-                        maxScalar.push_back(d[i].death.sfValue);
-                        mapMax[t].push_back(deathId);
-                    }
-                        break;
-                    case CriticalType::Saddle1:
-                    if(std::find(mapSad_1[t].begin(), mapSad_1[t].end(), deathId) == mapSad_1[t].end()){
                         sad_1Coords.push_back(deathCoords);
                         sad_1Scalar.push_back(d[i].death.sfValue);
-                        mapSad_1[t].push_back(deathId);
-                    }
+                        mapSad_1[t].push_back(deathId);                      
                         break;
-                    case CriticalType::Saddle2:
-                    if(std::find(mapSad_2[t].begin(), mapSad_2[t].end(), deathId) == mapSad_2[t].end()){
+                    case 1:
+                        sad_1Coords.push_back(birthCoords);
+                        sad_1Scalar.push_back(d[i].birth.sfValue);
+                        mapSad_1[t].push_back(birthId);    
                         sad_2Coords.push_back(deathCoords);
                         sad_2Scalar.push_back(d[i].death.sfValue);
                         mapSad_2[t].push_back(deathId);
-                    }
-                        break;
-                    case CriticalType::Local_minimum:
-                    if(std::find(mapMin[t].begin(), mapMin[t].end(), deathId) == mapMin[t].end()){
-                        minCoords.push_back(deathCoords);
-                        minScalar.push_back(d[i].death.sfValue);
-                        mapMin[t].push_back(deathId);
-                    }
-                        break;
-                    default : 
-                        break;
+                        break;                                        
+                    case 2:
+                        sad_2Coords.push_back(birthCoords);
+                        sad_2Scalar.push_back(d[i].birth.sfValue);
+                        mapSad_2[t].push_back(birthId);    
+                        maxCoords.push_back(deathCoords);
+                        maxScalar.push_back(d[i].death.sfValue);
+                        mapMax[t].push_back(deathId);
+                        break;                                        
                 }
             }
-        }  
-    }
-
+        }
+    }  
 
 void ttk::CriticalPointTracking::buildCostMatrix(
     const std::vector<std::array<float, 3>> coords_1,
