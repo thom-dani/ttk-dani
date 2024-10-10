@@ -205,6 +205,7 @@ template <class dataType, class triangulationType>
     tracker.setTolerance(tolerance);
     tracker.setEpsilon(costDeathBirth);
     tracker.setAssignmentMethod(assignmentMethod);
+    tracker.setWeights(PX, PY, PZ, PF);
 
     std::vector<ttk::DiagramType> persistenceDiagrams(fieldNumber);
     this->setDebugLevel(10);

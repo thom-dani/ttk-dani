@@ -10,10 +10,10 @@ double ttk::CriticalPointTracking::criticalPointDistance(
     const std::array<float, 3> coords_p2,
     const double sfValue_p2,
     int p = 2){
-    return std::pow(std::pow(coords_p1[0] - coords_p2[0], p)
-                    + std::pow(coords_p1[1] - coords_p2[1], p)
-                    + std::pow(coords_p1[2] - coords_p2[2], p)
-                    + std::pow(sfValue_p1 - sfValue_p2,p), 1.0/p);
+    return std::pow(xWeight*std::pow(coords_p1[0] - coords_p2[0], p)
+                    + yWeight*std::pow(coords_p1[1] - coords_p2[1], p)
+                    + zWeight*std::pow(coords_p1[2] - coords_p2[2], p)
+                    + fWeight*std::pow(sfValue_p1 - sfValue_p2,p), 1.0/p);
 }
 
 

@@ -25,6 +25,10 @@ namespace ttk {
       double meshDiameter{1};
       double tolerance{10e-3};
       int assignmentMethod{0};
+      double xWeight{1};
+      double yWeight{1};
+      double zWeight{1};
+      double fWeight{1};
 
           
     public:
@@ -48,6 +52,13 @@ namespace ttk {
         if(a == 0 || a ==1){
           assignmentMethod = a;
         }
+      }
+
+      void setWeights(double PX, double PY, double PZ, double PF){
+        xWeight = PX;
+        yWeight = PY;
+        zWeight = PZ;
+        fWeight = PF;
       }
 
       double computeBoundingBoxRadius(const DiagramType &d1, const DiagramType &d2){

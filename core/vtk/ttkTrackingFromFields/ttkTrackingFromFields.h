@@ -110,6 +110,12 @@ public:
   vtkGetMacro(PS, double);
   /// @}
 
+   /// @brief Importance weight for function values.
+  /// @{
+  vtkSetMacro(PF, double);
+  vtkGetMacro(PF, double);
+  /// @}
+
   /// @brief Value of the parameter p for the Wp (p-th Wasserstein) distance
   /// computation (type "inf" for the Bottleneck distance).
   /// @{
@@ -178,9 +184,10 @@ private:
   double Tolerance{1};
   double PX{1};
   double PY{1};
-  double PZ{0};
+  double PZ{1};
   double PE{0};
   double PS{0};
+  double PF{1};
 
   double CostDeathBirth{0.1};
   int AssignmentMethod{0};
