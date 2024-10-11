@@ -136,7 +136,6 @@ namespace ttk {
 
       void sortCriticalPoint(
           const DiagramType &d, 
-          const int t,
           const double minimumRelevantPersistence,
           std::vector<std::array<float, 3>> &maxCoords,
           std::vector<std::array<float, 3>> &sad_1Coords,
@@ -146,10 +145,10 @@ namespace ttk {
           std::vector<double> &sad1Scalar,
           std::vector<double> &sad_2Scalar,
           std::vector<double> &minScalar,
-          std::vector<std::vector<SimplexId>> &mapMax,
-          std::vector<std::vector<SimplexId>> &mapSad_1,
-          std::vector<std::vector<SimplexId>> &mapSad_2,
-          std::vector<std::vector<SimplexId>> &mapMin);
+          std::vector<SimplexId> &mapMax,
+          std::vector<SimplexId> &mapSad_1,
+          std::vector<SimplexId> &mapSad_2,
+          std::vector<SimplexId> &mapMin);
 
       void buildCostMatrix(
           const std::vector<std::array<float, 3>> coords_1,
@@ -159,8 +158,9 @@ namespace ttk {
           std::vector<std::vector<double>> &matrix,
           float costDeathBirth);
 
-      void localToGlobalMatching(std::vector<std::vector<MatchingType>> &matchings, 
-                                  const std::vector<std::vector<int>> &map);
+      void localToGlobalMatching(std::vector<MatchingType> &matchings, 
+                                  const std::vector<int> &startMap,
+                                  const std::vector<int> &endMap);
 
       void assignmentSolver(
           std::vector<std::vector<double>> &costMatrix,
