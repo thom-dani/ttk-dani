@@ -84,7 +84,7 @@ void ttk::CriticalPointTracking::buildCostMatrix(
     {
         int size_1 = coords_1.size();
         int size_2 = coords_2.size();
-        int matrix_size = size_1 + size_2;
+        int matrix_size = (size_1 > 0 && size_2 > 0) ? size_1 + size_2 : 0;
         for (int i = 0 ; i < size_1 ; i++){
             for (int j = 0 ; j < size_2 ; j++){
                 matrix[i][j]=criticalPointDistance(coords_1[i], sfValues_1[i], coords_2[j], sfValues_2[j]);
@@ -110,11 +110,13 @@ void ttk::CriticalPointTracking::performMatchings(
     std::vector<std::vector<MatchingType>> &minimaMatchings, 
     int fieldNumber)
     {
+
    
     #ifdef TTK_ENABLE_OPENMP
     #pragma omp parallel for num_threads(threadNumber_)
     #endif // TTK_ENABLE_OPENMP
     for (int i = 0 ; i < fieldNumber-1 ; i++){
+
         std::vector<SimplexId> maxMap_1;
         std::vector<SimplexId> sad_1Map_1;
         std::vector<SimplexId> sad_2Map_1;
@@ -129,6 +131,7 @@ void ttk::CriticalPointTracking::performMatchings(
         std::vector<double> sad_1Scalar_1;
         std::vector<double> sad_2Scalar_1;
         std::vector<double> minScalar_1;
+
 
         double minimumRelevantPersistence = ttk::CriticalPointTracking::computeRelevantPersistence(persistenceDiagrams[i], persistenceDiagrams[i+1]);
         sortCriticalPoint(persistenceDiagrams[i], minimumRelevantPersistence,
@@ -247,8 +250,10 @@ void ttk::CriticalPointTracking::performMatchings(
             }
         }
 
+    
+
     void ttk::CriticalPointTracking::performTrackings(
-        const std::vector<DiagramType> persistenceDiagrams,
+        int fieldNumber, 
         std::vector<std::vector<MatchingType>> &maximaMatchings,
         std::vector<std::vector<MatchingType>> &sad_1_Matchings,
         std::vector<std::vector<MatchingType>> &sad_2_Matchings,
@@ -256,8 +261,6 @@ void ttk::CriticalPointTracking::performMatchings(
         std::vector<trackingTuple> &allTrackings,
         unsigned int  (&typesArrayLimits)[]
       ){
-
-        int fieldNumber = persistenceDiagrams.size();
         std::vector<ttk::trackingTuple> trackingsBaseMax;
         std::vector<ttk::trackingTuple> trackingsBaseSad_1;
         std::vector<ttk::trackingTuple> trackingsBaseSad_2;
@@ -265,6 +268,7 @@ void ttk::CriticalPointTracking::performMatchings(
 
         performTrackingForOneType(fieldNumber, maximaMatchings, trackingsBaseMax);
         allTrackings.insert(allTrackings.end(), trackingsBaseMax.begin(), trackingsBaseMax.end());   
+       
         typesArrayLimits[0]=allTrackings.size();
 
         performTrackingForOneType(fieldNumber, sad_1_Matchings, trackingsBaseSad_1);
@@ -282,19 +286,20 @@ void ttk::CriticalPointTracking::performMatchings(
     void ttk::CriticalPointTracking::assignmentSolver(
       std::vector<std::vector<double>> &costMatrix,
       std::vector<ttk::MatchingType> &matching){
-        if(assignmentMethod == 0){
-            ttk::AssignmentAuction<double> solver;
-            solver.setInput(costMatrix);
-            solver.setNumberOfRounds(100);
-            solver.setEpsilon(10e-1);
-            solver.run(matching);
-            solver.clearMatrix();
-        }
-        else if(assignmentMethod == 1){
-            ttk::AssignmentMunkres<double> solver;
-            solver.setInput(costMatrix);
-            solver.run(matching);
-            solver.clearMatrix();
+        if(costMatrix.size() > 0){
+            if(assignmentMethod == 0){
+                ttk::AssignmentAuction<double> solver;
+                solver.setInput(costMatrix);
+                solver.setBalanced(false);
+                solver.run(matching);
+                solver.clearMatrix();
+            }
+            else if(assignmentMethod == 1){
+                ttk::AssignmentMunkres<double> solver;
+                solver.setInput(costMatrix);
+                solver.run(matching);
+                solver.clearMatrix();
+            }
         }
     }
 

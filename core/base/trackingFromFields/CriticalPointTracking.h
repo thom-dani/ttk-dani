@@ -91,7 +91,7 @@ namespace ttk {
           int fieldNumber);
       
       void performTrackings(
-        const std::vector<DiagramType> persistenceDiagrams,
+        int fieldNumber, 
         std::vector<std::vector<MatchingType>> &maximaMatchings,
         std::vector<std::vector<MatchingType>> &sad_1_Matchings,
         std::vector<std::vector<MatchingType>> &sad_2_Matchings,

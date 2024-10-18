@@ -128,11 +128,10 @@ template<class triangulationType>
     int pointCpt = 0;
     int edgeCpt=0;
     for (unsigned int i = 0 ; i <  trackings.size() ; i++){
-      ttk::CriticalType currentType;
-      if(i >= sizes[2])currentType = ttk::CriticalType::Local_minimum;
-      else if(i >= sizes[1])currentType = ttk::CriticalType::Saddle2;
-      else if(i >= sizes[0])currentType = ttk::CriticalType::Saddle1;
-      else currentType = ttk::CriticalType::Local_maximum;
+      ttk::CriticalType currentType=ttk::CriticalType::Local_maximum;
+      if(i >= sizes[2] && i>sizes[1])currentType = ttk::CriticalType::Local_minimum;
+      else if(i >= sizes[1] && i>sizes[0])currentType = ttk::CriticalType::Saddle2;
+      else if(i >= sizes[0] && i > 0)currentType = ttk::CriticalType::Saddle1;
       int startTime = std::get<0>(trackings[i]);
       std::vector<ttk::SimplexId> chain = std::get<2>(trackings[i]);
 
@@ -170,8 +169,6 @@ template<class triangulationType>
     criticalPointTracking->GetPointData()->AddArray(pointsCriticalType);
     criticalPointTracking->GetPointData()->AddArray(timeScalars);
     criticalPointTracking->GetPointData()->AddArray(globalVertexIds);
-
-
   }
 
 
@@ -180,7 +177,7 @@ template <class dataType, class triangulationType>
                                    unsigned long fieldNumber,
                                    const triangulationType *triangulation){
 
-
+    std::cout<<"fieldNumber  = "<<fieldNumber<<std::endl;
     ttk::CriticalPointTracking tracker;
     float x, y, z;
     float maxX, minX, maxY, minY, maxZ, minZ;
@@ -206,6 +203,7 @@ template <class dataType, class triangulationType>
     tracker.setEpsilon(costDeathBirth);
     tracker.setAssignmentMethod(assignmentMethod);
     tracker.setWeights(PX, PY, PZ, PF);
+    tracker.setThreadNumber(this->threadNumber_);
 
     std::vector<ttk::DiagramType> persistenceDiagrams(fieldNumber);
     this->setDebugLevel(10);
@@ -223,6 +221,7 @@ template <class dataType, class triangulationType>
                               minimaMatchings, 
                               fieldNumber);
   
+
     vtkNew<vtkPoints> const points{};
     vtkNew<vtkUnstructuredGrid> const criticalPointTracking{};
 
@@ -245,7 +244,7 @@ template <class dataType, class triangulationType>
     std::vector<ttk::trackingTuple> allTrackings;
     unsigned int typesArrayLimits [3]={};
     tracker.performTrackings(
-        persistenceDiagrams,
+        fieldNumber,
         maximaMatchings,
         sad_1_Matchings,
         sad_2_Matchings,
@@ -279,7 +278,7 @@ int ttkTrackingFromFields::RequestData(vtkInformation *ttkNotUsed(request),
 	
   auto input = vtkDataSet::GetData(inputVector[0]);
   auto output = vtkUnstructuredGrid::GetData(outputVector);
-
+  this->SetDebugLevel(20);
   ttk::Triangulation *triangulation = ttkAlgorithm::GetTriangulation(input);
   if(!triangulation)
     return 0;
