@@ -132,13 +132,12 @@ void ttk::CriticalPointTracking::performMatchings(
         std::vector<double> sad_2Scalar_1;
         std::vector<double> minScalar_1;
 
-
         double minimumRelevantPersistence = ttk::CriticalPointTracking::computeRelevantPersistence(persistenceDiagrams[i], persistenceDiagrams[i+1]);
+
         sortCriticalPoint(persistenceDiagrams[i], minimumRelevantPersistence,
                            maxCoords_1, sad_1Coords_1, sad_2Coords_1, minCoords_1, 
                            maxScalar_1, sad_1Scalar_1, sad_2Scalar_1, minScalar_1,
                            maxMap_1, sad_1Map_1, sad_2Map_1, minMap_1);
-
         std::vector<SimplexId> maxMap_2;
         std::vector<SimplexId> sad_1Map_2;
         std::vector<SimplexId> sad_2Map_2;
@@ -237,6 +236,7 @@ void ttk::CriticalPointTracking::performMatchings(
                         std::get<1>(trackings[it->second])++;
                         std::get<2>(trackings[it->second]).push_back(v2);
                         sw[v2]=it->second;
+                        previousTrackingsEndsIds.erase(it);
                     }
                     else{
                         std::vector<ttk::SimplexId> chain = {v1, v2};

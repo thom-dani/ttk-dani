@@ -128,10 +128,10 @@ template<class triangulationType>
     int pointCpt = 0;
     int edgeCpt=0;
     for (unsigned int i = 0 ; i <  trackings.size() ; i++){
-      ttk::CriticalType currentType=ttk::CriticalType::Local_maximum;
-      if(i >= sizes[2] && i>sizes[1])currentType = ttk::CriticalType::Local_minimum;
-      else if(i >= sizes[1] && i>sizes[0])currentType = ttk::CriticalType::Saddle2;
-      else if(i >= sizes[0] && i > 0)currentType = ttk::CriticalType::Saddle1;
+      ttk::CriticalType currentType=ttk::CriticalType::Local_minimum;
+      if(i < sizes[0])currentType=ttk::CriticalType::Local_maximum;
+      else if(i < sizes[1] && i >=sizes[0])currentType = ttk::CriticalType::Saddle1;
+      else if(i < sizes[2] && i >=sizes[1])currentType = ttk::CriticalType::Saddle1; 
       int startTime = std::get<0>(trackings[i]);
       std::vector<ttk::SimplexId> chain = std::get<2>(trackings[i]);
 
@@ -177,7 +177,6 @@ template <class dataType, class triangulationType>
                                    unsigned long fieldNumber,
                                    const triangulationType *triangulation){
 
-    std::cout<<"fieldNumber  = "<<fieldNumber<<std::endl;
     ttk::CriticalPointTracking tracker;
     float x, y, z;
     float maxX, minX, maxY, minY, maxZ, minZ;
@@ -195,7 +194,7 @@ template <class dataType, class triangulationType>
     }
     
     double const costDeathBirth = CostDeathBirth;
-    double const tolerance = Tolerance;
+    double const tolerance = (double)Tolerance;
     float meshDiameter = std::sqrt(std::pow(maxX-minX, 2)  + std::pow(maxY - minY, 2) + std::pow(maxZ - minZ, 2));
     int assignmentMethod = AssignmentMethod;
     tracker.setMeshDiamater(meshDiameter);
@@ -278,7 +277,6 @@ int ttkTrackingFromFields::RequestData(vtkInformation *ttkNotUsed(request),
 	
   auto input = vtkDataSet::GetData(inputVector[0]);
   auto output = vtkUnstructuredGrid::GetData(outputVector);
-  this->SetDebugLevel(20);
   ttk::Triangulation *triangulation = ttkAlgorithm::GetTriangulation(input);
   if(!triangulation)
     return 0;
@@ -385,7 +383,7 @@ int ttkTrackingFromFields::RequestData(vtkInformation *ttkNotUsed(request),
   // 0. get data
   int const fieldNumber = inputScalarFields.size();
   std::vector<void *> inputFields(fieldNumber);
-  for(int i = 0; i < fieldNumber; ++i) {
+  for(int i = 0; i < fieldNumber; i++) {
     inputFields[i] = ttkUtils::GetVoidPointer(inputScalarFields[i]);
   }
   this->setInputScalars(inputFields);

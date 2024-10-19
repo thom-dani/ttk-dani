@@ -302,7 +302,7 @@ namespace ttk {
     }
 
   protected:
-    bool IgnoreBoundary{true};
+    bool IgnoreBoundary{false};
     ftm::FTMTreePP contourTree_{};
     dcg::DiscreteGradient dcg_{};
     PersistentSimplexPairs psp_{};
