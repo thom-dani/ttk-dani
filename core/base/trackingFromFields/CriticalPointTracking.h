@@ -111,12 +111,13 @@ namespace ttk {
         std::vector<double> toSort(d1.size() + d2.size());
         for(size_t i = 0; i < d1.size(); ++i) {
           const auto &t = d1[i];
-          toSort[i] = std::abs(t.birth.sfValue-t.death.sfValue);
+          toSort[i] = std::abs(t.persistence());
         }
         for(size_t i = 0; i < d2.size(); ++i) {
           const auto &t = d2[i];
-          toSort[d1.size() + i] = std::abs(t.birth.sfValue-t.death.sfValue);
+          toSort[d1.size() + i] = std::abs(t.persistence());
         }
+
         const auto minVal = *std::min_element(toSort.begin(), toSort.end());
         const auto maxVal = *std::max_element(toSort.begin(), toSort.end());
         return s * (maxVal - minVal);

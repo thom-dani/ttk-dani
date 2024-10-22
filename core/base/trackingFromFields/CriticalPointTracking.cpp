@@ -281,6 +281,7 @@ void ttk::CriticalPointTracking::performMatchings(
 
         performTrackingForOneType(fieldNumber, minimaMatchings, trackingsBaseMin);
         allTrackings.insert(allTrackings.end(), trackingsBaseMin.begin(), trackingsBaseMin.end());  
+
       }
 
     void ttk::CriticalPointTracking::assignmentSolver(

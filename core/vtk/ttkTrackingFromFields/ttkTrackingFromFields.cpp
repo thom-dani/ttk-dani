@@ -6,6 +6,7 @@
 #include <ttkTrackingFromFields.h>
 #include <ttkTrackingFromPersistenceDiagrams.h>
 #include <ttkUtils.h>
+#include<Timer.h>
 
 
 
@@ -41,6 +42,8 @@ int ttkTrackingFromFields::trackWithPersistenceMatching(
   unsigned long fieldNumber,
   const triangulationType *triangulation) {
 
+  ttk::Timer timer;
+  
   using trackingTuple = ttk::trackingTuple;
 
   // 1. get persistence diagrams.
@@ -49,6 +52,7 @@ int ttkTrackingFromFields::trackWithPersistenceMatching(
   this->performDiagramComputation<dataType, triangulationType>(
     (int)fieldNumber, persistenceDiagrams, triangulation);
 
+  double afterDiagramComputation = timer.getElapsedTime();
   // 2. call feature tracking with threshold.
   std::vector<std::vector<ttk::MatchingType>> outputMatchings(fieldNumber - 1);
 
@@ -65,6 +69,8 @@ int ttkTrackingFromFields::trackWithPersistenceMatching(
     algorithm, // Not from paraview, from enclosing tracking plugin
     wasserstein, tolerance, PX, PY, PZ, PS, PE // Coefficients
   );
+  double afterPerformMatching = timer.getElapsedTime();
+
 
   vtkNew<vtkPoints> const points{};
   vtkNew<vtkUnstructuredGrid> const persistenceDiagram{};
@@ -89,6 +95,8 @@ int ttkTrackingFromFields::trackWithPersistenceMatching(
   std::vector<trackingTuple> trackingsBase;
   tfp.performTracking(persistenceDiagrams, outputMatchings, trackingsBase);
 
+  double afterPerformTracking = timer.getElapsedTime();
+
   std::vector<std::set<int>> trackingTupleToMerged(trackingsBase.size());
 
   if(DoPostProc) {
@@ -106,6 +114,20 @@ int ttkTrackingFromFields::trackWithPersistenceMatching(
     timeScalars, componentIds, pointTypeScalars, *this);
 
   output->ShallowCopy(persistenceDiagram);
+
+  double afterBuildMesh = timer.getElapsedTime();
+
+  std::ofstream outputFile("/home/thomas/ttk/ttk-perso-data/timeTrackingEx/plots/functionTimes.txt",std::ios::app);
+  outputFile <<afterDiagramComputation<<", "
+              <<afterPerformMatching<<", "
+              <<afterPerformTracking<<", "
+              <<afterBuildMesh
+              <<std::endl;
+  if (!outputFile.is_open()) {
+    std::cerr << "Error: Unable to open file for writing!" << std::endl;
+    return 1;
+  }
+  outputFile.close();
 
   return 1;
 }
@@ -131,7 +153,7 @@ template<class triangulationType>
       ttk::CriticalType currentType=ttk::CriticalType::Local_minimum;
       if(i < sizes[0])currentType=ttk::CriticalType::Local_maximum;
       else if(i < sizes[1] && i >=sizes[0])currentType = ttk::CriticalType::Saddle1;
-      else if(i < sizes[2] && i >=sizes[1])currentType = ttk::CriticalType::Saddle1; 
+      else if(i < sizes[2] && i >=sizes[1])currentType = ttk::CriticalType::Saddle2; 
       int startTime = std::get<0>(trackings[i]);
       std::vector<ttk::SimplexId> chain = std::get<2>(trackings[i]);
 
@@ -177,6 +199,8 @@ template <class dataType, class triangulationType>
                                    unsigned long fieldNumber,
                                    const triangulationType *triangulation){
 
+    ttk::Timer timer;
+
     ttk::CriticalPointTracking tracker;
     float x, y, z;
     float maxX, minX, maxY, minY, maxZ, minZ;
@@ -203,10 +227,12 @@ template <class dataType, class triangulationType>
     tracker.setAssignmentMethod(assignmentMethod);
     tracker.setWeights(PX, PY, PZ, PF);
     tracker.setThreadNumber(this->threadNumber_);
-
+    
     std::vector<ttk::DiagramType> persistenceDiagrams(fieldNumber);
     this->setDebugLevel(10);
     this->performDiagramComputation<dataType, triangulationType>((int)fieldNumber, persistenceDiagrams, triangulation);
+
+    double afterDiagramComputation = timer.getElapsedTime();
 
     std::vector<std::vector<ttk::MatchingType>> maximaMatchings(fieldNumber-1);
     std::vector<std::vector<ttk::MatchingType>> sad_1_Matchings(fieldNumber-1);
@@ -220,6 +246,7 @@ template <class dataType, class triangulationType>
                               minimaMatchings, 
                               fieldNumber);
   
+    double afterPerformMatching = timer.getElapsedTime();
 
     vtkNew<vtkPoints> const points{};
     vtkNew<vtkUnstructuredGrid> const criticalPointTracking{};
@@ -251,6 +278,8 @@ template <class dataType, class triangulationType>
         allTrackings,
         typesArrayLimits);
 
+    double afterPerformTracking = timer.getElapsedTime();
+
     double const spacing = Spacing;
     bool const useGeometricSpacing = UseGeometricSpacing;
 
@@ -268,13 +297,30 @@ template <class dataType, class triangulationType>
       typesArrayLimits);
 
     output->ShallowCopy(criticalPointTracking);
+
+    double afterBuildMesh = timer.getElapsedTime();
+    std::ofstream outputFile("/home/thomas/ttk/ttk-perso-data/timeTrackingEx/plots/functionTimes.txt", std::ios::app);
+    if (!outputFile.is_open()) {
+      std::cerr << "Error: Unable to open file for writing!" << std::endl;
+      return 1;
+    }
+
+    outputFile <<afterDiagramComputation<<", "
+            <<afterPerformMatching<<", "
+            <<afterPerformTracking<<", "
+            <<afterBuildMesh
+            <<std::endl;
+    outputFile.close();
     return 1;
 }
 
 int ttkTrackingFromFields::RequestData(vtkInformation *ttkNotUsed(request),
                                        vtkInformationVector **inputVector,
                                        vtkInformationVector *outputVector) {
-	
+
+
+  ttk::Timer timer;
+
   auto input = vtkDataSet::GetData(inputVector[0]);
   auto output = vtkUnstructuredGrid::GetData(outputVector);
   ttk::Triangulation *triangulation = ttkAlgorithm::GetTriangulation(input);
@@ -399,6 +445,8 @@ int ttkTrackingFromFields::RequestData(vtkInformation *ttkNotUsed(request),
   }
   this->setInputOffsets(inputOrders);
 
+  double beforeCoreMethod = timer.getElapsedTime(); 
+
   int status = 0;
   if(useTTKMethod && !criticalPointTracking) {
     ttkVtkTemplateMacro(
@@ -415,5 +463,13 @@ int ttkTrackingFromFields::RequestData(vtkInformation *ttkNotUsed(request),
     this->printMsg("The specified matching method is not supported.");
   }
 
+  double total_rt = timer.getElapsedTime();
+  std::ofstream outputFile("/home/thomas/ttk/ttk-perso-data/timeTrackingEx/plots/functionTimes.txt", std::ios::app);
+  if (!outputFile.is_open()) {
+      std::cerr << "Error: Unable to open file for writing!" << std::endl;
+      return 1;
+  }
+  outputFile <<"before core function : "<<beforeCoreMethod<< ",    total runtime : "<<total_rt<<std::endl;
+  outputFile.close();
   return status;
 }
