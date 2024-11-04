@@ -116,7 +116,7 @@ int ttkTrackingFromFields::trackWithPersistenceMatching(
     spacing, DoPostProc, trackingTupleToMerged, points, persistenceDiagram,
     persistenceScalars, valueScalars, matchingIdScalars, lengthScalars,
     timeScalars, componentIds, pointTypeScalars, *this);
-
+    
   output->ShallowCopy(persistenceDiagram);
 
   double Mesh_RT = timer.getElapsedTime() - clock;
@@ -124,7 +124,7 @@ int ttkTrackingFromFields::trackWithPersistenceMatching(
             <<"DiagramComputationRT = "<<Diagram_RT
             <<", PerformMatchingRT = "<<Matching_RT
             <<", PerformTrackingRT = "<<Tracking_RT
-            <<", BuildMeshRT = "<<Mesh_RT<<std::endl;
+            <<", BuildMeshRT = "<<Mesh_RT<<std::endl; 
   return 1;
 }
 
@@ -294,13 +294,6 @@ template <class dataType, class triangulationType>
       typesArrayLimits);
 
     output->ShallowCopy(criticalPointTracking);
-
-    double afterBuildMesh = timer.getElapsedTime();
-    std::ofstream outputFile("/home/thomas/ttk/ttk-perso-data/timeTrackingEx/plots/functionTimes.txt", std::ios::app);
-    if (!outputFile.is_open()) {
-      std::cerr << "Error: Unable to open file for writing!" << std::endl;
-      return 1;
-    }
 
     double Mesh_RT = timer.getElapsedTime() - clock;
     std::cout<<std::fixed

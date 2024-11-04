@@ -107,11 +107,51 @@ void ttk::CriticalPointTracking::performMatchings(
   std::vector<std::vector<MatchingType>> &minimaMatchings,
   int fieldNumber) {
 
-	std::vector<double> sortRT(fieldNumber - 1);
+	std::vector<double> sortRT(fieldNumber);
 	std::vector<double> matrixRT(fieldNumber - 1);
 	std::vector<double> solveRT(fieldNumber - 1);
 	std::vector<double> remapRT(fieldNumber - 1);
+
+	std::vector<std::vector<SimplexId>> maxMap(fieldNumber);
+	std::vector<std::vector<SimplexId>> sad_1Map(fieldNumber);
+	std::vector<std::vector<SimplexId>> sad_2Map(fieldNumber);
+	std::vector<std::vector<SimplexId>> minMap(fieldNumber);
+
+	std::vector<std::vector<std::array<float, 3>>>maxCoords(fieldNumber);
+	std::vector<std::vector<std::array<float, 3>>>sad_1Coords(fieldNumber);
+	std::vector<std::vector<std::array<float, 3>>>sad_2Coords(fieldNumber);
+	std::vector<std::vector<std::array<float, 3>>>minCoords(fieldNumber);
 	
+	std::vector<std::vector<double>> maxScalar(fieldNumber);
+	std::vector<std::vector<double>> sad_1Scalar(fieldNumber);
+	std::vector<std::vector<double>> sad_2Scalar(fieldNumber);
+	std::vector<std::vector<double>> minScalar(fieldNumber);
+
+#ifdef TTK_ENABLE_OPENMP
+#pragma omp parallel for num_threads(threadNumber_)
+#endif // TTK_ENABLE_OPENMP
+	for (int i = 0 ; i < fieldNumber; i++){
+		Timer tm{};
+		double clock = tm.getElapsedTime();
+		
+		double minimumRelevantPersistence{};
+		if( i < fieldNumber - 1){
+			minimumRelevantPersistence
+				= ttk::CriticalPointTracking::computeRelevantPersistence(
+					persistenceDiagrams[i], persistenceDiagrams[i + 1]);
+			}
+		if( i == fieldNumber - 1){
+			minimumRelevantPersistence
+				= ttk::CriticalPointTracking::computeRelevantPersistence(
+					persistenceDiagrams[i - 1], persistenceDiagrams[i]);
+		}
+    sortCriticalPoint(persistenceDiagrams[i], minimumRelevantPersistence,
+				maxCoords[i], sad_1Coords[i], sad_2Coords[i], minCoords[i],
+				maxScalar[i], sad_1Scalar[i], sad_2Scalar[i], minScalar[i],
+				maxMap[i], sad_1Map[i], sad_2Map[i], minMap[i]);
+		sortRT[i]=tm.getElapsedTime() - clock;
+} 
+
 #ifdef TTK_ENABLE_OPENMP
 #pragma omp parallel for num_threads(threadNumber_)
 #endif // TTK_ENABLE_OPENMP
@@ -119,65 +159,22 @@ void ttk::CriticalPointTracking::performMatchings(
 		
 		Timer tm{};
 		double clock = tm.getElapsedTime();
-    std::vector<SimplexId> maxMap_1;
-    std::vector<SimplexId> sad_1Map_1;
-    std::vector<SimplexId> sad_2Map_1;
-    std::vector<SimplexId> minMap_1;
-
-    std::vector<std::array<float, 3>> maxCoords_1;
-    std::vector<std::array<float, 3>> sad_1Coords_1;
-    std::vector<std::array<float, 3>> sad_2Coords_1;
-    std::vector<std::array<float, 3>> minCoords_1;
-
-    std::vector<double> maxScalar_1;
-    std::vector<double> sad_1Scalar_1;
-    std::vector<double> sad_2Scalar_1;
-    std::vector<double> minScalar_1;
-
-    double minimumRelevantPersistence
-      = ttk::CriticalPointTracking::computeRelevantPersistence(
-        persistenceDiagrams[i], persistenceDiagrams[i + 1]);
-
-    sortCriticalPoint(persistenceDiagrams[i], minimumRelevantPersistence,
-                      maxCoords_1, sad_1Coords_1, sad_2Coords_1, minCoords_1,
-                      maxScalar_1, sad_1Scalar_1, sad_2Scalar_1, minScalar_1,
-                      maxMap_1, sad_1Map_1, sad_2Map_1, minMap_1);
-    std::vector<SimplexId> maxMap_2;
-    std::vector<SimplexId> sad_1Map_2;
-    std::vector<SimplexId> sad_2Map_2;
-    std::vector<SimplexId> minMap_2;
-    std::vector<std::array<float, 3>> maxCoords_2;
-    std::vector<std::array<float, 3>> sad_1Coords_2;
-    std::vector<std::array<float, 3>> sad_2Coords_2;
-    std::vector<std::array<float, 3>> minCoords_2;
-    std::vector<double> maxScalar_2;
-    std::vector<double> sad_1Scalar_2;
-    std::vector<double> sad_2Scalar_2;
-    std::vector<double> minScalar_2;
-
-    sortCriticalPoint(persistenceDiagrams[i + 1], minimumRelevantPersistence,
-                      maxCoords_2, sad_1Coords_2, sad_2Coords_2, minCoords_2,
-                      maxScalar_2, sad_1Scalar_2, sad_2Scalar_2, minScalar_2,
-                      maxMap_2, sad_1Map_2, sad_2Map_2, minMap_2);
-
-		sortRT[i]= tm.getElapsedTime() - clock;
-		clock = tm.getElapsedTime();
 
     float costDeathBirth
       = epsilon
         * computeBoundingBoxRadius(
           persistenceDiagrams[i], persistenceDiagrams[i + 1]);
-    int maxSize = (maxCoords_1.size() > 0 && maxCoords_2.size() > 0)
-                    ? maxCoords_1.size() + maxCoords_2.size()
+    int maxSize = (maxCoords[i].size() > 0 && maxCoords[i+1].size() > 0)
+                    ? maxCoords[i].size() + maxCoords[i+1].size()
                     : 0;
-    int sad_1Size = (sad_1Coords_1.size() > 0 && sad_1Coords_2.size() > 0)
-                      ? sad_1Coords_1.size() + sad_1Coords_2.size()
+    int sad_1Size = (sad_1Coords[i].size() > 0 && sad_1Coords[i+1].size() > 0)
+                      ? sad_1Coords[i].size() + sad_1Coords[i+1].size()
                       : 0;
-    int sad_2Size = (sad_2Coords_1.size() > 0 && sad_2Coords_2.size() > 0)
-                      ? sad_2Coords_1.size() + sad_2Coords_2.size()
+    int sad_2Size = (sad_2Coords[i].size() > 0 && sad_2Coords[i+1].size() > 0)
+                      ? sad_2Coords[i].size() + sad_2Coords[i+1].size()
                       : 0;
-    int minSize = (minCoords_1.size() > 0 && minCoords_2.size() > 0)
-                    ? minCoords_1.size() + minCoords_2.size()
+    int minSize = (minCoords[i].size() > 0 && minCoords[i+1].size() > 0)
+                    ? minCoords[i].size() + minCoords[i+1].size()
                     : 0;
 
     std::vector<std::vector<double>> maxMatrix(
@@ -194,13 +191,13 @@ void ttk::CriticalPointTracking::performMatchings(
     std::vector<MatchingType> sad_2_Matching;
     std::vector<MatchingType> minMatching;
 
-    buildCostMatrix(maxCoords_1, maxScalar_1, maxCoords_2, maxScalar_2,
+    buildCostMatrix(maxCoords[i], maxScalar[i], maxCoords[i+1], maxScalar[i+1],
                     maxMatrix, costDeathBirth);
-    buildCostMatrix(sad_1Coords_1, sad_1Scalar_1, sad_1Coords_2, sad_1Scalar_2,
+    buildCostMatrix(sad_1Coords[i], sad_1Scalar[i], sad_1Coords[i+1], sad_1Scalar[i+1],
                     sad_1Matrix, costDeathBirth);
-    buildCostMatrix(sad_2Coords_1, sad_2Scalar_1, sad_2Coords_2, sad_2Scalar_2,
+    buildCostMatrix(sad_2Coords[i], sad_2Scalar[i], sad_2Coords[i+1], sad_2Scalar[i+1],
                     sad_2Matrix, costDeathBirth);
-    buildCostMatrix(minCoords_1, minScalar_1, minCoords_2, minScalar_2,
+    buildCostMatrix(minCoords[i], minScalar[i], minCoords[i+1], minScalar[i+1],
                     minMatrix, costDeathBirth);
 		
 		matrixRT[i]=tm.getElapsedTime() - clock;
@@ -214,10 +211,10 @@ void ttk::CriticalPointTracking::performMatchings(
 		solveRT[i]=tm.getElapsedTime() - clock;
 		clock = tm.getElapsedTime();
 		
-    localToGlobalMatching(maxMatching, maxMap_1, maxMap_2);
-    localToGlobalMatching(sad_1_Matching, sad_1Map_1, sad_1Map_2);
-    localToGlobalMatching(sad_2_Matching, sad_2Map_1, sad_2Map_2);
-    localToGlobalMatching(minMatching, minMap_1, minMap_2);
+    localToGlobalMatching(maxMatching, maxMap[i], maxMap[i+1]);
+    localToGlobalMatching(sad_1_Matching, sad_1Map[i], sad_1Map[i+1]);
+    localToGlobalMatching(sad_2_Matching, sad_2Map[i], sad_2Map[i+1]);
+    localToGlobalMatching(minMatching, minMap[i], minMap[i+1]);
 
     maximaMatchings[i] = maxMatching;
     sad_1_Matchings[i] = sad_1_Matching;
@@ -233,6 +230,7 @@ void ttk::CriticalPointTracking::performMatchings(
 		RT_3+=solveRT[i];
 		RT_4+=remapRT[i];
 		}
+		RT_1+=sortRT[fieldNumber - 1];
 	std::cout<<std::fixed<<"SortRT = "<<RT_1
 											<<",  BuildCostMatrixRT = "<<RT_2
 											<<",  SolveRT = "<<RT_3
@@ -339,7 +337,6 @@ void ttk::CriticalPointTracking::assignmentSolver(
     if(assignmentMethod == 0) {
       ttk::AssignmentAuction<double> solver;
       solver.setInput(costMatrix);
-      solver.setBalanced(false);
       solver.run(matching);
       solver.clearMatrix();
     } else if(assignmentMethod == 1) {
