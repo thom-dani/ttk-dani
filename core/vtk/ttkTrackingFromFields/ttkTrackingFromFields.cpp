@@ -128,67 +128,6 @@ int ttkTrackingFromFields::trackWithPersistenceMatching(
   return 1;
 }
 
-template<class triangulationType>
-  void buildMeshFromTracking(
-  const triangulationType *triangulation,
-  const std::vector<ttk::trackingTuple> &trackings,
-  const bool useGeometricSpacing,
-  const double spacing,
-  vtkPoints *points,
-  vtkUnstructuredGrid *criticalPointTracking,
-  vtkIntArray *pointsCriticalType,
-  vtkIntArray * timeScalars,
-  vtkIntArray *lengthScalars,
-  vtkIntArray *globalVertexIds,
-  vtkIntArray *connectedComponentIds,
-  unsigned int *sizes){
-
-    int pointCpt = 0;
-    int edgeCpt=0;
-    for (unsigned int i = 0 ; i <  trackings.size() ; i++){
-      ttk::CriticalType currentType=ttk::CriticalType::Local_minimum;
-      if(i < sizes[0])currentType=ttk::CriticalType::Local_maximum;
-      else if(i < sizes[1] && i >=sizes[0])currentType = ttk::CriticalType::Saddle1;
-      else if(i < sizes[2] && i >=sizes[1])currentType = ttk::CriticalType::Saddle2; 
-      int startTime = std::get<0>(trackings[i]);
-      std::vector<ttk::SimplexId> chain = std::get<2>(trackings[i]);
-
-      float x=0;
-      float y=0;
-      float z=0;
-      triangulation->getVertexPoint(chain[0], x, y, z);
-      if(useGeometricSpacing)z+=startTime *spacing;
-      points->InsertNextPoint(x,y,z);
-      globalVertexIds->InsertTuple1(pointCpt, (int)chain[0]);
-      pointsCriticalType->InsertTuple1(pointCpt, (int)currentType);
-      timeScalars->InsertTuple1(pointCpt, startTime);
-      vtkIdType edge[2];
-      for (unsigned int j = 1 ; j < chain.size() ; j++){
-        triangulation->getVertexPoint(chain[j], x, y, z);
-        if(useGeometricSpacing)z+=(j+startTime)*spacing;
-        edge[0]=pointCpt;
-        pointCpt++;
-        edge[1]=pointCpt;
-        points->InsertNextPoint(x, y, z);
-        globalVertexIds->InsertTuple1(pointCpt, (int)chain[j]);
-        criticalPointTracking->InsertNextCell(VTK_LINE, 2, edge);
-        pointsCriticalType->InsertTuple1(pointCpt, (int)currentType);
-        timeScalars->InsertTuple1(pointCpt, startTime+j);
-        lengthScalars->InsertTuple1(edgeCpt, chain.size()-1);
-        connectedComponentIds->InsertTuple1(edgeCpt, i);
-        edgeCpt++;
-      }
-      pointCpt++;
-    }
-
-    criticalPointTracking->SetPoints(points);
-    criticalPointTracking->GetCellData()->AddArray(lengthScalars);
-    criticalPointTracking->GetCellData()->AddArray(connectedComponentIds);
-    criticalPointTracking->GetPointData()->AddArray(pointsCriticalType);
-    criticalPointTracking->GetPointData()->AddArray(timeScalars);
-    criticalPointTracking->GetPointData()->AddArray(globalVertexIds);
-  }
-
 
 template <class dataType, class triangulationType>
   int ttkTrackingFromFields::trackWithCriticalPointMatching(vtkUnstructuredGrid *output,
@@ -217,15 +156,18 @@ template <class dataType, class triangulationType>
     double const tolerance = (double)Tolerance;
     float meshDiameter = std::sqrt(std::pow(maxX-minX, 2)  + std::pow(maxY - minY, 2) + std::pow(maxZ - minZ, 2));
     int assignmentMethod = AssignmentMethod;
+    bool adaptDeathBirthCost  = AdaptDeathBirthCost;
+
     tracker.setMeshDiamater(meshDiameter);
     tracker.setTolerance(tolerance);
     tracker.setEpsilon(costDeathBirth);
+    tracker.setAdaptDeathBirthCost(adaptDeathBirthCost);
     tracker.setAssignmentMethod(assignmentMethod);
     tracker.setWeights(PX, PY, PZ, PF);
+    
     tracker.setThreadNumber(this->threadNumber_);
 	    
     std::vector<ttk::DiagramType> persistenceDiagrams(fieldNumber);
-    this->setDebugLevel(10);
     this->performDiagramComputation<dataType, triangulationType>((int)fieldNumber, persistenceDiagrams, triangulation);
 
     double Diagram_RT = timer.getElapsedTime() - clock;
@@ -235,19 +177,29 @@ template <class dataType, class triangulationType>
     std::vector<std::vector<ttk::MatchingType>> sad_2_Matchings(fieldNumber-1);
     std::vector<std::vector<ttk::MatchingType>> minimaMatchings(fieldNumber-1);    
 
+    std::vector<std::vector<ttk::MatchingType>> maxMatchingsPersistence(fieldNumber-1);
+    std::vector<std::vector<ttk::MatchingType>> sad_1_MatchingsPersistence(fieldNumber-1);
+    std::vector<std::vector<ttk::MatchingType>> sad_2_MatchingsPersistence(fieldNumber-1);
+    std::vector<std::vector<ttk::MatchingType>> minMatchingsPersistence(fieldNumber-1);
+
     tracker.performMatchings(persistenceDiagrams, 
                               maximaMatchings,
                               sad_1_Matchings,
                               sad_2_Matchings,
-                              minimaMatchings, 
+                              minimaMatchings,
+                              maxMatchingsPersistence,
+                              sad_1_MatchingsPersistence,
+                              sad_2_MatchingsPersistence,
+                              minMatchingsPersistence, 
                               fieldNumber);
-  
+
     double Matching_RT = timer.getElapsedTime() - clock;
     clock = timer.getElapsedTime();
     vtkNew<vtkPoints> const points{};
     vtkNew<vtkUnstructuredGrid> const criticalPointTracking{};
 
     vtkNew<vtkDoubleArray> costs{};
+    vtkNew<vtkDoubleArray> averagePersistences{};
     vtkNew<vtkDoubleArray> valueScalars{};
     vtkNew<vtkIntArray> globalVertexIds{};
     vtkNew<vtkIntArray> lengthScalars{};
@@ -255,7 +207,8 @@ template <class dataType, class triangulationType>
     vtkNew<vtkIntArray> connectedComponentIds{};
     vtkNew<vtkIntArray> pointsCriticalType{};
 
-    costs->SetName("Cost");
+    costs->SetName("Costs");
+    averagePersistences->SetName("AveragePersistence");
     valueScalars->SetName("Scalar");
     globalVertexIds->SetName("VertexGlobalId");
     lengthScalars->SetName("ComponentLength");
@@ -264,6 +217,9 @@ template <class dataType, class triangulationType>
     pointsCriticalType->SetName("CriticalType");
 
     std::vector<ttk::trackingTuple> allTrackings;
+    std::vector<double> allTrackingsMeanPersistence;
+    std::vector<std::vector<double>> allTrackingsCosts;
+
     unsigned int typesArrayLimits [3]={};
     tracker.performTrackings(
         fieldNumber,
@@ -271,18 +227,28 @@ template <class dataType, class triangulationType>
         sad_1_Matchings,
         sad_2_Matchings,
         minimaMatchings,
+        maxMatchingsPersistence,
+        sad_1_MatchingsPersistence,
+        sad_2_MatchingsPersistence,
+        minMatchingsPersistence, 
         allTrackings,
+        allTrackingsCosts,
+        allTrackingsMeanPersistence,
         typesArrayLimits);
 
+    std::cout<<"balise 1"<<std::endl;
+    
     double Tracking_RT = timer.getElapsedTime() - clock;
     clock = timer.getElapsedTime();
 
     double const spacing = Spacing;
     bool const useGeometricSpacing = UseGeometricSpacing;
 
-    buildMeshFromTracking(
+    ttkTrackingFromPersistenceDiagrams::buildMesh(
       triangulation,
       allTrackings,
+      allTrackingsCosts,
+      allTrackingsMeanPersistence,
       useGeometricSpacing, spacing, 
       points, 
       criticalPointTracking,
@@ -291,6 +257,8 @@ template <class dataType, class triangulationType>
       lengthScalars,
       globalVertexIds,
       connectedComponentIds,
+      costs,
+      averagePersistences,
       typesArrayLimits);
 
     output->ShallowCopy(criticalPointTracking);

@@ -29,6 +29,7 @@ namespace ttk {
     double yWeight{1};
     double zWeight{1};
     double fWeight{1};
+    bool adaptiveDeathBirthCost{false};
 
   public:
     CriticalPointTracking() {
@@ -51,6 +52,11 @@ namespace ttk {
         assignmentMethod = a;
       }
     }
+    
+    void setAdaptDeathBirthCost(bool b){
+      adaptiveDeathBirthCost=b;
+    }
+
 
     void setWeights(double PX, double PY, double PZ, double PF) {
       xWeight = PX;
@@ -88,6 +94,10 @@ namespace ttk {
                        std::vector<std::vector<MatchingType>> &sad_1_Matchings,
                        std::vector<std::vector<MatchingType>> &sad_2_Matchings,
                        std::vector<std::vector<MatchingType>> &minimaMatchings,
+                       std::vector<std::vector<MatchingType>> &maxMatchingsPersistence,
+                       std::vector<std::vector<MatchingType>> &sad_1_MatchingsPersistence,
+                       std::vector<std::vector<MatchingType>> &sad_2_MatchingsPersistence,
+                       std::vector<std::vector<MatchingType>> &minMatchingsPersistence,
                        int fieldNumber);
 
     void
@@ -96,7 +106,13 @@ namespace ttk {
                        std::vector<std::vector<MatchingType>> &sad_1_Matchings,
                        std::vector<std::vector<MatchingType>> &sad_2_Matchings,
                        std::vector<std::vector<MatchingType>> &minimaMatchings,
+                       std::vector<std::vector<MatchingType>> &maxMatchingsPersistence,
+                       std::vector<std::vector<MatchingType>> &sad_1_MatchingsPersistence,
+                       std::vector<std::vector<MatchingType>> &sad_2_MatchingsPersistence,
+                       std::vector<std::vector<MatchingType>> &minMatchingsPersistence,
                        std::vector<trackingTuple> &allTrackings,
+                       std::vector<std::vector<double>> &allTrackingCost,
+                       std::vector<double> &allTrackingsMeanPersistences,
                        unsigned int (&sizes)[]);
 
   protected:
@@ -144,7 +160,11 @@ namespace ttk {
                            std::vector<SimplexId> &mapMax,
                            std::vector<SimplexId> &mapSad_1,
                            std::vector<SimplexId> &mapSad_2,
-                           std::vector<SimplexId> &mapMin);
+                           std::vector<SimplexId> &mapMin,
+                           std::vector<double> &maxPersistence,
+                           std::vector<double> &sad_1_Persistence,
+                           std::vector<double> &sad_2_Persistence,
+                           std::vector<double> &minPersistence);
 
     void buildCostMatrix(const std::vector<std::array<float, 3>> coords_1,
                          const std::vector<double> sfValues_1,
@@ -155,7 +175,10 @@ namespace ttk {
 
     void localToGlobalMatching(std::vector<MatchingType> &matchings,
                                const std::vector<int> &startMap,
-                               const std::vector<int> &endMap);
+                               const std::vector<int> &endMap,
+                               const std::vector<double> &startPersistence,
+                               const std::vector<double> &endPersistence,
+                               std::vector<MatchingType> &matchingsPersistence);
 
     void assignmentSolver(std::vector<std::vector<double>> &costMatrix,
                           std::vector<ttk::MatchingType> &matching);
@@ -163,6 +186,9 @@ namespace ttk {
     void performTrackingForOneType(
       int fieldNumber,
       std::vector<std::vector<MatchingType>> &matching,
-      std::vector<trackingTuple> &tracking);
+      std::vector<std::vector<MatchingType>> &maxMatchingsPersistence,
+      std::vector<trackingTuple> &tracking,
+      std::vector<std::vector<double>> &trackingCosts,
+      std::vector<double> &trackingPersistence);
   };
 } // namespace ttk
