@@ -223,7 +223,7 @@ template <class dataType, class triangulationType>
     tracker.setAssignmentMethod(assignmentMethod);
     tracker.setWeights(PX, PY, PZ, PF);
     tracker.setThreadNumber(this->threadNumber_);
-    
+	    
     std::vector<ttk::DiagramType> persistenceDiagrams(fieldNumber);
     this->setDebugLevel(10);
     this->performDiagramComputation<dataType, triangulationType>((int)fieldNumber, persistenceDiagrams, triangulation);

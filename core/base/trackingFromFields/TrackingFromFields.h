@@ -14,7 +14,7 @@
 #include <BottleneckDistance.h>
 #include <PersistenceDiagram.h>
 #include <Triangulation.h>
-
+#include <DiscreteGradient.h>
 namespace ttk {
 
   class TrackingFromFields : virtual public Debug {
@@ -91,7 +91,7 @@ int ttk::TrackingFromFields::performDiagramComputation(
   int fieldNumber,
   std::vector<ttk::DiagramType> &persistenceDiagrams,
   const triangulationType *triangulation) {
-
+	
 #ifdef TTK_ENABLE_OPENMP
 #pragma omp parallel for num_threads(threadNumber_)
 #endif // TTK_ENABLE_OPENMP
