@@ -189,7 +189,7 @@ by a list of scalar fields) and which computes a tracking mesh."
 
       <DoubleVectorProperty
         name="epsilon_adapt"
-        label="Birth/death threshold"
+        label="Adaptative coefficient"
         command="SetEpsilonAdapt"
         number_of_elements="1"
         default_values="0.1"

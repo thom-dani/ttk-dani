@@ -157,12 +157,15 @@ template <class dataType, class triangulationType>
     float meshDiameter = std::sqrt(std::pow(maxX-minX, 2)  + std::pow(maxY - minY, 2) + std::pow(maxZ - minZ, 2));
     int assignmentMethod = AssignmentMethod;
     bool adaptDeathBirthCost  = AdaptDeathBirthCost;
+    double epsilonAdapt = EpsilonAdapt;
 
     tracker.setMeshDiamater(meshDiameter);
     tracker.setTolerance(tolerance);
     tracker.setEpsilon(costDeathBirth);
     tracker.setAdaptDeathBirthCost(adaptDeathBirthCost);
     tracker.setAssignmentMethod(assignmentMethod);
+    tracker.setDimension(triangulation->getDimensionality());
+    tracker.setEpsilonAdapt(epsilonAdapt);
     tracker.setWeights(PX, PY, PZ, PF);
     
     tracker.setThreadNumber(this->threadNumber_);

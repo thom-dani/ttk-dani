@@ -43,8 +43,7 @@ void ttk::CriticalPointTracking::sortCriticalPoint(
     std::array<float, 3> birthCoords = d[i].birth.coords;
     std::array<float, 3> deathCoords = d[i].death.coords;
     SimplexId birthId = d[i].birth.id;
-    SimplexId deathId = d[i].death.id;
-
+    SimplexId deathId = d[i].death.id; 
     if(std::abs(d[i].persistence()) > minimumRelevantPersistence) {
       switch(d[i].dim) {
         case 0:
@@ -120,7 +119,7 @@ void ttk::CriticalPointTracking::buildCostMatrix(
         c=matrix[i][j] < c ? matrix[i][j] : c; 
         }
       for (int i = size_1 ; i < matrix_size ; i++){
-        matrix[i][j] = c/(1+0.5);
+        matrix[i][j] = c/(1+epsilonAdapt);
       }
     }
 
@@ -130,7 +129,7 @@ void ttk::CriticalPointTracking::buildCostMatrix(
         d=matrix[i][j] < d ? matrix[i][j] : d; 
       }
       for (int j = size_2 ; j < matrix_size ; j++){
-        matrix[i][j] = d/(1+0.5);
+        matrix[i][j] = d/(1+epsilonAdapt);
       }
     }
   }
@@ -208,7 +207,7 @@ void ttk::CriticalPointTracking::performMatchings(
 		double clock = tm.getElapsedTime();
 
     float costDeathBirth
-      = epsilon
+      = epsilonConstant
         * computeBoundingBoxRadius(
           persistenceDiagrams[i], persistenceDiagrams[i + 1]);
     int maxSize = (maxCoords[i].size() > 0 && maxCoords[i+1].size() > 0)

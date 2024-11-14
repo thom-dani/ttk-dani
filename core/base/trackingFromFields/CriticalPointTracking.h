@@ -21,15 +21,18 @@ namespace ttk {
                                 public TrackingFromPersistenceDiagrams {
 
   private:
-    double epsilon{10e-1};
+    double epsilonConstant{10e-1};
+    double epsilonAdapt{0.5};
     double meshDiameter{1};
     double tolerance{10e-3};
     int assignmentMethod{0};
+    int dimension{2};
     double xWeight{1};
     double yWeight{1};
     double zWeight{1};
     double fWeight{1};
     bool adaptiveDeathBirthCost{false};
+
 
   public:
     CriticalPointTracking() {
@@ -40,7 +43,11 @@ namespace ttk {
     }
 
     void setEpsilon(double e) {
-      epsilon = e;
+      epsilonConstant = e;
+    }
+
+    void setEpsilonAdapt(double e){
+     epsilonAdapt=e;
     }
 
     void setTolerance(double t) {
@@ -57,6 +64,9 @@ namespace ttk {
       adaptiveDeathBirthCost=b;
     }
 
+    void setDimension(int d){
+      dimension=d;
+    }
 
     void setWeights(double PX, double PY, double PZ, double PF) {
       xWeight = PX;
