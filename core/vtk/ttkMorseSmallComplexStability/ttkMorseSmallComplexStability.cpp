@@ -133,6 +133,120 @@ void ttkMorseSmallComplexStability::computePointIds(const int &cellId_1,
   else if((int)cellId->GetValue(id_2) == destinationGlobalId)destinationPointId = id_2;
   else if((int)cellId->GetValue(id_3) == destinationGlobalId)destinationPointId = id_3;
 
+void ttkMorseSmallComplexStability::updateVertexLinksList(std::vector<std::vector<int>> &vertexLinks, 
+                                                          const int &v1, 
+                                                          const int &v2){
+  if (v1 >= vertexLinks.size()){
+    std::vector<int> newEdgeList;
+    newEdgeList.push_back(v2);                                                          
+    vertexLinks.push_back(newEdgeList);
+  }else{
+    vertexLinks[v1].push_back(v2);
+  }
+}     
+
+void ttkMorseSmallComplexStability::computePointIds(const vtkCell* cell_1,
+                      const vtkCell* cell_2,
+                      const int &sourceGlobalId,
+                      const int &destinationGlobalId,
+                      const vtkDataSet &block,
+                      vtkIdType &srcPointId,
+                      vtkIdType &destPointId){
+  
+  vtkSmartPointer<vtkIdList> sourcePointIds = cell_1-> GetPointIds();
+  vtkSmartPointer<vtkIdList> destinationPointIds = cell_2-> GetPointIds();
+  ttkSimplexIdTypeArray cellId = block->GetPointData()->GetArray(ttk::MorseSmaleCellIdName);
+
+  srcPointId = ((int)cellId(sourcePointIds->GetId(0))==sourceGlobalId) ? sourcePointIds->GetId(0) || sourcePointIds->GetId(1);
+  destPointId = ((int)cellId(destinationPointIds->GetId(0))==destinationGlobalId) ? destinationPointIds->GetId(0) || destinationPointIds->GetId(1);
+  
+}
+
+int ttkMorseSmallComplexStability::prepareData(vtkDataSet* block, 
+                                                std::vector<int> &localToGlobal, 
+                                                std::vector<std::pair<int, int>> &edges,
+                                                std::vector<std::array<double, 3>> &coords,
+                                                std::vector<float>&sfValues){
+  
+
+  vtkPoints* points = block->GetPoints();
+  vtkCellData* cellData = block->GetCellData();
+  vtkPointData* ttkScalarMask = block->GetPointData()->GetArray(ttk::MaskScalarFieldName);
+  ttkSimplexIdTypeArray *separatrixIds = cellData->GetArray(ttk::MorseSmaleSeparatrixIdName);
+  vtkSignedCharArray *separatrixTypes = cellData->GetArray(ttk::MorseSmaleSeparatrixTypeName);
+  ttkSimplexIdTypeArray *sourceIds = cellData->GetArray(ttk::MorseSmaleSourceIdName);
+  ttkSimplexIdTypeArray *destinationIds = cellData->GetArray(ttk::MorseSmaleDestinationIdName);
+
+  std::vector<std::vector<int>> criticalVertexType0;
+  std::vector<std::vector<int>> criticalVertexType1;
+  std::vector<std::vector<int>> criticalVertexType2;
+  std::vector<std::vector<int>> criticalVertexType3;
+  
+  std::vector<int> localToGlobalType0;
+  std::vector<int> localToGlobalType1;
+  std::vector<int> localToGlobalType2;
+  std::vector<int> localToGlobalType3;
+
+  std::vector<std::array<double, 3>> &coordsType0;
+  std::vector<std::array<double, 3>> &coordsType1;
+  std::vector<std::array<double, 3>> &coordsType2;
+  std::vector<std::array<double, 3>> &coordsType3;
+
+  std::vector<float>&sfValuesType0;
+  std::vector<float>&sfValuesType1;
+  std::vector<float>&sfValuesType2;
+  std::vector<float>&sfValuesType3;
+
+  int n_cells = block->GetNumberOfCells();
+  int currentCellId_1=0;
+
+  while (currentCellId_1 < n_cells ){
+    vtkCell* currentCell_1 = block->GetCell(currentCellId_1);
+    int currentSeparatrixId = separatrixIds->GetValue(currentCellId_1);
+    int currentSeparatrixType = static_cast<int>(separatrixTypes->GetValue(currentCellId_1));
+    int currentCellId_2 = currentCellId_1 + 1;
+    int potentialNextSeparatrixId=separatrixIds->GetValue(i);
+    while (potentialNextSeparatrixId==currentSeparatrixId && currentCellId_2 < n_cells){
+      currentCellId_2++;
+    }
+    vtkCell* currentCell_2 = block->GetCell(currentCellId_2);
+
+    int destinationGlobalId = destinationIds->GetValue(currentCellId_1);
+    int sourceGlobalId = sourceIds->GetValue(i);
+    int destinationLocalId = -1;
+    int sourceLocalId = -1;
+    vtkIdType srcPointId;
+    vtkIdType destPointId;
+
+    computePointIds(currentCell_1, 
+                      currentCell_2, 
+                      sourceGlobalId, 
+                      destinationGlobalId, 
+                      block, 
+                      srcPointId, 
+                      destPointId)
+
+    switch (currentSeparatrixType):
+      case 0:
+        updateVertexData(sourceGlobalId, srcPointId, points, coords, localToGlobalType0, sourceLocalId);
+        updateVertexData(destinationGlobalId, destPointId, points, coords, localToGlobalType1, destinationLocalId);
+        updateVertexLinkList(criticalVertexType0, sourceLocalId, destinationLocalId);
+        updateVertexLinkList(criticalVertexType1, destinationLocalId, sourceLocalId);
+      case 1:
+        updateVertexData(sourceGlobalId, srcPointId, points, coords, localToGlobalType1, sourceLocalId);
+        updateVertexData(destinationGlobalId, destPointId, points, coords, localToGlobalType2, destinationLocalId);
+        updateVertexLinkList(criticalVertexType1, sourceLocalId, destinationLocalId);
+        updateVertexLinkList(criticalVertexType2, destinationLocalId, sourceLocalId);
+
+      case 2:
+        updateVertexData(sourceGlobalId, srcPointId, points, coords, localToGlobalType1, sourceLocalId);
+        updateVertexData(destinationGlobalId, destPointId, points, coords, localToGlobalType2, destinationLocalId);
+        updateVertexLinkList(criticalVertexType2, sourceLocalId, destinationLocalId);
+        updateVertexLinkList(criticalVertexType3, destinationLocalId, sourceLocalId);
+
+    currentCellId_1 = currentCellId_2 + 1;
+
+  }
 }
 
 void ttkMorseSmallComplexStability::computeGraphMinor(const std::vector<std::vector<int>> &adjacencyMatrixFull, 
