@@ -38,7 +38,7 @@ namespace ttk {
     TrackingFromCriticalPoints() {
     }
 
-    void setMeshDiamater(double r) {
+    void setMeshDiameter(double r) {
       meshDiameter = r;
     }
 
@@ -125,7 +125,7 @@ namespace ttk {
                        std::vector<double> &allTrackingsMeanPersistences,
                        unsigned int (&sizes)[]);
 
-  protected:
+  private:
     double computeRelevantPersistence(const DiagramType &d1,
                                       const DiagramType &d2) {
       const auto sp = this->tolerance;

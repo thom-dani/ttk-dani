@@ -147,11 +147,6 @@ void ttk::TrackingFromCriticalPoints::performMatchings(
   std::vector<std::vector<MatchingType>> &minMatchingsPersistence,
   int fieldNumber) {
 
-	std::vector<double> sortRT(fieldNumber);
-	std::vector<double> matrixRT(fieldNumber - 1);
-	std::vector<double> solveRT(fieldNumber - 1);
-	std::vector<double> remapRT(fieldNumber - 1);
-
 	std::vector<std::vector<SimplexId>> maxMap(fieldNumber);
 	std::vector<std::vector<SimplexId>> sad_1Map(fieldNumber);
 	std::vector<std::vector<SimplexId>> sad_2Map(fieldNumber);
@@ -176,8 +171,6 @@ void ttk::TrackingFromCriticalPoints::performMatchings(
 #pragma omp parallel for num_threads(threadNumber_)
 #endif // TTK_ENABLE_OPENMP
 	for (int i = 0 ; i < fieldNumber; i++){
-		Timer tm{};
-		double clock = tm.getElapsedTime();
 		
 		double minimumRelevantPersistence{};
 		if( i < fieldNumber - 1){
@@ -195,7 +188,6 @@ void ttk::TrackingFromCriticalPoints::performMatchings(
 				maxScalar[i], sad_1Scalar[i], sad_2Scalar[i], minScalar[i],
 				maxMap[i], sad_1Map[i], sad_2Map[i], minMap[i],
         maxPersistence[i],sad_1_Persistence[i], sad_2_Persistence[i], minPersistence[i]);
-		sortRT[i]=tm.getElapsedTime() - clock;
 } 
 
 #ifdef TTK_ENABLE_OPENMP
@@ -203,9 +195,6 @@ void ttk::TrackingFromCriticalPoints::performMatchings(
 #endif // TTK_ENABLE_OPENMP
   for(int i = 0; i < fieldNumber - 1; i++) {
 		
-		Timer tm{};
-		double clock = tm.getElapsedTime();
-
     float costDeathBirth
       = epsilonConstant
         * computeBoundingBoxRadius(
@@ -245,17 +234,11 @@ void ttk::TrackingFromCriticalPoints::performMatchings(
                     sad_2Matrix, costDeathBirth);
     buildCostMatrix(minCoords[i], minScalar[i], minCoords[i+1], minScalar[i+1],
                     minMatrix, costDeathBirth);
-		
-		matrixRT[i]=tm.getElapsedTime() - clock;
-		clock = tm.getElapsedTime();
 
     assignmentSolver(maxMatrix, maxMatching);
     assignmentSolver(sad_1Matrix, sad_1_Matching);
     assignmentSolver(sad_2Matrix, sad_2_Matching);
     assignmentSolver(minMatrix, minMatching);
-
-		solveRT[i]=tm.getElapsedTime() - clock;
-		clock = tm.getElapsedTime();
 
     std::vector<MatchingType> maxPersistence_i(maxMatching.size());
     std::vector<MatchingType> sad_1_Persistence_i(sad_1_Matching.size());
@@ -278,20 +261,7 @@ void ttk::TrackingFromCriticalPoints::performMatchings(
     sad_2_MatchingsPersistence[i] = sad_2_Persistence_i;
     minMatchingsPersistence[i] = minPersistence_i;
 
-		remapRT[i]=tm.getElapsedTime() - clock;
   }
-	double RT_1{}, RT_2{}, RT_3{}, RT_4{};
-	for (int i = 0 ; i < fieldNumber -1 ; i++){
-		RT_1+=sortRT[i];
-		RT_2+=matrixRT[i];
-		RT_3+=solveRT[i];
-		RT_4+=remapRT[i];
-		}
-		RT_1+=sortRT[fieldNumber - 1];
-	std::cout<<std::fixed<<"SortRT = "<<RT_1
-											<<",  BuildCostMatrixRT = "<<RT_2
-											<<",  SolveRT = "<<RT_3
-											<<", RemapRT = "<<RT_4<<std::endl;
 
 }
 
