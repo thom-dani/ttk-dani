@@ -95,7 +95,7 @@ template<class triangulationType>
   const bool useGeometricSpacing,
   const double spacing,
   vtkPoints *points,
-  vtkUnstructuredGrid *criticalPointTracking,
+  vtkUnstructuredGrid *outputMesh,
   vtkIntArray *pointsCriticalType,
   vtkIntArray * timeScalars,
   vtkIntArray *lengthScalars,
@@ -133,7 +133,7 @@ template<class triangulationType>
         edge[1]=pointCpt;
         points->InsertNextPoint(x, y, z);
         globalVertexIds->InsertTuple1(pointCpt, (int)chain[j]);
-        criticalPointTracking->InsertNextCell(VTK_LINE, 2, edge);
+        outputMesh->InsertNextCell(VTK_LINE, 2, edge);
         pointsCriticalType->InsertTuple1(pointCpt, (int)currentType);
         timeScalars->InsertTuple1(pointCpt, startTime+j);
         lengthScalars->InsertTuple1(edgeCpt, chain.size()-1);
@@ -145,14 +145,14 @@ template<class triangulationType>
       pointCpt++;
     }
 
-    criticalPointTracking->SetPoints(points);
-    criticalPointTracking->GetCellData()->AddArray(lengthScalars);
-    criticalPointTracking->GetCellData()->AddArray(connectedComponentIds);
-    criticalPointTracking->GetCellData()->AddArray(averagePersistence);
-    criticalPointTracking->GetCellData()->AddArray(costs);
-    criticalPointTracking->GetPointData()->AddArray(pointsCriticalType);
-    criticalPointTracking->GetPointData()->AddArray(timeScalars);
-    criticalPointTracking->GetPointData()->AddArray(globalVertexIds);
+    outputMesh->SetPoints(points);
+    outputMesh->GetCellData()->AddArray(lengthScalars);
+    outputMesh->GetCellData()->AddArray(connectedComponentIds);
+    outputMesh->GetCellData()->AddArray(averagePersistence);
+    outputMesh->GetCellData()->AddArray(costs);
+    outputMesh->GetPointData()->AddArray(pointsCriticalType);
+    outputMesh->GetPointData()->AddArray(timeScalars);
+    outputMesh->GetPointData()->AddArray(globalVertexIds);
 
     return 0;
   }

@@ -136,7 +136,7 @@ template <class dataType, class triangulationType>
 
     ttk::Timer timer;
     double clock = timer.getElapsedTime();
-    ttk::CriticalPointTracking tracker;
+    ttk::TrackingFromCriticalPoints tracker;
     float x, y, z;
     float maxX, minX, maxY, minY, maxZ, minZ;
     triangulation->getVertexPoint(0, minX, minY, minZ );
@@ -154,7 +154,9 @@ template <class dataType, class triangulationType>
     
     double const costDeathBirth = CostDeathBirth;
     double const tolerance = (double)Tolerance;
-    float meshDiameter = std::sqrt(std::pow(maxX-minX, 2)  + std::pow(maxY - minY, 2) + std::pow(maxZ - minZ, 2));
+    float meshDiameter = std::sqrt(std::pow(maxX-minX, 2)  
+                        + std::pow(maxY - minY, 2) 
+                        + std::pow(maxZ - minZ, 2));
     int assignmentMethod = AssignmentMethod;
     bool adaptDeathBirthCost  = AdaptDeathBirthCost;
     double epsilonAdapt = EpsilonAdapt;
@@ -199,7 +201,7 @@ template <class dataType, class triangulationType>
     double Matching_RT = timer.getElapsedTime() - clock;
     clock = timer.getElapsedTime();
     vtkNew<vtkPoints> const points{};
-    vtkNew<vtkUnstructuredGrid> const criticalPointTracking{};
+    vtkNew<vtkUnstructuredGrid> const outputMesh{};
 
     vtkNew<vtkDoubleArray> costs{};
     vtkNew<vtkDoubleArray> averagePersistences{};
@@ -254,7 +256,7 @@ template <class dataType, class triangulationType>
       allTrackingsMeanPersistence,
       useGeometricSpacing, spacing, 
       points, 
-      criticalPointTracking,
+      outputMesh,
       pointsCriticalType,
       timeScalars,
       lengthScalars,
@@ -264,7 +266,7 @@ template <class dataType, class triangulationType>
       averagePersistences,
       typesArrayLimits);
 
-    output->ShallowCopy(criticalPointTracking);
+    output->ShallowCopy(outputMesh);
 
     double Mesh_RT = timer.getElapsedTime() - clock;
     std::cout<<std::fixed
@@ -348,7 +350,7 @@ int ttkTrackingFromFields::RequestData(vtkInformation *ttkNotUsed(request),
   std::string const algorithm = DistanceAlgorithm;
   int const pvalg = PVAlgorithm;
   bool useTTKMethod = false;
-  bool criticalPointTracking = (pvalg == 2);
+  bool trackWithCriticalPoints = (pvalg == 2);
 
 
   if(pvalg >= 0) {
@@ -409,13 +411,13 @@ int ttkTrackingFromFields::RequestData(vtkInformation *ttkNotUsed(request),
   double clock = timer.getElapsedTime(); 
 
   int status = 0;
-  if(useTTKMethod && !criticalPointTracking) {
+  if(useTTKMethod && !trackWithCriticalPoints) {
     ttkVtkTemplateMacro(
       inputScalarFields[0]->GetDataType(), triangulation->getType(),
       (status = this->trackWithPersistenceMatching<VTK_TT, TTK_TT>(
          output, fieldNumber, (TTK_TT *)triangulation->getData())));
   } 
-  else if(useTTKMethod && criticalPointTracking){
+  else if(useTTKMethod && trackWithCriticalPoints){
     ttkVtkTemplateMacro(
       inputScalarFields[0]->GetDataType(), triangulation->getType(),
       (status = this->trackWithCriticalPointMatching<VTK_TT, TTK_TT>(

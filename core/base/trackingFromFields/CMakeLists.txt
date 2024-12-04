@@ -1,13 +1,12 @@
 ttk_add_base_library(trackingFromFields
   SOURCES
     TrackingFromFields.cpp
-    CriticalPointTracking.cpp
   HEADERS
     TrackingFromFields.h
-    CriticalPointTracking.h
   DEPENDS
     persistenceDiagram
     bottleneckDistance
     trackingFromPersistenceDiagrams
+    trackingFromCriticalPoints
     triangulation
     )

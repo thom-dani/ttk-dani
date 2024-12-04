@@ -11,14 +11,14 @@
 #pragma once
 
 // base code includes
-#include <PersistenceDiagram.h>
-#include <TrackingFromPersistenceDiagrams.h>
+#include <PersistenceDiagramUtils.h>
 #include <Triangulation.h>
 
 namespace ttk {
 
-  class CriticalPointTracking : virtual public Debug,
-                                public TrackingFromPersistenceDiagrams {
+  using trackingTuple = std::tuple<int, int, std::vector<SimplexId>>;
+
+  class TrackingFromCriticalPoints : virtual public Debug{
 
   private:
     double epsilonConstant{10e-1};
@@ -35,7 +35,7 @@ namespace ttk {
 
 
   public:
-    CriticalPointTracking() {
+    TrackingFromCriticalPoints() {
     }
 
     void setMeshDiamater(double r) {

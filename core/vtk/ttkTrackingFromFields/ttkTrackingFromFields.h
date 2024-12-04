@@ -36,7 +36,7 @@
 
 // VTK Module
 #include <TrackingFromFields.h>
-#include<CriticalPointTracking.h>
+#include <TrackingFromCriticalPoints.h>
 #include <ttkAlgorithm.h>
 #include <ttkTrackingFromFieldsModule.h>
 

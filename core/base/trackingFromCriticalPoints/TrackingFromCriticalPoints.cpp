@@ -1,11 +1,11 @@
 #include <AssignmentAuction.h>
 #include <AssignmentMunkres.h>
-#include <CriticalPointTracking.h>
+#include <TrackingFromCriticalPoints.h>
 #include <algorithm>
 // Compute L_p distance betweem (p,f(p)) and (q,f(q)) where p and q are critical
 // points
 
-double ttk::CriticalPointTracking::criticalPointDistance(
+double ttk::TrackingFromCriticalPoints::criticalPointDistance(
   const std::array<float, 3> coords_p1,
   const double sfValue_p1,
   const std::array<float, 3> coords_p2,
@@ -20,7 +20,7 @@ double ttk::CriticalPointTracking::criticalPointDistance(
 
 // Sort the critical points by types
 
-void ttk::CriticalPointTracking::sortCriticalPoint(
+void ttk::TrackingFromCriticalPoints::sortCriticalPoint(
   const DiagramType &d,
   const double minimumRelevantPersistence,
   std::vector<std::array<float, 3>> &maxCoords,
@@ -84,7 +84,7 @@ void ttk::CriticalPointTracking::sortCriticalPoint(
   }
 }
 
-void ttk::CriticalPointTracking::buildCostMatrix(
+void ttk::TrackingFromCriticalPoints::buildCostMatrix(
   const std::vector<std::array<float, 3>> coords_1,
   const std::vector<double> sfValues_1,
   const std::vector<std::array<float, 3>> coords_2,
@@ -119,7 +119,7 @@ void ttk::CriticalPointTracking::buildCostMatrix(
         c=matrix[i][j] < c ? matrix[i][j] : c; 
         }
       for (int i = size_1 ; i < matrix_size ; i++){
-        matrix[i][j] = c/(1+epsilonAdapt);
+        matrix[i][j] = c/(epsilonAdapt);
       }
     }
 
@@ -129,13 +129,13 @@ void ttk::CriticalPointTracking::buildCostMatrix(
         d=matrix[i][j] < d ? matrix[i][j] : d; 
       }
       for (int j = size_2 ; j < matrix_size ; j++){
-        matrix[i][j] = d/(1+epsilonAdapt);
+        matrix[i][j] = d/(epsilonAdapt);
       }
     }
   }
 }
 
-void ttk::CriticalPointTracking::performMatchings(
+void ttk::TrackingFromCriticalPoints::performMatchings(
   const std::vector<DiagramType> persistenceDiagrams,
   std::vector<std::vector<MatchingType>> &maximaMatchings,
   std::vector<std::vector<MatchingType>> &sad_1_Matchings,
@@ -182,12 +182,12 @@ void ttk::CriticalPointTracking::performMatchings(
 		double minimumRelevantPersistence{};
 		if( i < fieldNumber - 1){
 			minimumRelevantPersistence
-				= ttk::CriticalPointTracking::computeRelevantPersistence(
+				= ttk::TrackingFromCriticalPoints::computeRelevantPersistence(
 					persistenceDiagrams[i], persistenceDiagrams[i + 1]);
 			}
 		if( i == fieldNumber - 1){
 			minimumRelevantPersistence
-				= ttk::CriticalPointTracking::computeRelevantPersistence(
+				= ttk::TrackingFromCriticalPoints::computeRelevantPersistence(
 					persistenceDiagrams[i - 1], persistenceDiagrams[i]);
 		}
     sortCriticalPoint(persistenceDiagrams[i], minimumRelevantPersistence,
@@ -295,7 +295,7 @@ void ttk::CriticalPointTracking::performMatchings(
 
 }
 
-void ttk::CriticalPointTracking::localToGlobalMatching(
+void ttk::TrackingFromCriticalPoints::localToGlobalMatching(
   std::vector<MatchingType> &matchings,
   const std::vector<int> &startMap,
   const std::vector<int> &endMap,
@@ -325,7 +325,7 @@ void ttk::CriticalPointTracking::localToGlobalMatching(
 
 }
 
-void ttk::CriticalPointTracking::performTrackingForOneType(
+void ttk::TrackingFromCriticalPoints::performTrackingForOneType(
   int fieldNumber,
   std::vector<std::vector<MatchingType>> &matchings,
   std::vector<std::vector<MatchingType>> &matchingPersistence,
@@ -381,7 +381,7 @@ void ttk::CriticalPointTracking::performTrackingForOneType(
   }
 }
 
-void ttk::CriticalPointTracking::performTrackings(
+void ttk::TrackingFromCriticalPoints::performTrackings(
   int fieldNumber,
   std::vector<std::vector<MatchingType>> &maximaMatchings,
   std::vector<std::vector<MatchingType>> &sad_1_Matchings,
@@ -447,7 +447,7 @@ void ttk::CriticalPointTracking::performTrackings(
     allTrackingsCosts.end(), minTrackingCost.begin(), minTrackingCost.end());
 }
 
-void ttk::CriticalPointTracking::assignmentSolver(
+void ttk::TrackingFromCriticalPoints::assignmentSolver(
   std::vector<std::vector<double>> &costMatrix,
   std::vector<ttk::MatchingType> &matching) {
   if(costMatrix.size() > 0) {

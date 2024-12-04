@@ -104,7 +104,7 @@ by a list of scalar fields) and which computes a tracking mesh."
         <EnumerationDomain name="enum">
           <Entry value="0" text="ttk: sparse Munkres (Wasserstein)"/>
           <Entry value="1" text="ttk:  Gabow-Tarjan (Bottleneck)"/>
-          <Entry value="2" text="ttk:  Critical point tracking"/>
+          <Entry value="2" text="ttk:  Tracking with critical points"/>
         </EnumerationDomain>                      
         <Documentation>
           Method for computing matchings.
@@ -133,7 +133,6 @@ by a list of scalar fields) and which computes a tracking mesh."
         </Documentation>
       </IntVectorProperty>
 
-      <!-- Bottleneck options -->
       <StringVectorProperty
         name="n"
         label="p parameter"
