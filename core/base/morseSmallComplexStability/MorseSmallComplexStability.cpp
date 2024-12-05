@@ -126,7 +126,7 @@ int ttk::MorseSmallComplexStability::buildOccurenceArrays(const std::vector<Grap
       for (int k = 0 ; k < n_blocks ; k++){
         int vertexId1 = classIdToVertexIds[i][k];
         int vertexId2 = classIdToVertexIds[j][k];
-        if(adjacencyMatrices[k][vertexId1][vertexId2].has_value())occurence++;
+        if(!adjacencyMatrices[k][vertexId1][vertexId2].empty())occurence++;
       }
       occurenceMatrix[i].push_back(occurence);
     }
@@ -145,11 +145,13 @@ int ttk::MorseSmallComplexStability::buildOccurenceArrays(const std::vector<Grap
       for (int k = 0; k < n_points ; k++){
         int vertexId1 = classIdToVertexIds[j][i];
         int vertexId2 = classIdToVertexIds[k][i];
-        if (adjacencyMatrices[i][vertexId1][vertexId2].has_value()){
-          int separatrixId1 = adjacencyMatrices[i][vertexId1][vertexId2].value().first;
-          int separatrixId2 = adjacencyMatrices[i][vertexId1][vertexId2].value().second;
-          edgeOccurenceForEachBlock[i][separatrixId1]=occurenceMatrix[j][k];
-          edgeOccurenceForEachBlock[i][separatrixId2]=occurenceMatrix[j][k];
+        if (!adjacencyMatrices[i][vertexId1][vertexId2].empty()){
+          for (int l = 0 ; l < adjacencyMatrices[i][vertexId1][vertexId2].size() ; l++){
+            int separatrixId1 = adjacencyMatrices[i][vertexId1][vertexId2][l].first;
+            int separatrixId2 = adjacencyMatrices[i][vertexId1][vertexId2][l].second;
+            edgeOccurenceForEachBlock[i][separatrixId1]=occurenceMatrix[j][k];
+            edgeOccurenceForEachBlock[i][separatrixId2]=occurenceMatrix[j][k];
+          }
         }
       }
     }

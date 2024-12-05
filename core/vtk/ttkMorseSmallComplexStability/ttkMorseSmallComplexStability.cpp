@@ -138,7 +138,7 @@ void ttkMorseSmallComplexStability::computeGraphMinor(const std::vector<std::vec
   int n_col = adjacencyMatrixFull[0].size();
   adjacencyMatrix.resize(n_row);
   for (int i = 0 ; i < n_row ; i++){
-    adjacencyMatrix[i].resize(n_row, std::nullopt);
+    adjacencyMatrix[i].resize(n_row);
   }
 
   for (int i = 0 ; i < n_row ; i++){
@@ -146,9 +146,9 @@ void ttkMorseSmallComplexStability::computeGraphMinor(const std::vector<std::vec
       if(adjacencyMatrixFull[i][j]!=-1){
         for (int k = i+1 ; k < n_row ; k++){
           if(adjacencyMatrixFull[k][j]!=-1){
-            std::optional<std::pair<int, int>> newEdge = std::make_pair(adjacencyMatrixFull[k][j], adjacencyMatrixFull[i][j]);
-            if(adjacencyMatrix[i][k].has_value())std::cout<<"multiple edge in reduced matrix"<<std::endl;
-            adjacencyMatrix[i][k] = newEdge;
+            std::pair<int, int> newEdge = std::make_pair(adjacencyMatrixFull[k][j], adjacencyMatrixFull[i][j]);
+            //if(adjacencyMatrix[i][k].has_value())std::cout<<"multiple edge in reduced matrix for indices "<<k<<", "<<j<<std::endl;
+            adjacencyMatrix[i][k].push_back(newEdge);
           }
         }
       }
@@ -239,15 +239,15 @@ for (int i = 0 ; i < adjacencyMatrixFull.size(); i++){
  
 std::cout<<std::endl;
 
- for (int i = 0 ; i < adjacencyMatrix.size(); i++){
-  for (int j = 0 ;j < adjacencyMatrix[i].size(); j++){
-    if(adjacencyMatrix[i][j].has_value()){
-      std::cout<<"("<<adjacencyMatrix[i][j].value().first<<", "<<adjacencyMatrix[i][j].value().second<<") ";
-    }
-    else std::cout<<"(X,  X) "; 
-  }
-  std::cout<<std::endl;
-}
+ //for (int i = 0 ; i < adjacencyMatrix.size(); i++){
+ // for (int j = 0 ;j < adjacencyMatrix[i].size(); j++){
+ //   if(adjacencyMatrix[i][j].size()!has_value=0){
+ //     for (int k = 0 ; k < aj)
+ //     std::cout<<"("<<adjacencyMatrix[i][j][].first<<", "<<adjacencyMatrix[i][j].value().second<<") ";
+ //   }
+ //   else std::cout<<"(X,  X) "; 
+ // }
+ // std::cout<<std::endl;
   return 1;
 }
 
@@ -293,6 +293,8 @@ int ttkMorseSmallComplexStability::execute( vtkMultiBlockDataSet* &multiBlock1_S
       int separatrixCount = 0;
       occurenceCount->InsertNextValue(edgeOccurenceForEachBlock[i][separatrixCount]);
 
+      std::cout<<"size of edgeOccurenceForEachBlock["<<i<<"] = "<<edgeOccurenceForEachBlock[i].size()<<std::endl;
+
       for (int j = 1 ; j < cellNumber ; j++){
         if(separatrixIds->GetValue(j)!=currentSeparatrixId){
           currentSeparatrixId = separatrixIds->GetValue(j);
@@ -300,6 +302,7 @@ int ttkMorseSmallComplexStability::execute( vtkMultiBlockDataSet* &multiBlock1_S
         }
         occurenceCount->InsertNextValue(edgeOccurenceForEachBlock[i][separatrixCount]);
       }
+      std::cout<<"separatrixCount for block "<<i<<" = "<<separatrixCount<<std::endl;
       blockCellData->AddArray(occurenceCount);
     }
     return 1;
@@ -338,6 +341,5 @@ int ttkMorseSmallComplexStability::RequestData(vtkInformation *ttkNotUsed(reques
   //for (size_t i = 0 ; i < output1_Separatrices->GetNumberOfBlocks(); i++){
   //  ((vtkDataSet*)(output1_Separatrices->GetBlock(i)))->GetPointData()->AddArray(edgesOccurences[i]);
   //}
-
   return 1;
 }
