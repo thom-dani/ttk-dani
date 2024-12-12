@@ -282,12 +282,12 @@ jobs:
 
     - name: Remove hosted Python
       run: |
-        #sudo rm -rf /Library/Frameworks/Python.framework/
-        #sudo rm -rf /usr/local/Frameworks/Python.framework/
+        sudo rm -rf /Library/Frameworks/Python.framework/
+        sudo rm -rf /usr/local/Frameworks/Python.framework/
     - name: Install macOS dependencies
       run: |
         # ParaView dependencies
-        #brew reinstall python
+        brew reinstall python
         brew install --cask xquartz
         brew install llvm ninja open-mpi
         # TTK dependencies

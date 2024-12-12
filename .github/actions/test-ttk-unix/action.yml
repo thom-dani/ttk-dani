@@ -25,9 +25,9 @@ runs:
     - name: Test Python example
       shell: bash
       run: |
-        if [[ "${{ matrix.os }}" != "macos-13" ]] 
-        && [[ "${{ matrix.os }}" != "macos-14" ]]
-        && [[ "${{ matrix.os }}" != "macos-15" ]]; then
+        if [ "${{ matrix.os }}" != "macos-13" ]
+        && [ "${{ matrix.os }}" != "macos-14" ]
+        && [ "${{ matrix.os }}" != "macos-15" ]; then
           cd $GITHUB_WORKSPACE/examples/python
           python3 example.py ../data/inputData.vtu
         fi
