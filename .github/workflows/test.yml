@@ -389,8 +389,6 @@ jobs:
         retention-days: 10
 
     - name: Run ttk-data Python scripts [TEMPORARILY NOT ENFORCED]
-      if: false
-      id: validate
       continue-on-error: true
       run: |
         cd ttk-data
