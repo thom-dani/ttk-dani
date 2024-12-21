@@ -371,6 +371,8 @@ jobs:
         rm ttk-data/states/nestedTrackingFromOverlap.py
         # remove examples which fill up the memory
         rm ttk-data/states/topologicalOptimization_darkSky.pvsm
+        # remove examples that take too long to render under mac
+        rm ttk-data/states/persistentGenerators_householdAnalysis.pvsm
         cd ttk-data/tests
         mkdir output_screenshots
         pvpython -u validate.py || (tar zcf screenshots.tar.gz output_screenshots && false)
@@ -385,8 +387,7 @@ jobs:
         path: ttk-data/tests/screenshots.tar.gz
         retention-days: 10
 
-    - name: Run ttk-data Python scripts [TEMPORARILY NOT ENFORCED]
-      continue-on-error: true
+    - name: Run ttk-data Python scripts
       run: |
         cd ttk-data
         # remove buggy example
