@@ -338,7 +338,7 @@ jobs:
         # remove examples which fill up the memory
         rm python/topologicalOptimization_darkSky.py
         # some cases fail only with version 12
-        if [[ "${{ matrix.os }}" == "macos-12" ]]; then
+        if [[ "${{ matrix.os }}" == "macos-13" ]]; then
           rm python/contourTreeAlignment.py
           rm python/geometryApproximation.py
           rm python/harmonicSkeleton.py
