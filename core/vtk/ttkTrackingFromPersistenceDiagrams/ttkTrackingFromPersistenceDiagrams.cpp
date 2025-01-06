@@ -2,7 +2,6 @@
 #include <ttkMacros.h>
 #include <ttkTrackingFromPersistenceDiagrams.h>
 
-
 vtkStandardNewMacro(ttkTrackingFromPersistenceDiagrams);
 
 ttkTrackingFromPersistenceDiagrams::ttkTrackingFromPersistenceDiagrams() {
@@ -60,8 +59,6 @@ int ttkTrackingFromPersistenceDiagrams::buildMesh(
       dbg.printErr("Got an unexpected 0-size chain.");
       return 0;
     }
-
-
 
     for(int c = 0; c < chainLength - 1; ++c) {
       const auto &matchings1 = outputMatchings[numStart + c];
@@ -126,7 +123,6 @@ int ttkTrackingFromPersistenceDiagrams::buildMesh(
         if(useGeometricSpacing)
           z1 += spacing * (numStart + c);
       }
-
 
       // Postproc component ids.
       int cid = k;
@@ -264,7 +260,6 @@ int ttkTrackingFromPersistenceDiagrams::buildMesh(
       lengthScalars->InsertTuple1(currentVertex, chainLength);
 
       currentVertex++;
-
     }
   }
 
@@ -279,7 +274,6 @@ int ttkTrackingFromPersistenceDiagrams::buildMesh(
 
   return 0;
 }
-
 
 int ttkTrackingFromPersistenceDiagrams::RequestData(
   vtkInformation *ttkNotUsed(request),

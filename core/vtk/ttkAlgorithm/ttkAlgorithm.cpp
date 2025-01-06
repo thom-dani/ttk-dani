@@ -104,7 +104,6 @@ vtkDataArray *
                                   vtkDataArray *oldOrderArray,
                                   ttk::Triangulation *triangulation) {
 
-
   vtkSmartPointer<ttkSimplexIdTypeArray> newOrderArray;
   auto nVertices = scalarArray->GetNumberOfTuples();
   if(oldOrderArray != nullptr && getGlobalOrder) {

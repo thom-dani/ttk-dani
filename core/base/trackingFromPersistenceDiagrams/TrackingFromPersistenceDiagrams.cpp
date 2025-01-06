@@ -88,10 +88,9 @@ int ttk::TrackingFromPersistenceDiagrams::performTracking(
   std::vector<ttk::DiagramType> &allDiagrams,
   std::vector<std::vector<MatchingType>> &allMatchings,
   std::vector<trackingTuple> &trackings) {
-  
+
   auto numPersistenceDiagramsInput = (int)allDiagrams.size();
   for(int in = 1; in < numPersistenceDiagramsInput - 1; ++in) {
-
 
     std::vector<MatchingType> matchings1 = allMatchings[in - 1];
     std::vector<MatchingType> matchings2 = allMatchings[in];

@@ -33,7 +33,6 @@ namespace ttk {
     double fWeight{1};
     bool adaptiveDeathBirthCost{false};
 
-
   public:
     CriticalPointTracking() {
     }
@@ -46,8 +45,8 @@ namespace ttk {
       epsilonConstant = e;
     }
 
-    void setEpsilonAdapt(double e){
-     epsilonAdapt=e;
+    void setEpsilonAdapt(double e) {
+      epsilonAdapt = e;
     }
 
     void setTolerance(double t) {
@@ -59,13 +58,13 @@ namespace ttk {
         assignmentMethod = a;
       }
     }
-    
-    void setAdaptDeathBirthCost(bool b){
-      adaptiveDeathBirthCost=b;
+
+    void setAdaptDeathBirthCost(bool b) {
+      adaptiveDeathBirthCost = b;
     }
 
-    void setDimension(int d){
-      dimension=d;
+    void setDimension(int d) {
+      dimension = d;
     }
 
     void setWeights(double PX, double PY, double PZ, double PF) {
@@ -98,32 +97,32 @@ namespace ttk {
                        + std::pow(maxScalar - minScalar, 2));
     }
 
-    void
-      performMatchings(const std::vector<DiagramType> persistenceDiagrams,
-                       std::vector<std::vector<MatchingType>> &maximaMatchings,
-                       std::vector<std::vector<MatchingType>> &sad_1_Matchings,
-                       std::vector<std::vector<MatchingType>> &sad_2_Matchings,
-                       std::vector<std::vector<MatchingType>> &minimaMatchings,
-                       std::vector<std::vector<MatchingType>> &maxMatchingsPersistence,
-                       std::vector<std::vector<MatchingType>> &sad_1_MatchingsPersistence,
-                       std::vector<std::vector<MatchingType>> &sad_2_MatchingsPersistence,
-                       std::vector<std::vector<MatchingType>> &minMatchingsPersistence,
-                       int fieldNumber);
+    void performMatchings(
+      const std::vector<DiagramType> persistenceDiagrams,
+      std::vector<std::vector<MatchingType>> &maximaMatchings,
+      std::vector<std::vector<MatchingType>> &sad_1_Matchings,
+      std::vector<std::vector<MatchingType>> &sad_2_Matchings,
+      std::vector<std::vector<MatchingType>> &minimaMatchings,
+      std::vector<std::vector<MatchingType>> &maxMatchingsPersistence,
+      std::vector<std::vector<MatchingType>> &sad_1_MatchingsPersistence,
+      std::vector<std::vector<MatchingType>> &sad_2_MatchingsPersistence,
+      std::vector<std::vector<MatchingType>> &minMatchingsPersistence,
+      int fieldNumber);
 
-    void
-      performTrackings(int fieldNumber,
-                       std::vector<std::vector<MatchingType>> &maximaMatchings,
-                       std::vector<std::vector<MatchingType>> &sad_1_Matchings,
-                       std::vector<std::vector<MatchingType>> &sad_2_Matchings,
-                       std::vector<std::vector<MatchingType>> &minimaMatchings,
-                       std::vector<std::vector<MatchingType>> &maxMatchingsPersistence,
-                       std::vector<std::vector<MatchingType>> &sad_1_MatchingsPersistence,
-                       std::vector<std::vector<MatchingType>> &sad_2_MatchingsPersistence,
-                       std::vector<std::vector<MatchingType>> &minMatchingsPersistence,
-                       std::vector<trackingTuple> &allTrackings,
-                       std::vector<std::vector<double>> &allTrackingCost,
-                       std::vector<double> &allTrackingsMeanPersistences,
-                       unsigned int (&sizes)[]);
+    void performTrackings(
+      int fieldNumber,
+      std::vector<std::vector<MatchingType>> &maximaMatchings,
+      std::vector<std::vector<MatchingType>> &sad_1_Matchings,
+      std::vector<std::vector<MatchingType>> &sad_2_Matchings,
+      std::vector<std::vector<MatchingType>> &minimaMatchings,
+      std::vector<std::vector<MatchingType>> &maxMatchingsPersistence,
+      std::vector<std::vector<MatchingType>> &sad_1_MatchingsPersistence,
+      std::vector<std::vector<MatchingType>> &sad_2_MatchingsPersistence,
+      std::vector<std::vector<MatchingType>> &minMatchingsPersistence,
+      std::vector<trackingTuple> &allTrackings,
+      std::vector<std::vector<double>> &allTrackingCost,
+      std::vector<double> &allTrackingsMeanPersistences,
+      unsigned int (&sizes)[]);
 
   protected:
     double computeRelevantPersistence(const DiagramType &d1,
