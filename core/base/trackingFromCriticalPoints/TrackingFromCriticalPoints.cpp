@@ -74,12 +74,12 @@ void ttk::TrackingFromCriticalPoints::sortCriticalPoint(
 }
 
 void ttk::TrackingFromCriticalPoints::buildCostMatrix(
-  const std::vector<std::array<float, 3>> coords_1,
-  const std::vector<double> sfValues_1,
-  const std::vector<std::array<float, 3>> coords_2,
-  const std::vector<double> sfValues_2,
-  std::vector<std::vector<double>> &matrix,
-  float costDeathBirth) {
+  const std::vector<std::array<float, 3>> &coords_1,
+  const std::vector<double> &sfValues_1,
+  const std::vector<std::array<float, 3>> &coords_2,
+  const std::vector<double> &sfValues_2,
+  const float &costDeathBirth,
+  std::vector<std::vector<double>> &matrix) {
   int size_1 = coords_1.size();
   int size_2 = coords_2.size();
   int matrix_size = (size_1 > 0 && size_2 > 0) ? size_1 + size_2 : 0;
@@ -201,13 +201,13 @@ void ttk::TrackingFromCriticalPoints::performMatchings(
       minSize, std::vector<double>(minSize, 0));
 
     buildCostMatrix(maxCoords[i], maxScalar[i], maxCoords[i + 1],
-                    maxScalar[i + 1], maxMatrix, costDeathBirth);
+                    maxScalar[i + 1], costDeathBirth, maxMatrix);
     buildCostMatrix(sad_1Coords[i], sad_1Scalar[i], sad_1Coords[i + 1],
-                    sad_1Scalar[i + 1], sad_1Matrix, costDeathBirth);
+                    sad_1Scalar[i + 1], costDeathBirth, sad_1Matrix);
     buildCostMatrix(sad_2Coords[i], sad_2Scalar[i], sad_2Coords[i + 1],
-                    sad_2Scalar[i + 1], sad_2Matrix, costDeathBirth);
+                    sad_2Scalar[i + 1], costDeathBirth, sad_2Matrix);
     buildCostMatrix(minCoords[i], minScalar[i], minCoords[i + 1],
-                    minScalar[i + 1], minMatrix, costDeathBirth);
+                    minScalar[i + 1], costDeathBirth, minMatrix);
 
     assignmentSolver(maxMatrix, maximaMatchings[i]);
     assignmentSolver(sad_1Matrix, sad_1_Matchings[i]);

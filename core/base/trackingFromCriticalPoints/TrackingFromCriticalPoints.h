@@ -34,8 +34,7 @@ namespace ttk {
     bool adaptiveDeathBirthCost{false};
 
   public:
-    TrackingFromCriticalPoints() {
-    }
+    TrackingFromCriticalPoints() = default;
 
     void setMeshDiameter(double r) {
       meshDiameter = r;
@@ -165,12 +164,12 @@ namespace ttk {
                            std::vector<SimplexId> &mapSad_2,
                            std::vector<SimplexId> &mapMin);
 
-    void buildCostMatrix(const std::vector<std::array<float, 3>> coords_1,
-                         const std::vector<double> sfValues_1,
-                         const std::vector<std::array<float, 3>> coords_2,
-                         const std::vector<double> sfValues_2,
-                         std::vector<std::vector<double>> &matrix,
-                         float costDeathBirth);
+    void buildCostMatrix(const std::vector<std::array<float, 3>> &coords_1,
+                         const std::vector<double> &sfValues_1,
+                         const std::vector<std::array<float, 3>> &coords_2,
+                         const std::vector<double> &sfValues_2,
+                         const float &costDeathBirth,
+                         std::vector<std::vector<double>> &matrix);
 
     void localToGlobalMatching(const std::vector<int> &startMap,
                                const std::vector<int> &endMap,
