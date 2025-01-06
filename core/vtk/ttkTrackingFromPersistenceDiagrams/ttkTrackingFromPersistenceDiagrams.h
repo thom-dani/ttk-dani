@@ -5,6 +5,7 @@
 
 // VTK Module
 #include <ttkTrackingFromPersistenceDiagramsModule.h>
+#include <vtkCellData.h>
 #include <vtkDataArray.h>
 #include <vtkDoubleArray.h>
 #include <vtkFloatArray.h>
@@ -13,7 +14,6 @@
 #include <vtkIntArray.h>
 #include <vtkObjectFactory.h>
 #include <vtkPointData.h>
-#include <vtkCellData.h>
 #include <vtkUnstructuredGrid.h>
 
 class vtkUnstructuredGrid;
@@ -86,59 +86,64 @@ public:
     vtkIntArray *pointTypeScalars,
     const ttk::Debug &dbg);
 
-template<class triangulationType>
-  static int buildMesh(
-  const triangulationType *triangulation,
-  const std::vector<ttk::trackingTuple> &trackings,
-  const std::vector<std::vector<double>> &allTrackingsCosts,
-  const std::vector<double> &allTrackingsPersistence,
-  const bool useGeometricSpacing,
-  const double spacing,
-  vtkPoints *points,
-  vtkUnstructuredGrid *outputMesh,
-  vtkIntArray *pointsCriticalType,
-  vtkIntArray * timeScalars,
-  vtkIntArray *lengthScalars,
-  vtkIntArray *globalVertexIds,
-  vtkIntArray *connectedComponentIds,
-  vtkDoubleArray *costs,
-  vtkDoubleArray *averagePersistence,
-  unsigned int *sizes){
+  template <class triangulationType>
+  static int
+    buildMesh(const triangulationType *triangulation,
+              const std::vector<ttk::trackingTuple> &trackings,
+              const std::vector<std::vector<double>> &allTrackingsCosts,
+              const std::vector<double> &allTrackingsPersistence,
+              const bool useGeometricSpacing,
+              const double spacing,
+              vtkPoints *points,
+              vtkUnstructuredGrid *outputMesh,
+              vtkIntArray *pointsCriticalType,
+              vtkIntArray *timeScalars,
+              vtkIntArray *lengthScalars,
+              vtkIntArray *globalVertexIds,
+              vtkIntArray *connectedComponentIds,
+              vtkDoubleArray *costs,
+              vtkDoubleArray *averagePersistence,
+              unsigned int *sizes) {
 
     int pointCpt = 0;
-    int edgeCpt=0;
-    for (unsigned int i = 0 ; i <  trackings.size() ; i++){
-      ttk::CriticalType currentType=ttk::CriticalType::Local_minimum;
-      if(i < sizes[0])currentType=ttk::CriticalType::Local_maximum;
-      else if(i < sizes[1] && i >=sizes[0])currentType = ttk::CriticalType::Saddle1;
-      else if(i < sizes[2] && i >=sizes[1])currentType = ttk::CriticalType::Saddle2; 
+    int edgeCpt = 0;
+    for(unsigned int i = 0; i < trackings.size(); i++) {
+      ttk::CriticalType currentType = ttk::CriticalType::Local_minimum;
+      if(i < sizes[0])
+        currentType = ttk::CriticalType::Local_maximum;
+      else if(i < sizes[1] && i >= sizes[0])
+        currentType = ttk::CriticalType::Saddle1;
+      else if(i < sizes[2] && i >= sizes[1])
+        currentType = ttk::CriticalType::Saddle2;
       int startTime = std::get<0>(trackings[i]);
       std::vector<ttk::SimplexId> chain = std::get<2>(trackings[i]);
 
-      float x=0;
-      float y=0;
-      float z=0;
+      float x = 0;
+      float y = 0;
+      float z = 0;
       triangulation->getVertexPoint(chain[0], x, y, z);
-      if(useGeometricSpacing)z+=startTime *spacing;
-      points->InsertNextPoint(x,y,z);
+      if(useGeometricSpacing)
+        z += startTime * spacing;
+      points->InsertNextPoint(x, y, z);
       globalVertexIds->InsertTuple1(pointCpt, (int)chain[0]);
       pointsCriticalType->InsertTuple1(pointCpt, (int)currentType);
       timeScalars->InsertTuple1(pointCpt, startTime);
       vtkIdType edge[2];
-      for (unsigned int j = 1 ; j < chain.size() ; j++){
+      for(unsigned int j = 1; j < chain.size(); j++) {
         triangulation->getVertexPoint(chain[j], x, y, z);
-        if(useGeometricSpacing)z+=(j+startTime)*spacing;
-        edge[0]=pointCpt;
+        if(useGeometricSpacing)
+          z += (j + startTime) * spacing;
+        edge[0] = pointCpt;
         pointCpt++;
-        edge[1]=pointCpt;
+        edge[1] = pointCpt;
         points->InsertNextPoint(x, y, z);
         globalVertexIds->InsertTuple1(pointCpt, (int)chain[j]);
         outputMesh->InsertNextCell(VTK_LINE, 2, edge);
         pointsCriticalType->InsertTuple1(pointCpt, (int)currentType);
-        timeScalars->InsertTuple1(pointCpt, startTime+j);
-        lengthScalars->InsertTuple1(edgeCpt, chain.size()-1);
+        timeScalars->InsertTuple1(pointCpt, startTime + j);
+        lengthScalars->InsertTuple1(edgeCpt, chain.size() - 1);
         connectedComponentIds->InsertTuple1(edgeCpt, i);
-        costs->InsertTuple1(edgeCpt, allTrackingsCosts[i][j-1]);
+        costs->InsertTuple1(edgeCpt, allTrackingsCosts[i][j - 1]);
         averagePersistence->InsertTuple1(edgeCpt, allTrackingsPersistence[i]);
         edgeCpt++;
       }

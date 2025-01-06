@@ -30,13 +30,13 @@
 
 #pragma once
 
+#include <vtkCellData.h>
 #include <vtkDataSet.h>
 #include <vtkUnstructuredGrid.h>
-#include<vtkCellData.h>
 
 // VTK Module
-#include <TrackingFromFields.h>
 #include <TrackingFromCriticalPoints.h>
+#include <TrackingFromFields.h>
 #include <ttkAlgorithm.h>
 #include <ttkTrackingFromFieldsModule.h>
 
@@ -79,7 +79,7 @@ public:
   vtkSetMacro(CostDeathBirth, double);
   vtkGetMacro(CostDeathBirth, double);
   /// @}
-  
+
   vtkSetMacro(AdaptDeathBirthCost, bool);
   vtkGetMacro(AdaptDeathBirthCost, bool);
 
@@ -116,7 +116,7 @@ public:
   vtkGetMacro(PS, double);
   /// @}
 
-   /// @brief Importance weight for function values.
+  /// @brief Importance weight for function values.
   /// @{
   vtkSetMacro(PF, double);
   vtkGetMacro(PF, double);
@@ -216,6 +216,6 @@ private:
 
   template <class dataType, class triangulationType>
   int trackWithCriticalPointMatching(vtkUnstructuredGrid *output,
-                                   unsigned long fieldNumber,
-                                   const triangulationType *triangulation);
+                                     unsigned long fieldNumber,
+                                     const triangulationType *triangulation);
 };

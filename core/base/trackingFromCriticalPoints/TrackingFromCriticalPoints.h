@@ -1,7 +1,7 @@
 /// \ingroup base
 /// \class ttk::TrackingFromPersistenceDiagrams
 /// \author Thomas Daniel <thomas.daniel@lip6.fr>
-/// \date Septemeber 2024.
+/// \date January 2025.
 ///
 /// \b Online \b examples: \n
 ///   - <a
@@ -11,6 +11,7 @@
 #pragma once
 
 // base code includes
+#include <DataTypes.h>
 #include <PersistenceDiagramUtils.h>
 #include <Triangulation.h>
 
@@ -18,7 +19,7 @@ namespace ttk {
 
   using trackingTuple = std::tuple<int, int, std::vector<SimplexId>>;
 
-  class TrackingFromCriticalPoints : virtual public Debug{
+  class TrackingFromCriticalPoints : virtual public Debug {
 
   private:
     double epsilonConstant{10e-1};
@@ -32,7 +33,6 @@ namespace ttk {
     double fWeight{1};
     bool adaptiveDeathBirthCost{false};
 
-
   public:
     TrackingFromCriticalPoints() {
     }
@@ -45,8 +45,8 @@ namespace ttk {
       epsilonConstant = e;
     }
 
-    void setEpsilonAdapt(double e){
-     epsilonAdapt=e;
+    void setEpsilonAdapt(double e) {
+      epsilonAdapt = e;
     }
 
     void setTolerance(double t) {
@@ -58,9 +58,9 @@ namespace ttk {
         assignmentMethod = a;
       }
     }
-    
-    void setAdaptDeathBirthCost(bool b){
-      adaptiveDeathBirthCost=b;
+
+    void setAdaptDeathBirthCost(bool b) {
+      adaptiveDeathBirthCost = b;
     }
 
     void setWeights(double PX, double PY, double PZ, double PF) {
@@ -99,24 +99,24 @@ namespace ttk {
                        std::vector<std::vector<MatchingType>> &sad_1_Matchings,
                        std::vector<std::vector<MatchingType>> &sad_2_Matchings,
                        std::vector<std::vector<MatchingType>> &minimaMatchings,
-                       std::vector<std::vector<MatchingType>> &maxMatchingsPersistence,
-                       std::vector<std::vector<MatchingType>> &sad_1_MatchingsPersistence,
-                       std::vector<std::vector<MatchingType>> &sad_2_MatchingsPersistence,
-                       std::vector<std::vector<MatchingType>> &minMatchingsPersistence);
-
-    void
-      performTrackings(const std::vector<std::vector<MatchingType>> &maximaMatchings,
-                       const std::vector<std::vector<MatchingType>> &sad_1_Matchings,
-                       const std::vector<std::vector<MatchingType>> &sad_2_Matchings,
-                       const std::vector<std::vector<MatchingType>> &minimaMatchings,
-                       std::vector<std::vector<MatchingType>> &maxMatchingsPersistence,
-                       std::vector<std::vector<MatchingType>> &sad_1_MatchingsPersistence,
-                       std::vector<std::vector<MatchingType>> &sad_2_MatchingsPersistence,
-                       std::vector<std::vector<MatchingType>> &minMatchingsPersistence,
-                       std::vector<trackingTuple> &allTrackings,
-                       std::vector<std::vector<double>> &allTrackingsCost,
-                       std::vector<double> &allTrackingsMeanPersistences,
-                       unsigned int (&typesArrayLimits)[]);
+                       std::vector<std::vector<SimplexId>> &maxMap,
+                       std::vector<std::vector<SimplexId>> &sad_1Map,
+                       std::vector<std::vector<SimplexId>> &sad_2Map,
+                       std::vector<std::vector<SimplexId>> &minMap);
+    void performTrackings(
+      const std::vector<DiagramType> &persistenceDiagrams,
+      const std::vector<std::vector<MatchingType>> &maximaMatchings,
+      const std::vector<std::vector<MatchingType>> &sad_1_Matchings,
+      const std::vector<std::vector<MatchingType>> &sad_2_Matchings,
+      const std::vector<std::vector<MatchingType>> &minimaMatchings,
+      const std::vector<std::vector<SimplexId>> &maxMap,
+      const std::vector<std::vector<SimplexId>> &sad_1Map,
+      const std::vector<std::vector<SimplexId>> &sad_2Map,
+      const std::vector<std::vector<SimplexId>> &minMap,
+      std::vector<trackingTuple> &allTrackings,
+      std::vector<std::vector<double>> &allTrackingsCost,
+      std::vector<double> &allTrackingsMeanPersistences,
+      unsigned int (&typesArrayLimits)[3]);
 
   private:
     double computeRelevantPersistence(const DiagramType &d1,
@@ -163,11 +163,7 @@ namespace ttk {
                            std::vector<SimplexId> &mapMax,
                            std::vector<SimplexId> &mapSad_1,
                            std::vector<SimplexId> &mapSad_2,
-                           std::vector<SimplexId> &mapMin,
-                           std::vector<double> &maxPersistence,
-                           std::vector<double> &sad_1_Persistence,
-                           std::vector<double> &sad_2_Persistence,
-                           std::vector<double> &minPersistence);
+                           std::vector<SimplexId> &mapMin);
 
     void buildCostMatrix(const std::vector<std::array<float, 3>> coords_1,
                          const std::vector<double> sfValues_1,
@@ -180,15 +176,21 @@ namespace ttk {
                                const std::vector<int> &endMap,
                                const std::vector<double> &startPersistence,
                                const std::vector<double> &endPersistence,
-                              std::vector<MatchingType> &matchings,
+                               std::vector<MatchingType> &matchings,
                                std::vector<MatchingType> &matchingsPersistence);
 
     void assignmentSolver(std::vector<std::vector<double>> &costMatrix,
                           std::vector<ttk::MatchingType> &matching);
 
+    int computeGlobalId(const DiagramType &persistenceDiagram,
+                        const CriticalType &type,
+                        const SimplexId &id);
+
     void performTrackingForOneType(
+      const std::vector<DiagramType> &persistenceDiagrams,
       const std::vector<std::vector<MatchingType>> &matching,
-      const std::vector<std::vector<MatchingType>> &maxMatchingsPersistence,
+      const std::vector<std::vector<SimplexId>> &map,
+      const CriticalType &currentType,
       std::vector<trackingTuple> &tracking,
       std::vector<std::vector<double>> &trackingCosts,
       std::vector<double> &trackingPersistence);
