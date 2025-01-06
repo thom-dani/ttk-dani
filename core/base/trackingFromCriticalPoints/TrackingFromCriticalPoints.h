@@ -26,7 +26,6 @@ namespace ttk {
     double meshDiameter{1};
     double tolerance{10e-3};
     int assignmentMethod{0};
-    int dimension{2};
     double xWeight{1};
     double yWeight{1};
     double zWeight{1};
@@ -64,10 +63,6 @@ namespace ttk {
       adaptiveDeathBirthCost=b;
     }
 
-    void setDimension(int d){
-      dimension=d;
-    }
-
     void setWeights(double PX, double PY, double PZ, double PF) {
       xWeight = PX;
       yWeight = PY;
@@ -99,7 +94,7 @@ namespace ttk {
     }
 
     void
-      performMatchings(const std::vector<DiagramType> persistenceDiagrams,
+      performMatchings(const std::vector<DiagramType> &persistenceDiagrams,
                        std::vector<std::vector<MatchingType>> &maximaMatchings,
                        std::vector<std::vector<MatchingType>> &sad_1_Matchings,
                        std::vector<std::vector<MatchingType>> &sad_2_Matchings,
@@ -107,23 +102,21 @@ namespace ttk {
                        std::vector<std::vector<MatchingType>> &maxMatchingsPersistence,
                        std::vector<std::vector<MatchingType>> &sad_1_MatchingsPersistence,
                        std::vector<std::vector<MatchingType>> &sad_2_MatchingsPersistence,
-                       std::vector<std::vector<MatchingType>> &minMatchingsPersistence,
-                       int fieldNumber);
+                       std::vector<std::vector<MatchingType>> &minMatchingsPersistence);
 
     void
-      performTrackings(int fieldNumber,
-                       std::vector<std::vector<MatchingType>> &maximaMatchings,
-                       std::vector<std::vector<MatchingType>> &sad_1_Matchings,
-                       std::vector<std::vector<MatchingType>> &sad_2_Matchings,
-                       std::vector<std::vector<MatchingType>> &minimaMatchings,
+      performTrackings(const std::vector<std::vector<MatchingType>> &maximaMatchings,
+                       const std::vector<std::vector<MatchingType>> &sad_1_Matchings,
+                       const std::vector<std::vector<MatchingType>> &sad_2_Matchings,
+                       const std::vector<std::vector<MatchingType>> &minimaMatchings,
                        std::vector<std::vector<MatchingType>> &maxMatchingsPersistence,
                        std::vector<std::vector<MatchingType>> &sad_1_MatchingsPersistence,
                        std::vector<std::vector<MatchingType>> &sad_2_MatchingsPersistence,
                        std::vector<std::vector<MatchingType>> &minMatchingsPersistence,
                        std::vector<trackingTuple> &allTrackings,
-                       std::vector<std::vector<double>> &allTrackingCost,
+                       std::vector<std::vector<double>> &allTrackingsCost,
                        std::vector<double> &allTrackingsMeanPersistences,
-                       unsigned int (&sizes)[]);
+                       unsigned int (&typesArrayLimits)[]);
 
   private:
     double computeRelevantPersistence(const DiagramType &d1,
@@ -149,11 +142,11 @@ namespace ttk {
     // Compute L_p distance betweem (p,f(p)) and (q,f(q)) where p and q are
     // critical points
 
-    double criticalPointDistance(const std::array<float, 3> coords_p1,
-                                 const double sfValue_p1,
-                                 const std::array<float, 3> coords_p2,
-                                 const double sfValue_p2,
-                                 int p);
+    double criticalPointDistance(const std::array<float, 3> &coords_p1,
+                                 const double &sfValue_p1,
+                                 const std::array<float, 3> &coords_p2,
+                                 const double &sfValue_p2,
+                                 const int &p);
 
     // Sort the critical points by types
 
@@ -183,20 +176,19 @@ namespace ttk {
                          std::vector<std::vector<double>> &matrix,
                          float costDeathBirth);
 
-    void localToGlobalMatching(std::vector<MatchingType> &matchings,
-                               const std::vector<int> &startMap,
+    void localToGlobalMatching(const std::vector<int> &startMap,
                                const std::vector<int> &endMap,
                                const std::vector<double> &startPersistence,
                                const std::vector<double> &endPersistence,
+                              std::vector<MatchingType> &matchings,
                                std::vector<MatchingType> &matchingsPersistence);
 
     void assignmentSolver(std::vector<std::vector<double>> &costMatrix,
                           std::vector<ttk::MatchingType> &matching);
 
     void performTrackingForOneType(
-      int fieldNumber,
-      std::vector<std::vector<MatchingType>> &matching,
-      std::vector<std::vector<MatchingType>> &maxMatchingsPersistence,
+      const std::vector<std::vector<MatchingType>> &matching,
+      const std::vector<std::vector<MatchingType>> &maxMatchingsPersistence,
       std::vector<trackingTuple> &tracking,
       std::vector<std::vector<double>> &trackingCosts,
       std::vector<double> &trackingPersistence);

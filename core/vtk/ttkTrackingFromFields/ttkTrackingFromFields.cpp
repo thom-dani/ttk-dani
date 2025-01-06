@@ -141,7 +141,6 @@ template <class dataType, class triangulationType>
     tracker.setEpsilon(costDeathBirth);
     tracker.setAdaptDeathBirthCost(adaptDeathBirthCost);
     tracker.setAssignmentMethod(assignmentMethod);
-    tracker.setDimension(triangulation->getDimensionality());
     tracker.setEpsilonAdapt(epsilonAdapt);
     tracker.setWeights(PX, PY, PZ, PF);
     
@@ -168,8 +167,7 @@ template <class dataType, class triangulationType>
                               maxMatchingsPersistence,
                               sad_1_MatchingsPersistence,
                               sad_2_MatchingsPersistence,
-                              minMatchingsPersistence, 
-                              fieldNumber);
+                              minMatchingsPersistence);
 
     vtkNew<vtkPoints> const points{};
     vtkNew<vtkUnstructuredGrid> const outputMesh{};
@@ -198,7 +196,6 @@ template <class dataType, class triangulationType>
 
     unsigned int typesArrayLimits [3]={};
     tracker.performTrackings(
-        fieldNumber,
         maximaMatchings,
         sad_1_Matchings,
         sad_2_Matchings,

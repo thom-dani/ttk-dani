@@ -6,11 +6,11 @@
 // points
 
 double ttk::TrackingFromCriticalPoints::criticalPointDistance(
-  const std::array<float, 3> coords_p1,
-  const double sfValue_p1,
-  const std::array<float, 3> coords_p2,
-  const double sfValue_p2,
-  int p = 2) {
+  const std::array<float, 3> &coords_p1,
+  const double &sfValue_p1,
+  const std::array<float, 3> &coords_p2,
+  const double &sfValue_p2,
+  const int &p = 2) {
   return std::pow(xWeight * std::pow(coords_p1[0] - coords_p2[0], p)
                     + yWeight * std::pow(coords_p1[1] - coords_p2[1], p)
                     + zWeight * std::pow(coords_p1[2] - coords_p2[2], p)
@@ -136,7 +136,7 @@ void ttk::TrackingFromCriticalPoints::buildCostMatrix(
 }
 
 void ttk::TrackingFromCriticalPoints::performMatchings(
-  const std::vector<DiagramType> persistenceDiagrams,
+  const std::vector<DiagramType> &persistenceDiagrams,
   std::vector<std::vector<MatchingType>> &maximaMatchings,
   std::vector<std::vector<MatchingType>> &sad_1_Matchings,
   std::vector<std::vector<MatchingType>> &sad_2_Matchings,
@@ -144,8 +144,9 @@ void ttk::TrackingFromCriticalPoints::performMatchings(
   std::vector<std::vector<MatchingType>> &maxMatchingsPersistence,
   std::vector<std::vector<MatchingType>> &sad_1_MatchingsPersistence,
   std::vector<std::vector<MatchingType>> &sad_2_MatchingsPersistence,
-  std::vector<std::vector<MatchingType>> &minMatchingsPersistence,
-  int fieldNumber) {
+  std::vector<std::vector<MatchingType>> &minMatchingsPersistence) {
+
+  int fieldNumber=persistenceDiagrams.size();
 
 	std::vector<std::vector<SimplexId>> maxMap(fieldNumber);
 	std::vector<std::vector<SimplexId>> sad_1Map(fieldNumber);
@@ -246,10 +247,10 @@ void ttk::TrackingFromCriticalPoints::performMatchings(
     std::vector<MatchingType> minPersistence_i(minMatching.size());
 
 
-    localToGlobalMatching(maxMatching, maxMap[i], maxMap[i+1], maxPersistence[i], maxPersistence[i+1], maxPersistence_i);
-    localToGlobalMatching(sad_1_Matching, sad_1Map[i], sad_1Map[i+1], sad_1_Persistence[i], sad_1_Persistence[i+1],  sad_1_Persistence_i);
-    localToGlobalMatching(sad_2_Matching, sad_2Map[i], sad_2Map[i+1], sad_2_Persistence[i], sad_2_Persistence[i+1], sad_2_Persistence_i);    
-    localToGlobalMatching(minMatching, minMap[i], minMap[i+1], minPersistence[i], minPersistence[i+1], minPersistence_i);
+    localToGlobalMatching(maxMap[i], maxMap[i+1], maxPersistence[i], maxPersistence[i+1], maxMatching, maxPersistence_i);
+    localToGlobalMatching(sad_1Map[i], sad_1Map[i+1], sad_1_Persistence[i], sad_1_Persistence[i+1],sad_1_Matching,  sad_1_Persistence_i);
+    localToGlobalMatching(sad_2Map[i], sad_2Map[i+1], sad_2_Persistence[i], sad_2_Persistence[i+1],sad_2_Matching, sad_2_Persistence_i);    
+    localToGlobalMatching(minMap[i], minMap[i+1], minPersistence[i], minPersistence[i+1], minMatching, minPersistence_i);
     
     maximaMatchings[i] = maxMatching;
     sad_1_Matchings[i] = sad_1_Matching;
@@ -266,11 +267,11 @@ void ttk::TrackingFromCriticalPoints::performMatchings(
 }
 
 void ttk::TrackingFromCriticalPoints::localToGlobalMatching(
-  std::vector<MatchingType> &matchings,
   const std::vector<int> &startMap,
   const std::vector<int> &endMap,
   const std::vector<double> &startPersistence,
   const std::vector<double> &endPersistence,
+  std::vector<MatchingType> &matchings,
   std::vector<MatchingType> &matchingsPersistence) {
   unsigned int totalMatchingsSize = matchings.size();
   int n_removedElements = 0;
@@ -292,16 +293,15 @@ void ttk::TrackingFromCriticalPoints::localToGlobalMatching(
       n_removedElements++;
     }
   }
-
 }
 
 void ttk::TrackingFromCriticalPoints::performTrackingForOneType(
-  int fieldNumber,
-  std::vector<std::vector<MatchingType>> &matchings,
-  std::vector<std::vector<MatchingType>> &matchingPersistence,
+  const std::vector<std::vector<MatchingType>> &matchings,
+  const std::vector<std::vector<MatchingType>> &matchingPersistence,
   std::vector<trackingTuple> &trackings,
   std::vector<std::vector<double>> &trackingCosts,
   std::vector<double> &trackingPersistence) {
+  int fieldNumber = matchings.size() + 1;
   std::unordered_map<int, int> previousTrackingsEndsIds;
   std::unordered_map<int, int> sw;
   for(unsigned int i = 0; i < matchings[0].size(); i++) {
@@ -352,11 +352,10 @@ void ttk::TrackingFromCriticalPoints::performTrackingForOneType(
 }
 
 void ttk::TrackingFromCriticalPoints::performTrackings(
-  int fieldNumber,
-  std::vector<std::vector<MatchingType>> &maximaMatchings,
-  std::vector<std::vector<MatchingType>> &sad_1_Matchings,
-  std::vector<std::vector<MatchingType>> &sad_2_Matchings,
-  std::vector<std::vector<MatchingType>> &minimaMatchings,
+  const std::vector<std::vector<MatchingType>> &maximaMatchings,
+  const std::vector<std::vector<MatchingType>> &sad_1_Matchings,
+  const std::vector<std::vector<MatchingType>> &sad_2_Matchings,
+  const std::vector<std::vector<MatchingType>> &minimaMatchings,
   std::vector<std::vector<MatchingType>> &maxMatchingsPersistence,
   std::vector<std::vector<MatchingType>> &sad_1_MatchingsPersistence,
   std::vector<std::vector<MatchingType>> &sad_2_MatchingsPersistence,
@@ -381,7 +380,7 @@ void ttk::TrackingFromCriticalPoints::performTrackings(
   std::vector<double> trackingsPersistenceSad_2;
   std::vector<double> trackingsPersistenceMin;
 
-  performTrackingForOneType(fieldNumber, maximaMatchings, maxMatchingsPersistence, trackingsBaseMax, maxTrackingCost, trackingsPersistenceMax);
+  performTrackingForOneType(maximaMatchings, maxMatchingsPersistence, trackingsBaseMax, maxTrackingCost, trackingsPersistenceMax);
   allTrackings.insert(
     allTrackings.end(), trackingsBaseMax.begin(), trackingsBaseMax.end());
   allTrackingsMeanPersistences.insert(
@@ -390,7 +389,7 @@ void ttk::TrackingFromCriticalPoints::performTrackings(
     allTrackingsCosts.end(), maxTrackingCost.begin(), maxTrackingCost.end());
   typesArrayLimits[0] = allTrackings.size();
 
-  performTrackingForOneType(fieldNumber, sad_1_Matchings, sad_1_MatchingsPersistence, trackingsBaseSad_1, sad_1_TrackingCost,  trackingsPersistenceSad_1);
+  performTrackingForOneType(sad_1_Matchings, sad_1_MatchingsPersistence, trackingsBaseSad_1, sad_1_TrackingCost,  trackingsPersistenceSad_1);
   allTrackings.insert(
     allTrackings.end(), trackingsBaseSad_1.begin(), trackingsBaseSad_1.end());
   allTrackingsMeanPersistences.insert(
@@ -399,7 +398,7 @@ void ttk::TrackingFromCriticalPoints::performTrackings(
     allTrackingsCosts.end(), sad_1_TrackingCost.begin(), sad_1_TrackingCost.end());
   typesArrayLimits[1] = allTrackings.size();
 
-  performTrackingForOneType(fieldNumber, sad_2_Matchings, sad_2_MatchingsPersistence, trackingsBaseSad_2,  sad_2_TrackingCost, trackingsPersistenceSad_2);
+  performTrackingForOneType(sad_2_Matchings, sad_2_MatchingsPersistence, trackingsBaseSad_2,  sad_2_TrackingCost, trackingsPersistenceSad_2);
   allTrackings.insert(
     allTrackings.end(), trackingsBaseSad_2.begin(), trackingsBaseSad_2.end());
   allTrackingsMeanPersistences.insert(
@@ -408,7 +407,7 @@ void ttk::TrackingFromCriticalPoints::performTrackings(
     allTrackingsCosts.end(), sad_2_TrackingCost.begin(), sad_2_TrackingCost.end());
   typesArrayLimits[2] = allTrackings.size();
 
-  performTrackingForOneType(fieldNumber, minimaMatchings, minMatchingsPersistence, trackingsBaseMin, minTrackingCost,  trackingsPersistenceMin);
+  performTrackingForOneType(minimaMatchings, minMatchingsPersistence, trackingsBaseMin, minTrackingCost,  trackingsPersistenceMin);
   allTrackings.insert(
     allTrackings.end(), trackingsBaseMin.begin(), trackingsBaseMin.end());
   allTrackingsMeanPersistences.insert(
