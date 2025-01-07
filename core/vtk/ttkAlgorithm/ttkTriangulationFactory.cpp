@@ -189,7 +189,7 @@ RegistryTriangulation
   if(!spacing[1])
     spacing[1] = 1;
   if(!spacing[2]) // 2D
-    spacing[2] = 1;  
+    spacing[2] = 1;
 
   int dimensions[3];
   image->GetDimensions(dimensions);
