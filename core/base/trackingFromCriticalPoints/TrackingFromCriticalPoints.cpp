@@ -162,8 +162,6 @@ void ttk::TrackingFromCriticalPoints::performMatchings(
         = ttk::TrackingFromCriticalPoints::computeRelevantPersistence(
           persistenceDiagrams[i - 1], persistenceDiagrams[i]);
     }
-    std::cout<<"minimum relevant persistence = "<<minimumRelevantPersistence<<std::endl;
-    std::cout<<"field number i = "<<std::endl;
     sortCriticalPoint(persistenceDiagrams[i], minimumRelevantPersistence,
                       maxCoords[i], sad_1Coords[i], sad_2Coords[i],
                       minCoords[i], maxScalar[i], sad_1Scalar[i],
@@ -250,30 +248,20 @@ void ttk::TrackingFromCriticalPoints::performTrackingForOneType(
 
   SimplexId deathLimitId = map[1].size();
   SimplexId birthLimitId = map[0].size();
-std::cout<<"death/birth index bounds = "<<birthLimitId<<", "<<deathLimitId<<std::endl;
 
   std::vector<int> previousStepMap(deathLimitId, -1);
-    for (size_t i = 0; i<previousStepMap.size(); i++){
-    std::cout<<previousStepMap[i]<<", ";
-  }
   std::vector<int> sw;
-  
 
   for(unsigned int i = 0; i < matchings[0].size(); i++) {
-      SimplexId endLocalId = std::get<1>(matchings[0][i]);
-      SimplexId startLocalId = std::get<0>(matchings[0][i]);
-      std::cout<<"i = "<<i<<", matching = ("<<startLocalId<<", "<<endLocalId<<")"<<std::endl;
-    if(endLocalId < deathLimitId && startLocalId < birthLimitId){
+    SimplexId endLocalId = std::get<1>(matchings[0][i]);
+    SimplexId startLocalId = std::get<0>(matchings[0][i]);
+    if(endLocalId < deathLimitId && startLocalId < birthLimitId) {
 
       SimplexId startId = computeGlobalId(
         persistenceDiagrams[0], currentType, map[0][startLocalId]);
 
-      std::cout<<"start id = "<<startId<<std::endl;
-
       SimplexId endId = computeGlobalId(
         persistenceDiagrams[1], currentType, map[1][endLocalId]);
-
-      std::cout<<"end id = "<<endId<<std::endl;
 
       std::vector<SimplexId> chain = {startId, endId};
       std::tuple<int, int, std::vector<SimplexId>> tt
@@ -290,14 +278,7 @@ std::cout<<"death/birth index bounds = "<<birthLimitId<<", "<<deathLimitId<<std:
       previousStepMap[std::get<1>(matchings[0][i])] = trackings.size() - 1;
     }
   }
-  for (size_t i = 0; i<previousStepMap.size(); i++){
-    std::cout<<previousStepMap[i]<<", ";
-  }
-  std::cout<<std::endl;
-
   for(int i = 1; i < fieldNumber - 1; i++) {
-    std::cout<<"death/birth index bounds = "<<birthLimitId<<", "<<deathLimitId<<std::endl;
-
     birthLimitId = map[i].size();
     deathLimitId = map[i + 1].size();
     sw.resize(deathLimitId, -1);
@@ -305,18 +286,13 @@ std::cout<<"death/birth index bounds = "<<birthLimitId<<", "<<deathLimitId<<std:
       SimplexId startLocalId = std::get<0>(matchings[i][j]);
       SimplexId endLocalId = std::get<1>(matchings[i][j]);
 
-      std::cout<<"|"<<startLocalId<<", "<<endLocalId<<"|";
-
       bool wasPreviouslyMatched = false;
       if(startLocalId < birthLimitId)
         wasPreviouslyMatched = previousStepMap[startLocalId] != -1;
 
-      bool fullPair = startLocalId < birthLimitId && endLocalId < deathLimitId;
+      bool validPair = startLocalId < birthLimitId && endLocalId < deathLimitId;
 
-      std::cout<<wasPreviouslyMatched<<", "<<fullPair<<std::endl;
-
-
-      if(fullPair && wasPreviouslyMatched) {
+      if(validPair && wasPreviouslyMatched) {
         int trackingId = previousStepMap[startLocalId];
         SimplexId endId = computeGlobalId(
           persistenceDiagrams[i + 1], currentType, map[i + 1][endLocalId]);
@@ -326,13 +302,10 @@ std::cout<<"death/birth index bounds = "<<birthLimitId<<", "<<deathLimitId<<std:
         trackingPersistence[trackingId]
           += persistenceDiagrams[i + 1][map[i + 1][endLocalId]].persistence();
         sw[endLocalId] = trackingId;
-        previousStepMap[startLocalId]=-1;
+        previousStepMap[startLocalId] = -1;
       }
 
-      else if(fullPair
-              && !wasPreviouslyMatched) {
-
-      std::cout<<"coucou"<<std::endl;
+      else if(validPair && !wasPreviouslyMatched) {
 
         SimplexId startId = computeGlobalId(
           persistenceDiagrams[i], currentType, map[i][startLocalId]);
@@ -351,25 +324,13 @@ std::cout<<"death/birth index bounds = "<<birthLimitId<<", "<<deathLimitId<<std:
         sw[endLocalId] = trackings.size() - 1;
       }
     }
-    std::cout<<std::endl;
     previousStepMap = sw;
     sw.clear();
-    for (size_t i = 0; i<previousStepMap.size(); i++){
-      std::cout<<previousStepMap[i]<<", ";
-    }
   }
 
-
-  std::cout<<std::endl;
   for(unsigned int i = 0; i < trackings.size(); i++) {
     trackingPersistence[i]
       /= (std::get<1>(trackings[i]) - std::get<0>(trackings[i]) + 1);
-  }
-  for (size_t i = 0 ; i<trackings.size(); i++){
-    std::cout<<"start at "<<std::get<0>(trackings[i])<<", ends at "<<std::get<1>(trackings[i])<<std::endl;
-    for (size_t j = 0 ; j<trackings.size(); j++){
-      std::cout<<std::get<2>(trackings[i])[j]<<", "<<std::endl;
-    }
   }
 }
 
@@ -403,8 +364,6 @@ void ttk::TrackingFromCriticalPoints::performTrackings(
   std::vector<double> trackingsPersistenceSad_2;
   std::vector<double> trackingsPersistenceMin;
 
-  std::cout<<"balise ttk 1"<<std::endl;
-
   performTrackingForOneType(persistenceDiagrams, maximaMatchings, maxMap,
                             CriticalType::Local_maximum, trackingsMax,
                             maxTrackingCost, trackingsPersistenceMax);
@@ -416,8 +375,6 @@ void ttk::TrackingFromCriticalPoints::performTrackings(
   allTrackingsCosts.insert(
     allTrackingsCosts.end(), maxTrackingCost.begin(), maxTrackingCost.end());
   typesArrayLimits[0] = allTrackings.size();
-
-  std::cout<<"balise ttk 2"<<std::endl;
 
   performTrackingForOneType(persistenceDiagrams, sad_1_Matchings, sad_1Map,
                             CriticalType::Saddle1, trackingsSad_1,
@@ -431,8 +388,6 @@ void ttk::TrackingFromCriticalPoints::performTrackings(
                            sad_1_TrackingCost.end());
   typesArrayLimits[1] = allTrackings.size();
 
-  std::cout<<"balise ttk 3"<<std::endl;
-
   performTrackingForOneType(persistenceDiagrams, sad_2_Matchings, sad_2Map,
                             CriticalType::Saddle2, trackingsSad_2,
                             sad_2_TrackingCost, trackingsPersistenceSad_2);
@@ -445,8 +400,6 @@ void ttk::TrackingFromCriticalPoints::performTrackings(
                            sad_2_TrackingCost.end());
   typesArrayLimits[2] = allTrackings.size();
 
-  std::cout<<"balise ttk 4"<<std::endl;
-
   performTrackingForOneType(persistenceDiagrams, minimaMatchings, minMap,
                             CriticalType::Local_minimum, trackingsMin,
                             minTrackingCost, trackingsPersistenceMin);
@@ -457,9 +410,6 @@ void ttk::TrackingFromCriticalPoints::performTrackings(
                                       trackingsPersistenceMin.end());
   allTrackingsCosts.insert(
     allTrackingsCosts.end(), minTrackingCost.begin(), minTrackingCost.end());
-
-  std::cout<<"balise ttk 5"<<std::endl;
-
 }
 
 void ttk::TrackingFromCriticalPoints::assignmentSolver(

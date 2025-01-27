@@ -143,7 +143,6 @@ int ttkTrackingFromFields::trackWithCriticalPointMatching(
 
   tracker.setThreadNumber(this->threadNumber_);
 
-  std::cout<<"balise 1"<<std::endl;
   std::vector<ttk::DiagramType> persistenceDiagrams(fieldNumber);
   this->performDiagramComputation<dataType, triangulationType>(
     (int)fieldNumber, persistenceDiagrams, triangulation);
@@ -158,12 +157,9 @@ int ttkTrackingFromFields::trackWithCriticalPointMatching(
   std::vector<std::vector<ttk::SimplexId>> sad_2Map(fieldNumber);
   std::vector<std::vector<ttk::SimplexId>> minMap(fieldNumber);
 
-  std::cout<<"balise 2"<<std::endl;
-
   tracker.performMatchings(persistenceDiagrams, maximaMatchings,
                            sad_1_Matchings, sad_2_Matchings, minimaMatchings,
                            maxMap, sad_1Map, sad_2Map, minMap);
-  std::cout<<"balise 3"<<std::endl;
 
   vtkNew<vtkPoints> const points{};
   vtkNew<vtkUnstructuredGrid> const outputMesh{};
@@ -197,8 +193,6 @@ int ttkTrackingFromFields::trackWithCriticalPointMatching(
     minimaMatchings, maxMap, sad_1Map, sad_2Map, minMap, allTrackings,
     allTrackingsCosts, allTrackingsMeanPersistence, typesArrayLimits);
 
-  std::cout<<"balise 4"<<std::endl;
-
   double const spacing = Spacing;
   bool const useGeometricSpacing = UseGeometricSpacing;
 
@@ -207,8 +201,6 @@ int ttkTrackingFromFields::trackWithCriticalPointMatching(
     useGeometricSpacing, spacing, points, outputMesh, pointsCriticalType,
     timeScalars, lengthScalars, globalVertexIds, connectedComponentIds, costs,
     averagePersistences, typesArrayLimits);
-
-  std::cout<<"balise 5"<<std::endl;
 
   output->ShallowCopy(outputMesh);
 
