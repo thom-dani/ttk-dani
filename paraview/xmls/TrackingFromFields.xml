@@ -187,9 +187,9 @@ by a list of scalar fields) and which computes a tracking mesh."
         </Documentation>
       </DoubleVectorProperty>
 
-      <DoubleVectorProperty
+<!--      <DoubleVectorProperty
         name="epsilon_adapt"
-        label="Adaptative coefficient"
+        label="Adaptive coefficient"
         command="SetEpsilonAdapt"
         number_of_elements="1"
         default_values="0.1"
@@ -210,7 +210,7 @@ by a list of scalar fields) and which computes a tracking mesh."
         </Hints>
         <Documentation>
         </Documentation>
-      </DoubleVectorProperty>
+      </DoubleVectorProperty>-->
 
 
       <DoubleVectorProperty
