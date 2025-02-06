@@ -183,7 +183,7 @@ by a list of scalar fields) and which computes a tracking mesh."
           </PropertyWidgetDecorator>                                                      
         </Hints>
         <Documentation>
-        Relative cost (with regard to the data span) associated with the destruction of a critical point. Set this parameter to larger values to allow for larger displcements for a critical point from one time step to another.
+        Relative cost (with regard to the data span) associated with the destruction of a critical point. Set this parameter to larger values to allow for larger displcements for a critical point from one time step to another. Set this parameter to smaller values to prevent a critical point from jumping too far from one time step to another.
         </Documentation>
       </DoubleVectorProperty>
 
