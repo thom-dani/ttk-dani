@@ -30,7 +30,7 @@ namespace ttk {
     double xWeight{1};
     double yWeight{1};
     double zWeight{1};
-    double fWeight{1};
+    double fWeight{0};
     bool adaptiveDeathBirthCost{false};
 
   public:

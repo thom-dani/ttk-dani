@@ -99,12 +99,12 @@ by a list of scalar fields) and which computes a tracking mesh."
       label="Backend"
       command="SetPVAlgorithm"
         number_of_elements="1"
-        default_values="0"
+        default_values="2"
         >
         <EnumerationDomain name="enum">
-          <Entry value="0" text="ttk: sparse Munkres (Wasserstein)"/>
-          <Entry value="1" text="ttk:  Gabow-Tarjan (Bottleneck)"/>
-          <Entry value="2" text="ttk:  Tracking with critical points"/>
+          <Entry value="0" text="ttk: Sparse Munkres (Wasserstein)"/>
+          <Entry value="1" text="ttk: Gabow-Tarjan (Bottleneck)"/>
+          <Entry value="2" text="ttk: Tracking from Critical Points"/>
         </EnumerationDomain>                      
         <Documentation>
           Method for computing matchings.
@@ -145,7 +145,7 @@ by a list of scalar fields) and which computes a tracking mesh."
         </Documentation>
       </StringVectorProperty>
 
-      <IntVectorProperty
+<!--      <IntVectorProperty
         name="adaptDeathBirthCost"
         command="SetAdaptDeathBirthCost"
         label="Adaptive desctructive cost"
@@ -159,7 +159,7 @@ by a list of scalar fields) and which computes a tracking mesh."
                                    property="Backend"
                                    value="2" />
         </Hints>
-      </IntVectorProperty>
+      </IntVectorProperty>-->
 
       <DoubleVectorProperty
         name="epsilon"
@@ -303,7 +303,7 @@ the extremum</Documentation>
         label="F weight"
         command="SetPF"
         number_of_elements="1"
-        default_values="1"
+        default_values="0"
         panel_visibility="advanced">
         <DoubleRangeDomain name="spz" min="0.0" max="1.0"/>
         <Hints>
