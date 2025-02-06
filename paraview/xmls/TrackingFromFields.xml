@@ -163,7 +163,7 @@ by a list of scalar fields) and which computes a tracking mesh."
 
       <DoubleVectorProperty
         name="epsilon"
-        label="Birth/death threshold"
+        label="Relative destruction cost"
         command="SetCostDeathBirth"
         number_of_elements="1"
         default_values="0.1"
@@ -183,6 +183,7 @@ by a list of scalar fields) and which computes a tracking mesh."
           </PropertyWidgetDecorator>                                                      
         </Hints>
         <Documentation>
+        Relative cost (with regard to the data span) associated with the destruction of a critical point. Set this parameter to larger values to allow larger displcements for a critical point from one time step to another.
         </Documentation>
       </DoubleVectorProperty>
 
@@ -271,7 +272,7 @@ by a list of scalar fields) and which computes a tracking mesh."
         panel_visibility="advanced">
         <DoubleRangeDomain name="spx" min="0.0" max="1.0"/>
         <Documentation>Importance weight for the X component of
-the extremum</Documentation>
+the critical point.</Documentation>
       </DoubleVectorProperty>
 
       <DoubleVectorProperty
@@ -283,7 +284,7 @@ the extremum</Documentation>
         panel_visibility="advanced">
         <DoubleRangeDomain name="spy" min="0.0" max="1.0"/>
         <Documentation>Importance weight for the Y component of
-the extremum</Documentation>
+the critical point.</Documentation>
       </DoubleVectorProperty>
 
       <DoubleVectorProperty
@@ -295,7 +296,7 @@ the extremum</Documentation>
         panel_visibility="advanced">
         <DoubleRangeDomain name="spz" min="0.0" max="1.0"/>
         <Documentation>Importance weight for the Z component of
-the extremum</Documentation>
+the critical point.</Documentation>
       </DoubleVectorProperty>
 
       <DoubleVectorProperty
@@ -312,7 +313,7 @@ the extremum</Documentation>
                                    property="Backend"
                                    value="2" />
         </Hints>
-        <Documentation>Importance weight for the function value of the extremum</Documentation>
+        <Documentation>Importance weight for the function value of the critical point.</Documentation>
       </DoubleVectorProperty>
 
 
