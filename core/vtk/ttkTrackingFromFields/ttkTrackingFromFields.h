@@ -76,8 +76,8 @@ public:
   vtkSetMacro(Tolerance, double);
   vtkGetMacro(Tolerance, double);
 
-  vtkSetMacro(CostDeathBirth, double);
-  vtkGetMacro(CostDeathBirth, double);
+  vtkSetMacro(RelativeDestructionCost, double);
+  vtkGetMacro(RelativeDestructionCost, double);
   /// @}
 
   vtkSetMacro(AdaptDeathBirthCost, bool);
@@ -195,7 +195,7 @@ private:
   double PS{0};
   double PF{0};
 
-  double CostDeathBirth{0.1};
+  double RelativeDestructionCost{0.1};
   double EpsilonAdapt{0.5};
   int AssignmentMethod{0};
   bool AdaptDeathBirthCost{false};

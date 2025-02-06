@@ -123,7 +123,7 @@ int ttkTrackingFromFields::trackWithCriticalPointMatching(
     minZ = std::min(z, minZ);
   }
 
-  double const costDeathBirth = CostDeathBirth;
+  double const relativeDestructionCost = RelativeDestructionCost;
   double const tolerance = (double)Tolerance;
   float meshDiameter
     = std::sqrt(std::pow(maxX - minX, 2) + std::pow(maxY - minY, 2)
@@ -135,7 +135,7 @@ int ttkTrackingFromFields::trackWithCriticalPointMatching(
   ttk::TrackingFromCriticalPoints tracker;
   tracker.setMeshDiameter(meshDiameter);
   tracker.setTolerance(tolerance);
-  tracker.setEpsilon(costDeathBirth);
+  tracker.setEpsilon(relativeDestructionCost);
   tracker.setAdaptDeathBirthCost(adaptDeathBirthCost);
   tracker.setAssignmentMethod(assignmentMethod);
   tracker.setEpsilonAdapt(epsilonAdapt);
