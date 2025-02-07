@@ -89,7 +89,7 @@ namespace ttk {
       }
 
       return std::sqrt(std::pow(meshDiameter, 2)
-                       + fWeight*std::pow(maxScalar - minScalar, 2));
+                       + fWeight * std::pow(maxScalar - minScalar, 2));
     }
 
     void
