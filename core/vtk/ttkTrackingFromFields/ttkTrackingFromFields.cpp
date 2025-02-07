@@ -108,8 +108,8 @@ int ttkTrackingFromFields::trackWithCriticalPointMatching(
   unsigned long fieldNumber,
   const triangulationType *triangulation) {
 
-  float x, y, z;
-  float maxX, minX, maxY, minY, maxZ, minZ;
+  float x = 0, y = 0, z = 0;
+  float maxX = 0, minX = 0, maxY = 0, minY = 0, maxZ = 0, minZ = 0;
   triangulation->getVertexPoint(0, minX, minY, minZ);
   triangulation->getVertexPoint(0, maxX, maxY, maxZ);
 
