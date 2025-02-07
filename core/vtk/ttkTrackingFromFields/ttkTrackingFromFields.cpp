@@ -142,6 +142,7 @@ int ttkTrackingFromFields::trackWithCriticalPointMatching(
   tracker.setWeights(PX, PY, PZ, PF);
 
   tracker.setThreadNumber(this->threadNumber_);
+  tracker.setDebugLevel(this->debugLevel_);
 
   std::vector<ttk::DiagramType> persistenceDiagrams(fieldNumber);
   this->performDiagramComputation<dataType, triangulationType>(
