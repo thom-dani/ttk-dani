@@ -46,7 +46,7 @@ if (TTK_ENABLE_MPI)
   option(TTK_ENABLE_MPI_TIME "Enable time measuring for MPI computation" FALSE)
   mark_as_advanced(TTK_ENABLE_MPI_TIME)
   option(TTK_ENABLE_MPI_RANK_ID_INT "Enable rank ids of type int (default char) for distributed sort" FALSE)
-  mark_as_advanced(TTK_ENABLE_MPI_RANK_ID_TIME)
+  mark_as_advanced(TTK_ENABLE_MPI_RANK_ID_INT)
 
 endif()
 
@@ -146,7 +146,7 @@ list(INSERT CMAKE_MODULE_PATH 0
 
 # mandatory packages
 
-find_package(Boost REQUIRED)
+find_package(Boost REQUIRED CONFIG)
 if(Boost_FOUND)
   message(STATUS "Found Boost ${Boost_VERSION} (${Boost_INCLUDE_DIR})")
 endif()
