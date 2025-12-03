@@ -70,9 +70,10 @@ int ttkMorseSmaleComplex::dispatch(vtkDataArray *const inputScalars,
   OutputCriticalPoints criticalPoints_{};
   Output1Separatrices separatrices1_{};
   Output2Separatrices separatrices2_{};
-  const int ret = this->execute(
-    criticalPoints_, separatrices1_, separatrices2_, segmentations_, scalars,
-    inputScalars->GetMTime(), inputOffsets, triangulation);
+  const int ret
+    = this->execute(criticalPoints_, separatrices1_, separatrices2_,
+                    segmentations_, scalars, inputScalars->GetMTime(),
+                    inputOffsets, triangulation, StochasticGradientSeed);
 
 #ifndef TTK_ENABLE_KAMIKAZE
   if(ret != 0) {
@@ -507,6 +508,11 @@ int ttkMorseSmaleComplex::RequestData(vtkInformation *ttkNotUsed(request),
   this->setReturnSaddleConnectors(ReturnSaddleConnectors);
   this->setSaddleConnectorsPersistenceThreshold(
     SaddleConnectorsPersistenceThreshold);
+  DiscreteGradient::BACKEND selectedDiscreteGradientBackend
+    = DiscreteGradientBackend == 1
+        ? DiscreteGradient::BACKEND::STOCHASTIC_BACKEND
+        : DiscreteGradient::BACKEND::CLASSIC_BACKEND;
+  this->setDiscreteGradientBackend(selectedDiscreteGradientBackend);
 
   int ret{};
 

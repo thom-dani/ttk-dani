@@ -289,9 +289,17 @@ int ttkDiscreteGradient::RequestData(vtkInformation *ttkNotUsed(request),
     ttkUtils::GetVoidPointer(inputScalars), inputScalars->GetMTime());
   this->setInputOffsets(
     static_cast<SimplexId *>(ttkUtils::GetVoidPointer(inputOffsets)));
-  ttkTemplateMacro(triangulation->getType(),
-                   (ret = this->buildGradient<TTK_TT>(
-                      *static_cast<TTK_TT *>(triangulation->getData()), true)));
+
+  BACKEND selectedBackend
+    = Backend == 1 ? BACKEND::STOCHASTIC_BACKEND : BACKEND::CLASSIC_BACKEND;
+  this->setBackend(selectedBackend);
+  this->setSeed(StochasticGradientSeed);
+
+  ttkVtkTemplateMacro(
+    inputScalars->GetDataType(), triangulation->getType(),
+    (ret = this->buildGradient<VTK_TT, TTK_TT>(
+       *static_cast<TTK_TT *>(triangulation->getData()), true, nullptr)));
+
   if(ret != 0) {
     this->printErr("DiscreteGradient.buildGradient() error code: "
                    + std::to_string(ret));
