@@ -19,7 +19,7 @@ namespace ttk {
 
     SeparatrixStability();
 
-    int buildOccurenceArrays(
+    int buildOccurrenceArrays(
       const std::vector<GraphMatrixFull> &adjacencyMatrices,
       const std::vector<int> &separatrixCountForEachBlock ,
       const std::vector<std::vector<std::array<double, 3>>> &coordsSource,
@@ -27,7 +27,7 @@ namespace ttk {
       const std::vector<std::vector<double>> &scalarsSource,
       const std::vector<std::vector<double>> &scalarsDestination,
       const bool &mergeEdgesOnSaddles, 
-      std::vector<std::vector<int>> &edgesOccurencesForEachBlock,
+      std::vector<std::vector<int>> &edgesOccurrencesForEachBlock,
       std::vector<std::vector<bool>> &isomorphismForEachBlock,
       std::vector<std::vector<std::vector<int>>> &matchingArrayForEachBlockSource,
       std::vector<std::vector<std::vector<int>>> &matchingArrayForEachBlockDestination,
@@ -65,18 +65,18 @@ namespace ttk {
                           std::vector<ttk::MatchingType> &matching);
     
 
-    int buildOccurenceArraysMinor(
+    int buildOccurrenceArraysMinor(
       const std::vector<GraphMatrixFull> &adjacencyMatrices,
       const int &n_separatrices,
       const std::vector<std::vector<std::array<double, 3>>> &coords,
       const std::vector<std::vector<double>> &scalars,
       const int &block_id,
-      std::vector<int> &edgeOccurences,
+      std::vector<int> &edgeOccurrences,
       std::vector<bool> &isIsomorphicWith,
       std::vector<std::vector<int>> &matchingArray,
       std::vector<std::vector<int>> &matchingArraySeparatrix);
 
-    int buildOccurenceArraysFull(
+    int buildOccurrenceArraysFull(
       const std::vector<GraphMatrixFull> &adjacencyMatrices,
       const int &n_separatrices,
       const std::vector<std::vector<std::array<double, 3>>> &coordsSource,
@@ -84,7 +84,7 @@ namespace ttk {
       const std::vector<std::vector<double>> &scalarsSource,
       const std::vector<std::vector<double>> &scalarsDestination,
       const int &block_id,
-      std::vector<int> &edgesOccurences,
+      std::vector<int> &edgesOccurrences,
       std::vector<bool> &isIsomorphicWith,
       std::vector<std::vector<int>> &matchingArraySource,
       std::vector<std::vector<int>> &matchingArrayDestination,

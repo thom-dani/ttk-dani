@@ -27,9 +27,9 @@ class TTKSEPARATRIXSTABILITY_EXPORT ttkSeparatrixStability
     protected ttk::SeparatrixStability {
 
 private:
-  bool ComputeOccurenceType0{true};
-  bool ComputeOccurenceType1{false};
-  bool ComputeOccurenceType2{true};
+  bool ComputeOccurrenceType0{true};
+  bool ComputeOccurrenceType1{false};
+  bool ComputeOccurrenceType2{true};
   double PX{1};
   double PY{1};
   double PZ{1};

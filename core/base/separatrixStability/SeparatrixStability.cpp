@@ -91,7 +91,7 @@ int ttk::SeparatrixStability::buildMatchingsWithOtherBlocks(
   return 1;
 }
 
-int ttk::SeparatrixStability::buildOccurenceArraysFull(
+int ttk::SeparatrixStability::buildOccurrenceArraysFull(
   const std::vector<GraphMatrixFull> &adjacencyMatrices,
   const int &n_separatrices,
   const std::vector<std::vector<std::array<double, 3>>> &coordsSource,
@@ -99,7 +99,7 @@ int ttk::SeparatrixStability::buildOccurenceArraysFull(
   const std::vector<std::vector<double>> &scalarsSource,
   const std::vector<std::vector<double>> &scalarsDestination,
   const int &block_id,
-  std::vector<int> &edgeOccurences,
+  std::vector<int> &edgeOccurrences,
   std::vector<bool> &isIsomorphicWith,
   std::vector<std::vector<int>> &matchingArraySource,
   std::vector<std::vector<int>> &matchingArrayDestination,
@@ -119,7 +119,7 @@ int ttk::SeparatrixStability::buildOccurenceArraysFull(
     matchingArrayDestination[k].resize(adjacencyMatrices[k][0].size(),-2);
   }
   
-  edgeOccurences.resize(n_separatrices, 1);
+  edgeOccurrences.resize(n_separatrices, 1);
   
   std::vector<std::vector<MatchingType>> matchingsSource(n_blocks - 1);
   std::vector<std::vector<MatchingType>> matchingsDestination(n_blocks - 1);
@@ -186,7 +186,7 @@ int ttk::SeparatrixStability::buildOccurenceArraysFull(
                                      [thisBlockDestinationId];
           int separatriceIdInOtherBlock = adjacencyMatrices[k][otherBlockSourceId]
           [otherBlockDestinationId];
-          edgeOccurences[separatriceId]++;
+          edgeOccurrences[separatriceId]++;
           matchingArraySeparatrix[k][separatriceIdInOtherBlock]= separatriceId;
         }else if((adjacencyMatrices[block_id][thisBlockSourceId]
                                 [thisBlockDestinationId]
@@ -238,13 +238,13 @@ void ttk::SeparatrixStability::computeGraphMinor(
   }
 }
 
-int ttk::SeparatrixStability::buildOccurenceArraysMinor(
+int ttk::SeparatrixStability::buildOccurrenceArraysMinor(
   const std::vector<GraphMatrixFull> &adjacencyMatricesFull,
   const int &n_separatrices,
   const std::vector<std::vector<std::array<double, 3>>> &coords,
   const std::vector<std::vector<double>> &scalars,
   const int &block_id,
-  std::vector<int> &edgeOccurences,
+  std::vector<int> &edgeOccurrences,
   std::vector<bool> &isIsomorphicWith,
   std::vector<std::vector<int>> &matchingArray,
   std::vector<std::vector<int>> &matchingArraySeparatrix) {
@@ -270,14 +270,14 @@ int ttk::SeparatrixStability::buildOccurenceArraysMinor(
     matchingArray[block_id][i]=i;
   }
 
-  edgeOccurences.resize(n_separatrices);
+  edgeOccurrences.resize(n_separatrices);
 
   for(int i = 0; i < n_pointsThisBlock; i++) {
     for(int j = 0; j < n_pointsThisBlock; j++) {
       if(!adjacencyMatricesMinor[block_id][i][j].empty()) {;
         for(auto edge : adjacencyMatricesMinor[block_id][i][j]) {
-          edgeOccurences[edge.first] = 1;
-          edgeOccurences[edge.second] = 1;
+          edgeOccurrences[edge.first] = 1;
+          edgeOccurrences[edge.second] = 1;
         }
       }
     }
@@ -344,8 +344,8 @@ int ttk::SeparatrixStability::buildOccurenceArraysMinor(
           for(auto edge : adjacencyMatricesMinor[block_id][thisBlockVertex1]
                                                 [thisBlockVertex2]) {
             std::pair<int, int> edgeInOtherBlock = adjacencyMatricesMinor[k][otherBlockVertex1][otherBlockVertex2][0];
-            edgeOccurences[edge.first] += existsInOtherBlock;
-            edgeOccurences[edge.second] += existsInOtherBlock;
+            edgeOccurrences[edge.first] += existsInOtherBlock;
+            edgeOccurrences[edge.second] += existsInOtherBlock;
             matchingArraySeparatrix[k][edgeInOtherBlock.first]=matchingArraySeparatrix[block_id][edge.first];
             matchingArraySeparatrix[k][edgeInOtherBlock.second]=matchingArraySeparatrix[block_id][edge.second];
           }
@@ -360,7 +360,7 @@ int ttk::SeparatrixStability::buildOccurenceArraysMinor(
   return 1;
 }
 
-int ttk::SeparatrixStability::buildOccurenceArrays(
+int ttk::SeparatrixStability::buildOccurrenceArrays(
     const std::vector<GraphMatrixFull> &adjacencyMatrices,
     const std::vector<int> &separatrixCountForEachBlock ,
     const std::vector<std::vector<std::array<double, 3>>> &coordsSource,
@@ -368,7 +368,7 @@ int ttk::SeparatrixStability::buildOccurenceArrays(
     const std::vector<std::vector<double>> &scalarsSource,
     const std::vector<std::vector<double>> &scalarsDestination,
     const bool &mergeEdgesOnSaddles, 
-    std::vector<std::vector<int>> &edgesOccurencesForEachBlock,
+    std::vector<std::vector<int>> &edgesOccurrencesForEachBlock,
     std::vector<std::vector<bool>> &isomorphismForEachBlock,
     std::vector<std::vector<std::vector<int>>> &matchingArrayForEachBlockSource,
     std::vector<std::vector<std::vector<int>>> &matchingArrayForEachBlockDestination,
@@ -388,16 +388,16 @@ int ttk::SeparatrixStability::buildOccurenceArrays(
   #endif // TTK_ENABLE_OPENMP
   for(int i = 0; i < n_blocks; i++) {
     if(!mergeEdgesOnSaddles) {
-      status = this->buildOccurenceArraysFull(
+      status = this->buildOccurrenceArraysFull(
         adjacencyMatrices, separatrixCountForEachBlock[i], coordsSource,
-        coordsDestination, scalarsSource, scalarsDestination, i, edgesOccurencesForEachBlock[i], isomorphismForEachBlock[i],
+        coordsDestination, scalarsSource, scalarsDestination, i, edgesOccurrencesForEachBlock[i], isomorphismForEachBlock[i],
         matchingArrayForEachBlockSource[i],
         matchingArrayForEachBlockDestination[i],
         matchingArraySeparatrixForEachBlock[i]);
     } else {
-      status = this->buildOccurenceArraysMinor(
+      status = this->buildOccurrenceArraysMinor(
         adjacencyMatrices, separatrixCountForEachBlock[i],
-        coordsDestination, scalarsDestination, i, edgesOccurencesForEachBlock[i], isomorphismForEachBlock[i],
+        coordsDestination, scalarsDestination, i, edgesOccurrencesForEachBlock[i], isomorphismForEachBlock[i],
         matchingArrayForEachBlockDestination[i],
         matchingArraySeparatrixForEachBlock[i]);
     }

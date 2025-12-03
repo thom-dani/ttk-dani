@@ -245,7 +245,7 @@ int ttkSeparatrixStability::execute(
   std::vector<std::vector<double>> scalarsDestination(n_blocks);
   std::vector<std::vector<double>> scalarsSource(n_blocks);
   std::vector<int> separatrixCountForEachBlock(n_blocks);
-  std::vector<std::vector<int>> edgeOccurenceForEachBlock(n_blocks);
+  std::vector<std::vector<int>> edgeOccurrenceForEachBlock(n_blocks);
   std::vector<std::vector<bool>> isomorphismsForEachBlock(n_blocks);
   std::vector<std::vector<std::vector<int>>> matchingArrayForEachBlockSource(n_blocks);
   std::vector<std::vector<std::vector<int>>> matchingArrayForEachBlockDestination(n_blocks);
@@ -282,14 +282,14 @@ int ttkSeparatrixStability::execute(
   }
 
   
-  status = this->buildOccurenceArrays(adjacencyMatricesFull,  
+  status = this->buildOccurrenceArrays(adjacencyMatricesFull,  
                                       separatrixCountForEachBlock, 
                                       coordsSource,
                                       coordsDestination,  
                                       scalarsSource,
                                       scalarsDestination,
                                       MergeEdgesOnSaddles,
-                                      edgeOccurenceForEachBlock,
+                                      edgeOccurrenceForEachBlock,
                                       isomorphismsForEachBlock,
                                       matchingArrayForEachBlockSource,
                                       matchingArrayForEachBlockDestination,
@@ -331,9 +331,9 @@ int ttkSeparatrixStability::execute(
     ttkSimplexIdTypeArray *separatrixIds = ttkSimplexIdTypeArray::SafeDownCast(
       block->GetCellData()->GetArray(ttk::MorseSmaleSeparatrixIdName));
 
-    vtkNew<vtkFloatArray> occurenceCount;
-    occurenceCount->SetNumberOfComponents(1);
-    occurenceCount->SetName(ttk::SeparatrixStabilityOccurenceCount);
+    vtkNew<vtkFloatArray> occurrenceCount;
+    occurrenceCount->SetNumberOfComponents(1);
+    occurrenceCount->SetName(ttk::SeparatrixStabilityOccurrenceCount);
 
     vtkNew<vtkIntArray> isomorphismClassId;
     isomorphismClassId->SetNumberOfComponents(1);
@@ -343,21 +343,21 @@ int ttkSeparatrixStability::execute(
     int currentSeparatrixId = separatrixIds->GetValue(currentCellId);
     int separatrixCount = 0;
     float newValue
-      = (float)edgeOccurenceForEachBlock[i][separatrixCount] / n_blocks;
+      = (float)edgeOccurrenceForEachBlock[i][separatrixCount] / n_blocks;
    
-    occurenceCount->InsertNextValue(newValue);
+    occurrenceCount->InsertNextValue(newValue);
 
     for(int j = 1; j < cellNumber; j++) {
       if(separatrixIds->GetValue(j) != currentSeparatrixId) {
         currentSeparatrixId = separatrixIds->GetValue(j);
         separatrixCount++;
         newValue
-          = (float)edgeOccurenceForEachBlock[i][separatrixCount] / n_blocks;
+          = (float)edgeOccurrenceForEachBlock[i][separatrixCount] / n_blocks;
       }
-      occurenceCount->InsertNextValue(newValue);
+      occurrenceCount->InsertNextValue(newValue);
     }
 
-    block->GetCellData()->AddArray(occurenceCount);
+    block->GetCellData()->AddArray(occurrenceCount);
 
     isomorphismClassId->InsertNextValue(classId[i]);
 
@@ -450,7 +450,7 @@ int ttkSeparatrixStability::RequestData(
 
   status = this->execute(input1_Separatrices, output1_Separatrices);
 
-  this->printMsg("Occurence arrays calculated for "
+  this->printMsg("Occurrence arrays calculated for "
                    + std::to_string(input1_Separatrices->GetNumberOfBlocks())
                    + " blocks",
                  1.0, t.getElapsedTime(), this->threadNumber_);
